@@ -1,6 +1,6 @@
-import view.SopraApplication
+import view.SplendorApplication
 
 fun main() {
-    SopraApplication().show()
+    SplendorApplication().show()
     println("Application ended. Goodbye")
 }
