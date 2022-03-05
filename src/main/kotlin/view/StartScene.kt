@@ -40,7 +40,7 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
     val quitButton = Button(
 	width = 200, height = 100,
-	posX = 1650, posY = 950,
+	posX = 50, posY = 930,
 	text = "Exit",
 	font = Font(size = 28), visual = ColorVisual(221, 136, 136)
     )

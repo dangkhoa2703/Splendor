@@ -18,7 +18,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 
     val backButton = Button(
 	width = 200, height = 100,
-	posX = 1650, posY = 950,
+	posX = 50, posY = 930,
 	text = "Back",
 	font = Font(size = 28), visual = ColorVisual(136, 136, 221)
     )
