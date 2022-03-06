@@ -11,8 +11,6 @@ class SplendorImageLoader {
 	var image: BufferedImage = ImageIO.read(
 	    SplendorImageLoader::class.java.getResource(HUMAN_ICON)
 	)
-
-	println(image)
 	
 	return ImageVisual(
 	    image

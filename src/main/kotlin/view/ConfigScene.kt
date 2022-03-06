@@ -11,6 +11,9 @@ import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.visual.ImageVisual
 import entity.SplendorImageLoader
 import java.awt.MouseInfo
+import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
+import javax.swing.SwingUtilities
 
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
@@ -23,12 +26,12 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     )
     
     private val headLineLabel = Label(
-	width = 300, height = 200,
-	posX = width/2 - 150, posY = 50,
+	width = 400, height = 200,
+	posX = width/2 - 200, posY = 50,
 	text = "Configurate Game!",
-	font = Font(size=30)
+	font = Font(size=44)
     )
-
+    
     private val bar: Label = Label(
 	posX = 100, posY = 300, width = 10, height = 400,
 	visual = ColorVisual.WHITE
@@ -56,9 +59,14 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	text = "-", visual = ColorVisual(221, 136, 136)
     ).apply {
 	onMouseClicked = {
+	    selection[size*2] = 1
+	    selection[size*2+1] = -2
+	    textFields[size].text = ""
+	    
 	    size = (size - 1)
 	    if(size<=1) size = 1
 	    refresh()
+	    refreshStartButton()
 	}
     }
 
@@ -70,8 +78,16 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    size = (size + 1)
 	    if(size>=3) size = 3
 	    refresh()
+	    refreshStartButton()
 	}
     }
+
+    private val startButton = Button(
+	width = 200, height = 100,
+	posX = 1650, posY = 930,
+	text = "Start", font = Font(size = 28),
+	visual = ColorVisual(136, 221, 136)
+    )
     
     val backButton = Button(
 	width = 200, height = 100,
@@ -79,6 +95,19 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	text = "Back",
 	font = Font(size = 28), visual = ColorVisual(136, 136, 221)
     )
+
+    private fun refreshStartButton() {
+	var startDisabled = false
+
+	for(i in 0..size) {
+	    if(textFields[i].text.isBlank()) {
+		startDisabled = true
+		break
+	    }
+	}
+
+	startButton.isDisabled = startDisabled
+    }
 
     private fun select(row: Int, isHuman: Boolean) {
 	if(isHuman) {
@@ -114,7 +143,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    but.opacity = 0.5
 	    but.text = difficulties[absIndex]
 	}
-	
+
 	for(i in 0..size) {
 	    textFields[i].isVisible = true
 	    icons[i].isVisible = true
@@ -144,6 +173,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		delButton.posX = width/2 - 25
 	    }
 	}
+
+	
     }
     
     init{
@@ -156,7 +187,11 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		posX = width/2 - 200, posY = 300+i*150,
 		width = 400, height = 100,
 		text = "", font = Font(size = 26),
-	    )
+	    ).apply{
+		onKeyTyped = {
+		    refreshStartButton()
+		}
+	    }
 
 	    val icon = Button(
 		posX = width/2 + 250, posY = 300+i*150,
@@ -193,6 +228,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	knob.posY = bar.posY - knob.height/2
 	knob.posX = bar.posX + bar.width/2 - knob.width/2
 
+	startButton.isDisabled = true
+
 	// 81,126,44 why ? 
 	background = ColorVisual(108, 168, 59)
 	
@@ -205,6 +242,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    delButton,
 	    bar,
 	    knob,
+	    startButton,
 	)
     }
 }

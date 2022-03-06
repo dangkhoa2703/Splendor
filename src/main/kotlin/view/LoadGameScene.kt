@@ -13,7 +13,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	width = 300, height = 200,
 	posX = width/2 - 150, posY = 50,
 	text = "Load Game",
-	font = Font(size = 30)
+	font = Font(size = 44)
     )
 
     val backButton = Button(
