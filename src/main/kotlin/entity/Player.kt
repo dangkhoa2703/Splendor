@@ -13,11 +13,25 @@ package entity
  * */
 class Player (
     val name : String,
-    var score : Int,
-    var bonus : Map<GemType, Int>,
-    var playerType: PlayerType,
-    var gems : List<Gem>,
-    var nobleTiles : List<NobleTile>,
-    var reservedCards : List<DevCard>,
-    var devCards : List<DevCard>
-)
+    val playerType: PlayerType
+){
+    val reservedCards : MutableList<DevCard> = mutableListOf()
+    val nobleTiles : MutableList<NobleTile> = mutableListOf()
+    var score : Int = 0
+    var bonus : Map<GemType, Int> = mapOf(
+        GemType.RED to 0,
+        GemType.GREEN to 0,
+        GemType.WHITE to 0,
+        GemType.BLACK to 0,
+        GemType.BLUE to 0,
+        GemType.YELLOW to 0
+    )
+    var gems : Map<GemType,Int> = mapOf(
+        GemType.RED to 0,
+        GemType.GREEN to 0,
+        GemType.WHITE to 0,
+        GemType.BLACK to 0,
+        GemType.BLUE to 0,
+        GemType.YELLOW to 0)
+    var devCards : MutableList<DevCard> = mutableListOf()
+}
