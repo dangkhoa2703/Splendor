@@ -62,7 +62,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     fun nextPlayer(){}
 
-//    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{}
+    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{return true}
 
     fun createGems(PlayerCount: Int){}
 

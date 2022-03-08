@@ -11,13 +11,13 @@ class Board {
         GemType.BLUE to 0,
         GemType.YELLOW to 0)
 
-    val levelOneCards: List<DevCard> = listOf()
-    val levelOneOpen: List<DevCard> = listOf()
+    val levelOneCards: MutableList<DevCard> = mutableListOf()
+    val levelOneOpen: MutableList<DevCard> = mutableListOf()
 
-    val levelTwoCards: List<DevCard> = listOf()
-    val levelTwoOpen: List<DevCard> = listOf()
+    val levelTwoCards: MutableList<DevCard> = mutableListOf()
+    val levelTwoOpen: MutableList<DevCard> = mutableListOf()
 
-    val levelThreeCards: List<DevCard> = listOf()
-    val levelThreeOpen: List<DevCard> = listOf()
+    val levelThreeCards: MutableList<DevCard> = mutableListOf()
+    val levelThreeOpen: MutableList<DevCard> = mutableListOf()
 
 }
