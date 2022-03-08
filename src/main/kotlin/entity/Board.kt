@@ -10,7 +10,7 @@ class Board {
     val nobleTiles: List<NobleTile> = listOf()
 
     /** gems: List of gems that can be taken by players */
-    val gems: Map<GemType, Int> = mapOf(
+    var gems: Map<GemType, Int> = mapOf(
         GemType.RED to 0,
         GemType.GREEN to 0,
         GemType.WHITE to 0,
