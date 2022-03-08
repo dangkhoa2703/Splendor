@@ -6,6 +6,6 @@ package entity
  *  @param playerName : Name des Gewinners
  */
 class Highscore (
-    val score : Int,
-    val playerName : String
+    val playerName : String,
+    val score : Int
 )
