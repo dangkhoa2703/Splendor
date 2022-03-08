@@ -57,7 +57,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
         val numberOfDifferentGemTypes = game.board.gems.filter { it.value > 0 }.size
 
-        if( types.size > 3 || (types.size != numberOfDifferentGemTypes) )
+        if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes) )
             throw IllegalArgumentException("no valid gem number were chosen")
         else
         {
