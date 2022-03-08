@@ -7,13 +7,10 @@ import tools.aqua.bgw.visual.ImageVisual
 private const val HUMAN_ICON = "/human_green.jpg"
 
 class SplendorImageLoader {
-    fun humanIcon(): ImageVisual {
-	var image: BufferedImage = ImageIO.read(
-	    SplendorImageLoader::class.java.getResource(HUMAN_ICON)
-	)
-	
-	return ImageVisual(
-	    image
-	)
-    }
+	fun humanIcon(): ImageVisual {
+		var image: BufferedImage = ImageIO.read(
+			SplendorImageLoader::class.java.getResource(HUMAN_ICON)
+		)
+		return ImageVisual(image)
+	}
 }

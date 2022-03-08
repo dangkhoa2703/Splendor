@@ -30,18 +30,16 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param type is the GemType of the two chosen gems
      * @throws IllegalArgumentException if there aren't at least four gems of the given type left
      */
-    fun takeTwoSameGems(type : GemType)
-    {
+    fun takeTwoSameGems(type : GemType) {
         val game = rootService.currentGame!!.currentGameState
         val player = game.currentPlayer
 
         // if the board has at least four gems of type, move two gems from board to player
-        if( game.board.gems[type]!! > 3 )
-        {
+        if( game.board.gems[type]!! > 3 ) {
             game.board.gems = game.board.gems.filterKeys { it == type }.mapValues { it.value - 2 }
             player.gems = player.gems + player.gems.filterKeys { it == type }.mapValues { it.value + 2 }
-        }
-        else
+
+        }else
             throw IllegalArgumentException("there aren't at least four gems of the given type left")
 
         // update GUI
@@ -52,16 +50,18 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
 
     fun takeThreeDifferentGems(types : MutableList<GemType>){
-        val game = rootService.currentGame!!.currentGameState
-        val player = game.currentPlayer
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val currentGameState = game.currentGameState
+        val player = currentGameState.currentPlayer
+        val board = currentGameState.board
 
-        val numberOfDifferentGemTypes = game.board.gems.filter { it.value > 0 }.size
+        val numberOfDifferentGemTypes = currentGameState.board.gems.filter { it.value > 0 }.size
 
         if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes) )
             throw IllegalArgumentException("no valid gem number were chosen")
-        else
-        {
-            game.board.gems = game.board.gems.filterKeys { it in types }.mapValues { it.value - 1 }
+        else {
+            board.gems = board.gems.filterKeys { it in types }.mapValues { it.value - 1 }
             player.gems = player.gems + player.gems.filterKeys { it in types }.mapValues { it.value + 1 }
         }
 

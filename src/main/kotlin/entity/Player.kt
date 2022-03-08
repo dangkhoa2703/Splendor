@@ -34,5 +34,6 @@ class Player (
         GemType.BLACK to 0,
         GemType.BLUE to 0,
         GemType.YELLOW to 0)
+
     var devCards : MutableList<DevCard> = mutableListOf()
 }

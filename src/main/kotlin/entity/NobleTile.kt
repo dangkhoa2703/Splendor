@@ -6,6 +6,8 @@ package entity
  *  @param condition: required bonuses to be visited
  * */
 class NobleTile (
-    val prestigePoints: Int,
-    val condition: Map<GemType,Int>
+    val id: Int,
+    val condition: Map<GemType,Int>,
+    val prestigePoints: Int
+
 )

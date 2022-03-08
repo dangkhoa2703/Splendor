@@ -8,8 +8,8 @@ package entity
  *  @param highscores : see class Highscore
  * */
 data class Splendor (
-    var validGame : Boolean,
     var simulationSpeed : Int,
     val currentGameState : GameState,
-    val highscores: List<Highscore>
+    val highscores: List<Highscore>,
+    var validGame : Boolean = true
 )
