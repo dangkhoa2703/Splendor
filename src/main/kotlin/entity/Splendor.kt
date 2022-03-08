@@ -1,11 +1,11 @@
 package entity
 
 /**
- *  Klasse das Spiel Splendor
- *  @param validGame : Boolean, welcher angibt, ob das Spiel gültig für die Highscore-Liste ist.
- *  @param simulationSpeed : Integer als Angabe für die Simulationsgeschwindigkeit
- *  @param currentGameState : siehe Klasse GameState
- *  @param highscores : siehe Klasse Highscore
+ *  class for the game Splendor
+ *  @param validGame : indication whether game is eligible for saving a highscore
+ *  @param simulationSpeed : specification of the simulation speed
+ *  @param currentGameState : see class GameState
+ *  @param highscores : see class Highscore
  * */
 data class Splendor (
     var validGame : Boolean,

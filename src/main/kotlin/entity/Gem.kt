@@ -1,7 +1,7 @@
 package entity
 
 /**
- *  Klasse für ein Gem-Objekt
- *  @param gemType : siehe Klasse GemType
+ *  class for a gem object
+ *  @param gemType: see class GemType
  * */
-class Gem (val gemType: GemType){}
+class Gem (val gemType: GemType)

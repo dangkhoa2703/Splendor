@@ -1,7 +1,9 @@
 package entity
 
+/**
+ *  enum class for the different types a gem could have
+ * */
 enum class GemType {
-
     GREEN,
     RED,
     BLUE,
