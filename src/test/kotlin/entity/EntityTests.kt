@@ -13,7 +13,7 @@ class EntityTests
     private val board = Board()
     private val gameStateOne = GameState(playerOne, listOf(playerOne, playerTwo), board)
     private val highscoreOne = Highscore(playerOne.name, playerOne.score)
-    private val splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
+    private var splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
         highscores = mutableListOf(highscoreOne), validGame = true)
 
     @Test
@@ -32,6 +32,7 @@ class EntityTests
 
         /** change values of player's attributes */
         playerOne.score = 4
+
         val type = mutableListOf(GemType.YELLOW, GemType.BLUE)
         type.forEach { type ->
             playerOne.gems[type] = playerOne.gems.getValue(type) + 1
@@ -72,11 +73,20 @@ class EntityTests
         assertEquals(gameStateOne, gameStateOne.next)
         assertEquals(false, gameStateOne.hasNext())
         assertEquals(false, gameStateOne.hasPrevious())
+        val gameStateTwo = GameState(playerOne, listOf(playerOne, playerTwo), board)
+        gameStateOne.next = gameStateTwo
+        gameStateOne.previous = gameStateTwo
+        assertEquals(true, gameStateOne.hasNext())
+        assertEquals(true, gameStateOne.hasPrevious())
+        assertEquals(gameStateTwo, gameStateOne.next)
+        assertEquals(gameStateTwo, gameStateOne.previous)
     }
 
     @Test
     fun splendorTest()
     {
+        splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
+            highscores = mutableListOf(highscoreOne), validGame = true)
         /** test if splendor got initialized correctly */
         assertEquals(2, splendor.simulationSpeed)
         assertEquals(gameStateOne, splendor.currentGameState)
@@ -84,6 +94,14 @@ class EntityTests
         assertEquals(true, splendor.validGame)
         assertEquals(playerOne.name, highscoreOne.playerName)
         assertEquals(playerOne.score, highscoreOne.score)
+        splendor.simulationSpeed = 3
+        splendor.validGame = false
+        val gameStateTwo = GameState(playerOne, listOf(playerOne, playerTwo), board)
+        splendor.currentGameState = gameStateTwo
+        assertEquals(3, splendor.simulationSpeed)
+        assertEquals(gameStateTwo, splendor.currentGameState)
+        assertEquals(false, splendor.validGame)
+
     }
 
     @Test
@@ -91,6 +109,24 @@ class EntityTests
     {
         val gemRed = Gem(GemType.RED)
         assertEquals(GemType.RED, gemRed.gemType)
+        assertEquals(GemType.RED.toString(), gemRed.gemType.toString())
         assertNotNull(gemRed.toString())
+    }
+
+    @Test
+    fun cardTest()
+    {
+        val map = mapOf( GemType.BLUE to 2)
+        val devCard0 = DevCard(0,map,1,2,GemType.RED)
+        assertEquals(0,devCard0.id)
+        assertEquals(1,devCard0.level)
+        assertEquals(2,devCard0.PrestigePoints)
+        assertEquals(GemType.RED,devCard0.bonus)
+        assertEquals(map, devCard0.price)
+
+        val nobleTile0 = NobleTile(0,map,1)
+        assertEquals(0, nobleTile0.id)
+        assertEquals(1,nobleTile0.prestigePoints)
+        assertEquals(map,nobleTile0.condition)
     }
 }
