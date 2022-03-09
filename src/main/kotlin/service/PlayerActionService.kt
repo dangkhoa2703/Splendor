@@ -41,32 +41,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun showHint():String{return ""}
 
     //player-game-action
-//    /**
-//     * player takes two gems from the board
-//     * @param type is the GemType of the two chosen gems
-//     * @throws IllegalArgumentException if there aren't at least four gems of the given type left
-//     */
-//    fun takeTwoSameGems(type : GemType) {
-//        val game = rootService.currentGame!!.currentGameState
-//        val player = game.currentPlayer
-//
-//        // if the board has at least four gems of type, move two gems from board to player
-//        if( game.board.gems[type]!! > 3 ) {
-//            game.board.gems = game.board.gems.filterKeys { it == type }.mapValues { it.value - 2 }
-//            player.gems = player.gems + player.gems.filterKeys { it == type }.mapValues { it.value + 2 }
-//
-//        }else
-//            throw IllegalArgumentException("there aren't at least four gems of the given type left")
-//
-//        // update GUI
-//        //refreshAfterTakeTwoGems()
-//        // visit by nobleTiles, check gems
-//        rootService.gameService.endTurn()
-//    }
-
     /**
      * Move gems from to board to player's hand
-     *
      * @param types mutable list of gem types, which player chosen
      */
     fun takeGems(types : MutableList<GemType>){
@@ -79,17 +55,14 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val numberOfDifferentGemTypes = currentGameState.board.gems.filter { it.value > 0 }.size
 
         // list of gem types has invalid size
-        if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes)
-            || (types.size == 3 && types.map { it.name }.toSet().size != 3)
-            ||(types.size > numberOfDifferentGemTypes)) {
+        if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes) ||
+            (types.size == 3 && types.map { it.name }.toSet().size != 3) || (types.size > numberOfDifferentGemTypes)) {
             throw IllegalArgumentException("no valid gem number were chosen")
         }
         // take two same gems
-        else if(types.size == 2 && types[0] == types[1] && board.gems[types[0]]!! > 3){
+        else if((types.size == 2) && (types[0] == types[1]) && (board.gems[types[0]]!! > 3)) {
             player.gems[types[0]] = player.gems.getValue(types[0]) + 2
             board.gems[types[0]] = player.gems.getValue(types[0]) - 2
-//            board.gems = board.gems + board.gems.filterKeys { it == types[0] }.mapValues { it.value - 2 }
-//            player.gems = player.gems + player.gems.filterKeys { it == types[0] }.mapValues { it.value + 2 }
         }
         // take one to three different gems
         else{
@@ -97,10 +70,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 player.gems[gemType] = player.gems.getValue(gemType) + 1
                 board.gems[gemType] = player.gems.getValue(gemType) - 1
             }
-//            board.gems = board.gems + board.gems.filterKeys { it in types }.mapValues { it.value - 1 }
-//            player.gems = player.gems + player.gems.filterKeys { it in types }.mapValues { it.value + 1 }
         }
-
         rootService.gameService.consecutiveNoAction = 0
         // update GUI
         //refreshAfterTakeThreeGems()
@@ -139,21 +109,15 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 player.reservedCards.remove(card)
             }
             //move the gems in payment from player's hand back to board
-            card.price.forEach{ (gemType,value) ->
+            card.price.forEach{ (gemType, value) ->
                 player.gems[gemType] = player.gems.getValue(gemType) - value
                 board.gems[gemType] = player.gems.getValue(gemType) + value
             }
-//            for (type in GemType.values()){
-//                if(payment[type] != null){
-//                    player.gems = player.gems + player.gems.filterKeys { it == type }.mapValues { it.value + 1 }
-//                    board.gems= board.gems + board.gems.filterKeys { it == type }.mapValues { it.value - 1 }
-//                }
-//            }
+
             player.score += card.PrestigePoints
-            val bonusType = card.bonus
-            player.bonus[bonusType] = player.bonus.getValue(bonusType) + 1
+            player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1
             player.devCards.add(card)
-        }else
+        } else
             throw IllegalArgumentException("card is not acquirable")
 
         rootService.gameService.consecutiveNoAction = 0
@@ -227,8 +191,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val player = game.currentGameState.currentPlayer
 
         gems.forEach{ gemType ->
-            player.gems[gemType] = player.gems.getValue(gemType) + 1
-            board.gems[gemType] = player.gems.getValue(gemType) - 1
+            player.gems[gemType] = player.gems.getValue(gemType) - 1
+            board.gems[gemType] = player.gems.getValue(gemType) + 1
         }
     }
 }

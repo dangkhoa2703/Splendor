@@ -14,7 +14,9 @@ class EntityTests
     private val gameStateOne = GameState(playerOne, listOf(playerOne, playerTwo), board)
     private val highscoreOne = Highscore(playerOne.name, playerOne.score)
     private var splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
-        highscores = mutableListOf(highscoreOne), validGame = true)
+        highscores = mutableListOf(highscoreOne))
+    private val gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3, GemType.WHITE to 3, GemType.BLACK to 4,
+        GemType.BLUE to 3, GemType.YELLOW to 1)
 
     @Test
     fun testPlayer()
@@ -34,12 +36,8 @@ class EntityTests
         playerOne.score = 4
 
         val type = mutableListOf(GemType.YELLOW, GemType.BLUE)
-        type.forEach { type ->
-            playerOne.gems[type] = playerOne.gems.getValue(type) + 1
-        }
+        type.forEach { playerOne.gems[it] = playerOne.gems.getValue(it) + 1 }
         playerOne.bonus[GemType.RED] = playerOne.bonus.getValue(GemType.RED) + 1
-//        playerOne.gems = playerOne.gems + playerOne.gems.filterKeys { it in type }.mapValues { it.value + 1 }
-//        playerOne.bonus = playerOne.bonus + playerOne.bonus.filterKeys { it == GemType.RED }.mapValues { it.value + 1 }
 
         /** test if player's attributes can be changed correctly */
         assertEquals(4, playerOne.score)
@@ -60,6 +58,10 @@ class EntityTests
         assertEquals(mutableListOf(), board.levelThreeCards)
         assertEquals(mutableListOf(), board.levelThreeOpen)
         assertEquals(6, board.gems.size)
+
+        /** set and check gems */
+        board.gems = gemMap
+        assertEquals(gemMap[GemType.YELLOW], board.gems[GemType.YELLOW])
     }
 
     @Test
@@ -110,7 +112,12 @@ class EntityTests
         val gemRed = Gem(GemType.RED)
         assertEquals(GemType.RED, gemRed.gemType)
         assertEquals(GemType.RED.toString(), gemRed.gemType.toString())
-        assertNotNull(gemRed.toString())
+        assertEquals(GemType.GREEN.toString(), Gem(GemType.GREEN).gemType.toString())
+        assertEquals(GemType.BLUE.toString(), Gem(GemType.BLUE).gemType.toString())
+        assertEquals(GemType.WHITE.toString(), Gem(GemType.WHITE).gemType.toString())
+        assertEquals(GemType.BLACK.toString(), Gem(GemType.BLACK).gemType.toString())
+        assertEquals(GemType.YELLOW.toString(), Gem(GemType.YELLOW).gemType.toString())
+
     }
 
     @Test

@@ -3,13 +3,13 @@ package entity
 /**
  *  class for a player object
  *  @param name: name of the player
- *  @param score: current score (prestigePoints) of the player
+ *  @property score: current score (prestigePoints) of the player
  *  @param bonus: available bonuses of the player
  *  @param playerType: see enum PlayerType
  *  @param gems: gems the player currently has
- *  @param nobleTiles: nobleTiles who visited the player
- *  @param reservedCards: currently reserved devCards
- *  @param devCards: purchased devCards
+ *  @property nobleTiles: nobleTiles who visited the player
+ *  @property reservedCards: currently reserved devCards
+ *  @property devCards: purchased devCards
  * */
 class Player (
     val name : String,
