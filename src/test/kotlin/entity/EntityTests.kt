@@ -33,8 +33,12 @@ class EntityTests
         /** change values of player's attributes */
         playerOne.score = 4
         val type = mutableListOf(GemType.YELLOW, GemType.BLUE)
-        playerOne.gems = playerOne.gems + playerOne.gems.filterKeys { it in type }.mapValues { it.value + 1 }
-        playerOne.bonus = playerOne.bonus + playerOne.bonus.filterKeys { it == GemType.RED }.mapValues { it.value + 1 }
+        type.forEach { type ->
+            playerOne.gems[type] = playerOne.gems.getValue(type) + 1
+        }
+        playerOne.bonus[GemType.RED] = playerOne.bonus.getValue(GemType.RED) + 1
+//        playerOne.gems = playerOne.gems + playerOne.gems.filterKeys { it in type }.mapValues { it.value + 1 }
+//        playerOne.bonus = playerOne.bonus + playerOne.bonus.filterKeys { it == GemType.RED }.mapValues { it.value + 1 }
 
         /** test if player's attributes can be changed correctly */
         assertEquals(4, playerOne.score)

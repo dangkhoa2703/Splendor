@@ -23,7 +23,7 @@ class Board (
     val levelThreeOpen: MutableList<DevCard> = mutableListOf(),
 
     /** gems: List of gems that can be taken by players */
-    var gems: Map<GemType, Int> = mapOf(
+    var gems: MutableMap<GemType,Int> = mutableMapOf(
         GemType.RED to 0,
         GemType.GREEN to 0,
         GemType.WHITE to 0,
