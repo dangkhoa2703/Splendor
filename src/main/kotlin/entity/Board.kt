@@ -7,7 +7,7 @@ package entity
  * */
 class Board (
     /** List of noble cards */
-    val nobleTiles: List<NobleTile> = listOf(),
+    val nobleTiles: MutableList<NobleTile> = mutableListOf(),
 
     /**
      *  stack of level one development cards
