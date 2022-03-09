@@ -2,10 +2,11 @@ package service
 
 import entity.*
 import java.io.File
-import javax.swing.RowFilter.Entry
 
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
-    fun endGame(){}
+
+    var consecutiveNoAction = 0
+    var currentPlayerIndex = 0
 
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
@@ -67,24 +68,162 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //        onAllRefreshable { refreshAfterStartGame() }
     }
 
-//    fun checkNobleTiles(): List<NobleTile>{}
+    /**
+     * create a new game state, link it to the chain and set the pointer to this game state
+     * if nobody can make a move or the current Player hat 15 point -> endGame()
+     */
+    fun nextPlayer(){
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val currentGameState = game.currentGameState
+        val board = game.currentGameState.board
 
-    fun endTurn(){}
+        currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
 
-    fun refill(level: Int){
+        //check if there are any valid move, if nobody can make a move -> endGame()
+        if(!checkValidAction()){
+//            onAllRefreshables { refreshIfNoValidAction() }
+            consecutiveNoAction++
+        }
+        if(currentGameState.currentPlayer.score >= 15
+            || consecutiveNoAction == currentGameState.playerList.size){
+            endGame()
+            return
+        }
+
+        val newPlayerList = mutableListOf<Player>()
+        val newBoard = Board(
+            board.nobleTiles.toMutableList(),
+            board.levelOneCards.toMutableList(),
+            board.levelOneOpen.toMutableList(),
+            board.levelTwoCards.toMutableList(),
+            board.levelTwoCards.toMutableList(),
+            board.levelThreeCards.toMutableList(),
+            board.levelThreeOpen.toMutableList(),
+            board.gems.toMutableMap()
+        )
+
+        // create a new players list with the properties of the current list
+        currentGameState.playerList.forEach { player ->
+            newPlayerList.add(
+                Player(
+                    player.name,
+                    player.playerType,
+                    player.gems,
+                    player.bonus
+                )
+            )
+        }
+
+        //create new GameState
+        val newGameState = GameState(
+            newPlayerList[currentPlayerIndex],
+            newPlayerList,
+            newBoard
+        )
+
+        //bind new gameState to chain and set pointer to the newGameState
+        newGameState.previous = currentGameState
+        game.currentGameState = newGameState
+
+//        onAllRefreshables { refreshAfterNextPlayer }
+    }
+
+    /**
+     * End game
+     *
+     * @return a list sort by players' score
+     */
+    fun endGame(): List<Player>{
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val currentGameState = game.currentGameState
+        val board = game.currentGameState.board
+
+        return currentGameState.playerList.sortedByDescending { player -> player.score }
+    }
+
+
+
+    fun endTurn(){
+//
+//        val game = rootService.currentGame
+//        checkNotNull(game)
+//        val board = game.currentGameState.board
+//
+//        checkNobleTiles()
+////        checkGems()
+    }
+
+    /**
+     * deal a new card to the same place, where a card was removed
+     *
+     * @param level level of the card
+     * @param index  index of the removed card
+     */
+    fun refill(level: Int,index: Int){
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
+
+        when(level){
+            1 -> {
+                board.levelOneOpen.add(index,board.levelOneCards[0])
+                board.levelOneCards.removeAt(0)
+            }
+            2 -> {
+                board.levelTwoOpen.add(index,board.levelTwoCards[0])
+                board.levelTwoCards.removeAt(0)
+            }
+            3 -> {
+                board.levelThreeOpen.add(index,board.levelThreeCards[0])
+                board.levelThreeCards.removeAt(0)
+            }
+        }
     }
 
-//        fun nextPlayer(){}
 
+    /**
+     * Check if which noble tiles can visit the current player
+     * automatic add prestige point to player score if there is only on afforfable card
+     * @return a multable list of indexes of the affordable noble tiles on board
+     */
+    fun checkNobleTiles(): MutableList<Int>{
 
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val board = game.currentGameState.board
+        val player = game.currentGameState.currentPlayer
+        val affordableNobleTile = mutableListOf<Int>()
 
-//    fun createGems(PlayerCount: Int){
-//
-//        for()
-//    }
+        board.nobleTiles.forEach { nobleTile ->
+            var affordable = true
+            nobleTile.condition.forEach { type, num ->
+                affordable = affordable && (player.bonus.getValue(type) >= num )
+            }
+            if(affordable){ affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile)) }
+        }
+
+        if(affordableNobleTile.size == 1){
+            player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints
+        }
+
+        return affordableNobleTile
+    }
+
+    fun checkGems(): Boolean{
+
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val player = game.currentGameState.currentPlayer
+        var totalGems = 0
+
+        player.gems.forEach{ (_,v) ->
+            totalGems += v
+        }
+
+        return totalGems >= 10
+    }
 
 
     /*-----------------------------HELP FUNCTION-----------------------------*/
@@ -206,15 +345,30 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //        return boolean
 //    }
 
+    /**
+     * check if the card is for the current player affordable
+     *
+     * @param card the card which the player chose
+     * @param payment map of gems from player
+     * @return true if player can this card afford, else return false
+     */
     fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{
 
-        var boolean = true
+        var acquirableNoJoker = true
+        var totalGemNeeded = 0
+        var totalGemAvailable = 0
+        var acquirableWithJoker = true
 
         card.price.forEach { (gemType, gemNum) ->
-            boolean = boolean && (payment[gemType]!! >= gemNum)
+            acquirableNoJoker = acquirableNoJoker && (payment.getValue(gemType) >= gemNum)
+            totalGemNeeded =+ gemNum
+            totalGemAvailable += payment.getValue(gemType)
+        }
+        if(!acquirableNoJoker) {
+            acquirableWithJoker = (totalGemAvailable + payment.getValue(GemType.YELLOW)) >= totalGemNeeded
         }
 
-        return boolean
+        return acquirableNoJoker || acquirableWithJoker
     }
 
     /**
@@ -226,18 +380,27 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         val game = rootService.currentGame
         checkNotNull(game)
-        val currentGame = game.currentGameState
-        val board = currentGame.board
+        val board = game.currentGameState.board
+        val playerBonus = game.currentGameState.currentPlayer.bonus
+        val playerGems = game.currentGameState.currentPlayer.gems
         val listOfAcquirableCards = mutableListOf<Pair<Int,Int>>()
+        val totalOwn : Map<GemType,Int> = mapOf(
+            GemType.RED    to (playerBonus.getValue(GemType.RED)   + playerGems.getValue(GemType.RED)),
+            GemType.GREEN  to (playerBonus.getValue(GemType.GREEN) + playerGems.getValue(GemType.GREEN)),
+            GemType.WHITE  to (playerBonus.getValue(GemType.WHITE) + playerGems.getValue(GemType.WHITE)),
+            GemType.BLACK  to (playerBonus.getValue(GemType.BLACK) + playerGems.getValue(GemType.BLACK)),
+            GemType.BLUE   to (playerBonus.getValue(GemType.BLUE)  + playerGems.getValue(GemType.BLUE)),
+            GemType.YELLOW to   playerGems.getValue(GemType.YELLOW)
+        )
 
         for(i in 0..3){
-            if(isCardAcquirable(board.levelOneOpen[i], currentGame.currentPlayer.gems)){
+            if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){
                 listOfAcquirableCards.add(Pair(1,i))
             }
-            if(isCardAcquirable(board.levelTwoOpen[i], currentGame.currentPlayer.gems)){
+            if(isCardAcquirable(board.levelTwoOpen[i], totalOwn)){
                 listOfAcquirableCards.add(Pair(2,i))
             }
-            if(isCardAcquirable(board.levelThreeOpen[i], currentGame.currentPlayer.gems)){
+            if(isCardAcquirable(board.levelThreeOpen[i], totalOwn)){
                 listOfAcquirableCards.add(Pair(3,i))
             }
         }

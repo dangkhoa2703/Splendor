@@ -80,20 +80,28 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
         // list of gem types has invalid size
         if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes)
-            || (types.size == 3 && types.map { it.name }.toSet().size != 3)||(types.size > numberOfDifferentGemTypes)) {
+            || (types.size == 3 && types.map { it.name }.toSet().size != 3)
+            ||(types.size > numberOfDifferentGemTypes)) {
             throw IllegalArgumentException("no valid gem number were chosen")
         }
         // take two same gems
         else if(types.size == 2 && types[0] == types[1] && board.gems[types[0]]!! > 3){
-            board.gems = board.gems + board.gems.filterKeys { it == types[0] }.mapValues { it.value - 2 }
-            player.gems = player.gems + player.gems.filterKeys { it == types[0] }.mapValues { it.value + 2 }
+            player.gems[types[0]] = player.gems.getValue(types[0]) + 2
+            board.gems[types[0]] = player.gems.getValue(types[0]) - 2
+//            board.gems = board.gems + board.gems.filterKeys { it == types[0] }.mapValues { it.value - 2 }
+//            player.gems = player.gems + player.gems.filterKeys { it == types[0] }.mapValues { it.value + 2 }
         }
         // take one to three different gems
         else{
-            board.gems = board.gems + board.gems.filterKeys { it in types }.mapValues { it.value - 1 }
-            player.gems = player.gems + player.gems.filterKeys { it in types }.mapValues { it.value + 1 }
+            types.forEach{ gemType ->
+                player.gems[gemType] = player.gems.getValue(gemType) + 1
+                board.gems[gemType] = player.gems.getValue(gemType) - 1
+            }
+//            board.gems = board.gems + board.gems.filterKeys { it in types }.mapValues { it.value - 1 }
+//            player.gems = player.gems + player.gems.filterKeys { it in types }.mapValues { it.value + 1 }
         }
 
+        rootService.gameService.consecutiveNoAction = 0
         // update GUI
         //refreshAfterTakeThreeGems()
         // visit by nobleTiles, check gems
@@ -108,7 +116,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param index the position of the card in her line on the bord (index is 1 to 4)
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
-    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index:Int){
+    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int){
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
@@ -125,26 +133,30 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 } else {
                     board.levelThreeCards.remove(card)
                 }
-                rootService.gameService.refill(card.level)
+                rootService.gameService.refill(card.level,index)
             } else {
                 //move card from player.reservedCards to player.devCards
                 player.reservedCards.remove(card)
             }
             //move the gems in payment from player's hand back to board
-            for (type in GemType.values()){
-                if(payment[type] != null){
-                    player.gems = player.gems + player.gems.filterKeys { it == type }.mapValues { it.value + 1 }
-                    board.gems= board.gems + board.gems.filterKeys { it == type }.mapValues { it.value - 1 }
-                }
+            card.price.forEach{ (gemType,value) ->
+                player.gems[gemType] = player.gems.getValue(gemType) - value
+                board.gems[gemType] = player.gems.getValue(gemType) + value
             }
+//            for (type in GemType.values()){
+//                if(payment[type] != null){
+//                    player.gems = player.gems + player.gems.filterKeys { it == type }.mapValues { it.value + 1 }
+//                    board.gems= board.gems + board.gems.filterKeys { it == type }.mapValues { it.value - 1 }
+//                }
+//            }
             player.score += card.PrestigePoints
             val bonusType = card.bonus
-            player.bonus[bonusType] to player.bonus[bonusType]!!+1
+            player.bonus[bonusType] = player.bonus.getValue(bonusType) + 1
             player.devCards.add(card)
-        }
-        else
+        }else
             throw IllegalArgumentException("card is not acquirable")
 
+        rootService.gameService.consecutiveNoAction = 0
         // update GUI
         //refreshAfterBuyCard()
         // visit by nobleTiles, check gems
@@ -166,25 +178,23 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             val level = card.level
             if (level == 1) {
                 board.levelOneCards.remove(card)
-            }
-            else if (level == 2) {
+            }else if (level == 2) {
                 board.levelTwoCards.remove(card)
-            }
-            else {
+            }else {
                 board.levelThreeCards.remove(card)
             }
-            rootService.gameService.refill(card.level)
+            rootService.gameService.refill(card.level,index)
         }
         val numberGold = board.gems[GemType.YELLOW]
         checkNotNull(numberGold)
         if(numberGold != 0) {
             //move gold gem from game.board to player
-            player.gems = player.gems + player.gems.filterKeys { it == GemType.YELLOW }.mapValues { it.value + 1 }
-            board.gems= board.gems + board.gems.filterKeys { it == GemType.YELLOW }.mapValues { it.value - 1 }
-        }
-        else
+            player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1
+            board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1
+        }else
             throw IllegalArgumentException("a player can only reserve up to three cards")
 
+        rootService.gameService.consecutiveNoAction = 0
         // update GUI
         //refreshAfterReserveCard()
         // visit by nobleTiles, check gems
@@ -196,8 +206,10 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param card the selected nobleTile
      */
     fun selectNobleTile(card: NobleTile){
-        val board = rootService.currentGame!!.currentGameState.board
-        val player = rootService.currentGame!!.currentGameState.currentPlayer
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val board = game.currentGameState.board
+        val player = game.currentGameState.currentPlayer
 
         board.nobleTiles.remove(card)
         player.nobleTiles.add(card)
@@ -209,10 +221,14 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param gems the selected gems
      */
     fun returnGems(gems: List<GemType>){
-        val board = rootService.currentGame!!.currentGameState.board
-        val player = rootService.currentGame!!.currentGameState.currentPlayer
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val board = game.currentGameState.board
+        val player = game.currentGameState.currentPlayer
 
-        player.gems = player.gems + player.gems.filterKeys { it in gems }.mapValues { it.value + 1 }
-        board.gems= board.gems + board.gems.filterKeys { it in gems }.mapValues { it.value - 1 }
+        gems.forEach{ gemType ->
+            player.gems[gemType] = player.gems.getValue(gemType) + 1
+            board.gems[gemType] = player.gems.getValue(gemType) - 1
+        }
     }
 }
