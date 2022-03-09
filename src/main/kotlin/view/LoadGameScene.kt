@@ -16,6 +16,12 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     private val fileChooser = FileChooser()
     private var openedFileChooser: Boolean = false
 
+    private val fileName = Label(
+	width = 200, height = 50,
+	posX = width/2 - 150, posY = 215,
+	text = "", font = Font(size=18)
+    )
+
     private val headLineLabel = Label(
 	width = 300, height = 200,
 	posX = width/2 - 150, posY = 50,
@@ -24,15 +30,15 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     )
 
     private val areaLabel = Label(
-	width = 400, height = 400,
-	posX = width/2 - 200, posY = height/2 - 200,
+	width = 800, height = 450,
+	posX = width/2 - 400, posY = height/2 - 225,
 	text = ""
     )
 
     private val chooseFileButton = Button(
 	width = 100, height = 50,
-	posX = width/2 - 50, posY = height/2 - 25,
-	text = "loadFile", font = Font(size=16),
+	posX = 1260, posY = 815,
+	text = "Load File", font = Font(size=16),
 	visual = ColorVisual(255, 255, 255)
     ).apply{
 	onMouseClicked = {
@@ -40,7 +46,10 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 		openedFileChooser = true
 		val file: File? = fileChooser.showOpenDialog(null)
 		openedFileChooser = false
-		if(file!=null) println(file.getName())
+		if(file!=null) {
+		    println(file.getName())
+		    fileName.text = file.getName()
+		}
 	    }
 	}
     }
@@ -75,6 +84,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	    startButton,
 	    chooseFileButton,
 	    areaLabel,
+	    fileName,
 	)
     }
 }
