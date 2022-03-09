@@ -6,6 +6,7 @@ import tools.aqua.bgw.visual.ImageVisual
 
 private const val HUMAN_ICON = "/human_green.jpg"
 private const val DRAG_N_DROP_ICON = "/dragAndDrop.png"
+private const val START_BACKGROUND = "/Splendor-background.jpg"
 
 class SplendorImageLoader {
 	fun humanIcon(): ImageVisual {
@@ -22,11 +23,20 @@ class SplendorImageLoader {
 	    return ImageVisual(image)
 	}
 
-	fun frontImageFor(id :Int) : ImageVisual{
-		val idString = (id+1).toString()
-		val image: BufferedImage = ImageIO.read(
-			SplendorImageLoader::class.java.getResource("/cards/"+idString+".png")
+	fun frontImageFor(id: Int): ImageVisual {
+	    val idString = (id+1).toString()
+	    return ImageVisual(
+		ImageIO.read(
+		    SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
 		)
-		return ImageVisual(image)
+	    )
+	}
+
+	fun startBackground(): ImageVisual {
+	    return ImageVisual(
+		ImageIO.read(
+		    SplendorImageLoader::class.java.getResource(START_BACKGROUND)
+		)
+	    )
 	}
 }
