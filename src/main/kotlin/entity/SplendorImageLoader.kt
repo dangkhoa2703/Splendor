@@ -21,4 +21,12 @@ class SplendorImageLoader {
 	    )
 	    return ImageVisual(image)
 	}
+
+	fun frontImageFor(id :Int) : ImageVisual{
+		val idString = (id+1).toString()
+		val image: BufferedImage = ImageIO.read(
+			SplendorImageLoader::class.java.getResource("/cards/"+idString+".png")
+		)
+		return ImageVisual(image)
+	}
 }
