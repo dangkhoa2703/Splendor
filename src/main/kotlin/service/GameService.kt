@@ -59,7 +59,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val splendor = Splendor(
             simulationSpeed,
             gameState,
-            listOf<Highscore>()
+            mutableListOf<Highscore>()
         )
 
         rootService.currentGame = splendor
