@@ -13,7 +13,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         randomizedTurns: Boolean,
         simulationSpeed: Int) {
         // Sicherheitsabfragen
-        require( players.size < 2 || players.size > 4 ) { "invalid players' number" }
+        require( players.size >= 2 && players.size <= 4 ) { "invalid players' number" }
 
         // Spieler erstellen
         val playerList = mutableListOf<Player>()
@@ -263,8 +263,10 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     private fun createCardStack(level: Int): MutableList<DevCard>{
 
-        val cardConfigFile = "/splendor-entwicklungskarten.csv"
-        val cardConfigs: MutableList<String> = File(cardConfigFile).readLines().toMutableList()
+        val cardConfigFile = "src/main/resources/splendor-entwicklungskarten.csv"
+        val cardConfigs: MutableList<String> = File(
+	   cardConfigFile
+	).readLines().toMutableList()
         cardConfigs.removeAt(0)
         val cardList = mutableListOf<DevCard>()
 

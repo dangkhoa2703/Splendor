@@ -6,6 +6,7 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import service.RootService
+import entity.SplendorImageLoader
 
 class StartScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
@@ -47,7 +48,11 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
     
     init {
-	background = ColorVisual(108, 168, 59)
+	val imageLoader = SplendorImageLoader()
+	val image = imageLoader.startBackground()
+
+	background = image
+	//background = ColorVisual(108, 168, 59)
 	
 	addComponents(
 	    headLineLabel,
