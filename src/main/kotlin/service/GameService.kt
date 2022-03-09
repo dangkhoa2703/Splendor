@@ -71,11 +71,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     fun endTurn(){}
 
-    fun refill(level: Int){}
+    fun refill(level: Int){
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val board = game.currentGameState.board
+    }
 
 //        fun nextPlayer(){}
 
-    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{return true}
+
 
 //    fun createGems(PlayerCount: Int){
 //
@@ -125,20 +129,24 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         cardConfigs.removeAt(0)
         val cardList = mutableListOf<DevCard>()
 
-        if(level == 1){
-            for(i in 1..40){
-                val cardConfig = cardConfigs[i].split(", ")
-                cardList.add(createCard(cardConfigs))
+        when (level) {
+            1 -> {
+                for(i in 1..40){
+                    val cardConfig = cardConfigs[i].split(", ")
+                    cardList.add(createCard(cardConfigs))
+                }
             }
-        }else if(level == 2){
-            for(i in 41..69){
-                val cardConfig = cardConfigs[i].split(", ")
-                cardList.add(createCard(cardConfigs))
+            2 -> {
+                for(i in 41..69){
+                    val cardConfig = cardConfigs[i].split(", ")
+                    cardList.add(createCard(cardConfigs))
+                }
             }
-        }else{
-            for(i in 70..90){
-                val cardConfig = cardConfigs[i].split(", ")
-                cardList.add(createCard(cardConfigs))
+            else -> {
+                for(i in 70..90){
+                    val cardConfig = cardConfigs[i].split(", ")
+                    cardList.add(createCard(cardConfigs))
+                }
             }
         }
         return cardList
@@ -189,12 +197,75 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //        if(cardProp[7].toInt() == 3) { board.levelThreeCards.add(devCard) }
     }
 
-    fun checkIfAvailable(neededGem: Map<GemType,Int>, availableGem: Map<GemType,Int>): Boolean{
+//    fun checkIfAvailable(neededGem: Map<GemType,Int>, availableGem: Map<GemType,Int>): Boolean{
+//
+//        var boolean = true
+//        neededGem.forEach { (gemType, gemNum) ->
+//            boolean = boolean && (availableGem[gemType]!! >= gemNum)
+//        }
+//        return boolean
+//    }
+
+    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{
 
         var boolean = true
-        neededGem.forEach { (gemType, gemNum) ->
-            boolean = boolean && (availableGem[gemType]!! >= gemNum)
+
+        card.price.forEach { (gemType, gemNum) ->
+            boolean = boolean && (payment[gemType]!! >= gemNum)
         }
+
         return boolean
+    }
+
+    /**
+     * check if there are any open card, which player can afford
+     *
+     * @return a list of Pair( level, cardIndex ) of acquirable card
+     */
+    fun acquirableCards(): MutableList<Pair<Int,Int>>{
+
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val currentGame = game.currentGameState
+        val board = currentGame.board
+        val listOfAcquirableCards = mutableListOf<Pair<Int,Int>>()
+
+        for(i in 0..3){
+            if(isCardAcquirable(board.levelOneOpen[i], currentGame.currentPlayer.gems)){
+                listOfAcquirableCards.add(Pair(1,i))
+            }
+            if(isCardAcquirable(board.levelTwoOpen[i], currentGame.currentPlayer.gems)){
+                listOfAcquirableCards.add(Pair(2,i))
+            }
+            if(isCardAcquirable(board.levelThreeOpen[i], currentGame.currentPlayer.gems)){
+                listOfAcquirableCards.add(Pair(3,i))
+            }
+        }
+
+        return listOfAcquirableCards
+    }
+
+    /**
+     * Check if the current player can perform any valid move in this turn
+     *
+     * @return true if there are at least one valid action
+     * @return false if there is no valid action
+     */
+    fun checkValidAction(): Boolean{
+
+        val game = rootService.currentGame
+        checkNotNull(game)
+        val board = game.currentGameState.board
+        val currentPlayer = game.currentGameState.currentPlayer
+        var totalGemsOnBoard = 0
+        val affordableCard = acquirableCards().size
+        val reservCards = currentPlayer.gems.size
+
+        //calculate total gems on board
+        board.gems.forEach{ (_,v) ->
+            totalGemsOnBoard += v
+        }
+
+        return (totalGemsOnBoard != 0) || (affordableCard != 0) || (reservCards < 3)
     }
 }
