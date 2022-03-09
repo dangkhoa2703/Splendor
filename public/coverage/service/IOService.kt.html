@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IOService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">projekt2</a> &gt; <a href="index.source.html" class="el_package">service</a> &gt; <span class="el_source">IOService.kt</span></div><h1>IOService.kt</h1><pre class="source lang-java linenums">package service
+
+import entity.*
+
+/**
+ *  Class for inputs and outputs
+ * */
+<span class="nc" id="L8">class IOService(private val rootService: RootService): AbstractRefreshingService()</span>
+{
+    /** loads a game saved locally in a file */
+    fun loadGame(path : String) : Splendor?
+    {
+<span class="nc" id="L13">        return  null</span>
+    }
+
+    /** saves a file of the current game locally to the specified file path */
+    fun saveGame(path : String) : Splendor?
+    {
+<span class="nc" id="L19">        return  null</span>
+    }
+
+    /** deletes the file in the specified file path */
+    fun deleteGame(path : String)
+    {
+<span class="nc" id="L25">    }</span>
+
+    /** saves a highscore to a file including highscores of different games */
+    fun saveHighscore(score : Highscore)
+    {
+<span class="nc" id="L30">    }</span>
+
+    /** loads a file including highscores */
+    fun loadHighscore(path : String) : List&lt;Highscore&gt;?
+    {
+<span class="nc" id="L35">        return  null</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
