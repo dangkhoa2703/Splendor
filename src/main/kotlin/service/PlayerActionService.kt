@@ -11,13 +11,29 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
     /**
      * undoes the last performed player-game-action
+     * @throws IllegalStateException if a previous state does not exist
      */
-    fun undo(){}
+    fun undo(){
+        val game = rootService.currentGame!!
+        if(game.currentGameState.hasPrevious()){
+            game.currentGameState = game.currentGameState.previous
+            game.validGame = false
+        }
+        else throw IllegalStateException("a previous state does not exist")
+    }
 
     /**
      * redoes the last undone player-game-action
+     * @throws IllegalStateException if a following state does not exist
      */
-    fun redo(){}
+    fun redo(){
+        val game = rootService.currentGame!!
+        if(game.currentGameState.hasNext()){
+            game.currentGameState = game.currentGameState.next
+            game.validGame = false
+        }
+        else throw IllegalStateException("a following state does not exist")
+    }
 
     /**
      * @return a hint for the best next move for the current player and current situation
@@ -25,11 +41,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun showHint():String{return ""}
 
     //player-game-action
-    /**
-     * player takes two gems from the board
-     * @param type is the GemType of the two chosen gems
-     * @throws IllegalArgumentException if there aren't at least four gems of the given type left
-     */
+//    /**
+//     * player takes two gems from the board
+//     * @param type is the GemType of the two chosen gems
+//     * @throws IllegalArgumentException if there aren't at least four gems of the given type left
+//     */
 //    fun takeTwoSameGems(type : GemType) {
 //        val game = rootService.currentGame!!.currentGameState
 //        val player = game.currentPlayer
