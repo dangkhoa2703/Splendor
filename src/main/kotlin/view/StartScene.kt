@@ -10,40 +10,38 @@ import entity.SplendorImageLoader
 
 class StartScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
-    private val headLineLabel = Label(
-	width = 300 ,height = 200,
-	posX = width/2 - 150,
-	posY = 50,
-	text = "Welcome to Splendor",
-	font = Font(size = 30) 
-    )
+	val imageLoader = SplendorImageLoader()
+	val image = imageLoader.button()
 
     val startNewGameButton = Button(
-	width = 400, height = 100,
-	posX = width/2 - 200, posY = 200,
-	text = "Start New Game",
-	font = Font(size = 30),
+		width = 400, height = 100,
+		posX = width/2 - 200, posY = 200,
+		text = "Start New Game",
+		font = Font(size = 30),
+		visual = image
     )
 
     val loadGameButton = Button(
-	width = 400, height = 100,
-	posX = width/2 - 200, posY = 350,
-	text = "Load Game",
-	font = Font(size = 30)
-    )
+		width = 400, height = 100,
+		posX = width/2 - 200, posY = 350,
+		text = "Load Game",
+		font = Font(size = 30),
+		visual = image
+	)
 
     val loadHighscoreButton = Button(
-	width = 400, height = 100,
-	posX = width/2 - 200, posY = 500,
-	text = "Load Highscore",
-	font = Font(size = 30)
+		width = 400, height = 100,
+		posX = width/2 - 200, posY = 500,
+		text = "Load Highscore",
+		font = Font(size = 30),
+		visual = image
     )
 
     val quitButton = Button(
-	width = 200, height = 100,
-	posX = 50, posY = 930,
-	text = "Exit",
-	font = Font(size = 28), visual = ColorVisual(221, 136, 136)
+		width = 200, height = 100,
+		posX = 50, posY = 930,
+		text = "Exit",
+		font = Font(size = 28), visual = ColorVisual(221, 136, 136)
     )
 
     
@@ -55,7 +53,6 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 	//background = ColorVisual(108, 168, 59)
 	
 	addComponents(
-	    headLineLabel,
 	    startNewGameButton,
 	    loadGameButton,
 	    loadHighscoreButton,

@@ -16,7 +16,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 	val undo = imageLoader.undoButton()
 	val redo = imageLoader.redoButton()
 	val hint = imageLoader.hintButton()
-	//val tableImage = imageLoader.table()
 
     private val quitButton = Button(
 		width = 25, height = 25,
@@ -83,7 +82,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 	)
 
     init {
-	background = ColorVisual(220,220,220)
+		val tableImage = imageLoader.table()
+		background = tableImage
+			//ColorVisual(220,220,220)
 		//tableImage
 
 	addComponents(
