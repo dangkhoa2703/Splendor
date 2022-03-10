@@ -39,6 +39,7 @@ class GameServiceTest {
         val game = root.currentGame
         checkNotNull(game)
         val currentGame = game.currentGameState
+        assertNotNull(root.currentGame)
 
         assertEquals(2,currentGame.playerList.size)
         assertEquals(36,currentGame.board.levelOneCards.size)
@@ -95,6 +96,7 @@ class GameServiceTest {
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
         checkNotNull(game)
+        assertNotNull(game)
         val currentGame = game.currentGameState
         val board = currentGame.board
 
@@ -135,14 +137,16 @@ class GameServiceTest {
     }
 
 
+    /** tests if checkNobleTiles works correctly */
     @Test
     fun testCheckNobleTiles(){
+        assertNull(root.currentGame)
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
-
         val root = RootService()
         root.gameService.startNewGame(playerList2,false,1)
         val game =  root.currentGame
         checkNotNull(game)
+        assertNotNull(game)
         game.currentGameState.board.nobleTiles.clear()
 
         game.currentGameState.board.nobleTiles.add(
@@ -157,7 +161,6 @@ class GameServiceTest {
         game.currentGameState.currentPlayer.bonus[GemType.GREEN] = 4
         game.currentGameState.currentPlayer.bonus[GemType.WHITE] = 3
 
-        val nobleTile = root.gameService.checkNobleTiles()
         assertEquals( 0,game.currentGameState.board.nobleTiles.size)
         assertEquals(3,game.currentGameState.currentPlayer.score)
     }
@@ -165,8 +168,10 @@ class GameServiceTest {
     /** tests if checkGems works correctly */
     @Test
     fun testCheckGems() {
+        assertNull(root.currentGame)
         val playerList = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
         root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         val player1 = root.currentGame!!.currentGameState.currentPlayer
 
         /** currentPlayer has less or equal than ten gems */

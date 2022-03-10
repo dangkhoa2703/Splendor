@@ -26,6 +26,7 @@ class PlayerActionServiceTest {
     fun takeGemsTest() {
         assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         val types = mutableListOf(GemType.RED,GemType.BLUE,GemType.BLACK,GemType.GREEN)
 
         //Exception:
@@ -73,7 +74,9 @@ class PlayerActionServiceTest {
      */
     @Test
     fun reserveCardFromStackTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         val devCard1 = DevCard(0,gemMap,1,0,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,0,GemType.RED)
         val devCard3 = DevCard(0,gemMap,3,0,GemType.RED)
@@ -112,7 +115,9 @@ class PlayerActionServiceTest {
      */
     @Test
     fun reserveCardFromOpenCardsTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         val devCard1 = DevCard(0,gemMap,1,0,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,0,GemType.RED)
         val devCard3 = DevCard(0,gemMap,3,0,GemType.RED)
@@ -157,6 +162,7 @@ class PlayerActionServiceTest {
     fun buyCardTest() {
         assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
         val devCard1 = DevCard(0,gemMap,1,1,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,1,GemType.RED)
@@ -212,6 +218,7 @@ class PlayerActionServiceTest {
     fun selectNobleTileTest() {
         assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         val nobleTileOne = NobleTile(0,gemMap,1)
         root.currentGame!!.currentGameState.board.nobleTiles.add(nobleTileOne)
         val score = root.currentGame!!.currentGameState.currentPlayer.score
@@ -229,6 +236,7 @@ class PlayerActionServiceTest {
     fun returnGemTest() {
         assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
+        assertNotNull(root.currentGame)
         val gemTypeList = listOf(GemType.RED,GemType.BLUE)
         //set number of Players Gems
         val playersGems = root.currentGame!!.currentGameState.currentPlayer.gems
