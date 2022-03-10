@@ -18,7 +18,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(game.currentGameState.hasPrevious()){
             game.currentGameState = game.currentGameState.previous
             game.validGame = false
-        }else throw IllegalStateException("a previous state does not exist")
+        }
+        else throw IllegalStateException("a previous state does not exist")
     }
 
     /**
@@ -30,7 +31,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(game.currentGameState.hasNext()){
             game.currentGameState = game.currentGameState.next
             game.validGame = false
-        }else throw IllegalStateException("a following state does not exist")
+        }
+        else throw IllegalStateException("a following state does not exist")
     }
 
     /**
@@ -50,25 +52,33 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val player = currentGameState.currentPlayer
         val board = currentGameState.board
 
-        val numberOfDifferentGemTypes = currentGameState.board.gems.filter { it.value > 0 }.size
+        var numberOfDifferentGemTypes = currentGameState.board.gems.filter { it.value > 0 }.size
+        if (currentGameState.board.gems.getValue(GemType.YELLOW) > 0){
+            numberOfDifferentGemTypes--
+        }
 
+        val numberDifferentGemTypesInTypes = types.map { it.name }.toSet().size
         // list of gem types has invalid size
-        if( types.size > 3
-            || (types.size < 3 && types.size != numberOfDifferentGemTypes)
-            || (types.size == 3 && types.map { it.name }.toSet().size != 3)
-            || (types.size > numberOfDifferentGemTypes)) {
-            throw IllegalArgumentException("no valid gem number were chosen")
+        if( types.size > 3 ||
+            (types.size<3 &&numberDifferentGemTypesInTypes == types.size && types.size!=numberOfDifferentGemTypes)) {
+            throw IllegalArgumentException("no valid gem number")
+        }
+        else if (types.size == 3 &&  numberDifferentGemTypesInTypes!= 3){
+            throw IllegalArgumentException("three gemTypes must be different")
+        }
+        else if ( types.size == 2 && (types[0] == types[1]) && board.gems[types[0]]!! <= 3){
+            throw IllegalArgumentException("two same gems can only be chosen if four gems of their GemType are left")
         }
         // take two same gems
         else if((types.size == 2) && (types[0] == types[1]) && (board.gems[types[0]]!! > 3)) {
             player.gems[types[0]] = player.gems.getValue(types[0]) + 2
-            board.gems[types[0]] = player.gems.getValue(types[0]) - 2
+            board.gems[types[0]] = board.gems.getValue(types[0]) - 2
         }
         // take one to three different gems
         else{
             types.forEach{ gemType ->
                 player.gems[gemType] = player.gems.getValue(gemType) + 1
-                board.gems[gemType] = player.gems.getValue(gemType) - 1
+                board.gems[gemType] = board.gems.getValue(gemType) - 1
             }
         }
         rootService.gameService.consecutiveNoAction = 0
@@ -97,11 +107,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 //move card from board to player.devCards
                 val level = card.level
                 if (level == 1) {
-                    board.levelOneCards.remove(card)
+                    board.levelOneOpen.remove(card)
                 } else if (level == 2) {
-                    board.levelTwoCards.remove(card)
+                    board.levelTwoOpen.remove(card)
                 } else {
-                    board.levelThreeCards.remove(card)
+                    board.levelThreeOpen.remove(card)
                 }
                 rootService.gameService.refill(card.level,index)
             } else {
@@ -111,7 +121,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             //move the gems in payment from player's hand back to board
             card.price.forEach{ (gemType, value) ->
                 player.gems[gemType] = player.gems.getValue(gemType) - value
-                board.gems[gemType] = player.gems.getValue(gemType) + value
+                board.gems[gemType] = board.gems.getValue(gemType) + value
             }
 
             player.score += card.prestigePoints
@@ -141,21 +151,35 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             //move card from board to player.reservedCards
             val level = card.level
             if (level == 1) {
-                board.levelOneCards.remove(card)
+                if(board.levelOneOpen.contains(card)){
+                    board.levelOneOpen.remove(card)
+                    rootService.gameService.refill(card.level,index)
+                }
+                else{board.levelOneCards.remove(card)}
             }else if (level == 2) {
-                board.levelTwoCards.remove(card)
+                if(board.levelTwoOpen.contains(card)){
+                    board.levelTwoOpen.remove(card)
+                    rootService.gameService.refill(card.level,index)
+                }
+                else{board.levelTwoCards.remove(card)}
             }else {
-                board.levelThreeCards.remove(card)
+                if(board.levelThreeOpen.contains(card)){
+                    board.levelThreeOpen.remove(card)
+                    rootService.gameService.refill(card.level,index)
+                }
+                else{board.levelThreeCards.remove(card)}
             }
-            rootService.gameService.refill(card.level,index)
+            player.reservedCards.add(card)
+
+            val numberGold = board.gems[GemType.YELLOW]
+            checkNotNull(numberGold)
+            if(numberGold != 0) {
+                //move gold gem from game.board to player
+                player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1
+                board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1
+            }
         }
-        val numberGold = board.gems[GemType.YELLOW]
-        checkNotNull(numberGold)
-        if(numberGold != 0) {
-            //move gold gem from game.board to player
-            player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1
-            board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1
-        }else
+        else
             throw IllegalArgumentException("a player can only reserve up to three cards")
 
         rootService.gameService.consecutiveNoAction = 0
@@ -192,7 +216,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
         gems.forEach{ gemType ->
             player.gems[gemType] = player.gems.getValue(gemType) - 1
-            board.gems[gemType] = player.gems.getValue(gemType) + 1
+            board.gems[gemType] = board.gems.getValue(gemType) + 1
         }
     }
 }

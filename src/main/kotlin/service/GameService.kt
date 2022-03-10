@@ -5,8 +5,8 @@ import java.io.File
 
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
-    private var consecutiveNoAction = 0
-    private var currentPlayerIndex = 0
+     var consecutiveNoAction = 0
+     var currentPlayerIndex = 0
 
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
