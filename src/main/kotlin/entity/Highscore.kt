@@ -2,8 +2,8 @@ package entity
 
 /**
  *  class for a highscore object
- *  @param score: Endgültiger Score des Gewinners des aktuellen Spiels
- *  @param playerName: Name des Gewinners
+ *  @param score: final score of the winner of the current game
+ *  @param playerName: name of the winner
  * */
 class Highscore (
     val playerName: String,
