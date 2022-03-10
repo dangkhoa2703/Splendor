@@ -26,15 +26,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         }
 
         val levelOneStack = createCardStack(1)
-        val levelOneOpen = levelOneStack.slice(0..2).toMutableList()
+        val levelOneOpen = levelOneStack.slice(0..3).toMutableList()
 
         val levelTwoStack = createCardStack(2)
-        val levelTwoOpen = levelTwoStack.slice(0..2).toMutableList()
+        val levelTwoOpen = levelTwoStack.slice(0..3).toMutableList()
 
         val levelThreeStack = createCardStack(3)
-        val levelThreeOpen = levelThreeStack.slice(0..2).toMutableList()
+        val levelThreeOpen = levelThreeStack.slice(0..3).toMutableList()
 
-        for(i in 0..2){
+        for(i in 0..3){
             levelOneStack.removeAt(i)
             levelTwoStack.removeAt(i)
             levelThreeStack.removeAt(i)
@@ -235,24 +235,25 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val currentGame = game.currentGameState
         val board = game.currentGameState.board
 
-        val nobleTileFile = "/splendor-adligenkarten.csv"
-        val cardProp: MutableList<String> = File(nobleTileFile).readLines().toMutableList()
-        cardProp.removeAt(0)
+        val nobleTileFile = "src/main/resources/splendor-adligenkarten.csv"
+        val cardProps: MutableList<String> = File(nobleTileFile).readLines().toMutableList()
+        cardProps.removeAt(0)
         val nobleCards = mutableListOf<NobleTile>()
 
-        for (nobleTileConfig in cardProp) {
+        cardProps.forEach { cardProp ->
+            val cardConfig = cardProp.split(", ")
             val tempMap = mapOf(
-                GemType.WHITE to cardProp[1].toInt(),
-                GemType.BLUE to cardProp[2].toInt(),
-                GemType.GREEN to cardProp[3].toInt(),
-                GemType.RED to cardProp[4].toInt(),
-                GemType.BLACK to cardProp[5].toInt()
+                GemType.WHITE to cardConfig[1].trim().toInt(),
+                GemType.BLUE to cardConfig[2].trim().toInt(),
+                GemType.GREEN to cardConfig[3].trim().toInt(),
+                GemType.RED to cardConfig[4].trim().toInt(),
+                GemType.BLACK to cardConfig[5].trim().toInt()
             )
             nobleCards.add(
                 NobleTile(
-                    cardProp[0].toInt(),
+                    cardConfig[0].trim().toInt(),
                     tempMap,
-                    cardProp[6].toInt()
+                    cardConfig[6].trim().toInt()
                 )
             )
         }
@@ -264,27 +265,25 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     private fun createCardStack(level: Int): MutableList<DevCard>{
 
         val cardConfigFile = "src/main/resources/splendor-entwicklungskarten.csv"
-        val cardConfigs: MutableList<String> = File(
-	   cardConfigFile
-	).readLines().toMutableList()
+        val cardConfigs: MutableList<String> = File(cardConfigFile.trim()).readLines().toMutableList()
         cardConfigs.removeAt(0)
         val cardList = mutableListOf<DevCard>()
 
         when (level) {
             1 -> {
-                for(i in 1..40){
+                for(i in 0..39){
                     val cardConfig = cardConfigs[i].split(", ")
                     cardList.add(createCard(cardConfigs))
                 }
             }
             2 -> {
-                for(i in 41..69){
+                for(i in 40..69){
                     val cardConfig = cardConfigs[i].split(", ")
                     cardList.add(createCard(cardConfigs))
                 }
             }
             else -> {
-                for(i in 70..90){
+                for(i in 70..89){
                     val cardConfig = cardConfigs[i].split(", ")
                     cardList.add(createCard(cardConfigs))
                 }
@@ -304,11 +303,11 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val board = game.currentGameState.board
 
         val tempMap = mapOf(
-            GemType.WHITE to cardProp[1].toInt(),
-            GemType.BLUE to cardProp[2].toInt(),
-            GemType.GREEN to cardProp[3].toInt(),
-            GemType.RED to cardProp[4].toInt(),
-            GemType.BLACK to cardProp[5].toInt()
+            GemType.WHITE to cardProp[1].trim().toInt(),
+            GemType.BLUE to cardProp[2].trim().toInt(),
+            GemType.GREEN to cardProp[3].trim().toInt(),
+            GemType.RED to cardProp[4].trim().toInt(),
+            GemType.BLACK to cardProp[5].trim().toInt()
         )
         val color = when (cardProp[8]) {
             "diamant" -> GemType.WHITE
@@ -324,10 +323,10 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         }
         //create card
         return DevCard(
-            cardProp[0].toInt(),
+            cardProp[0].trim().toInt(),
             tempMap,
-            cardProp[6].toInt(),
-            cardProp[7].toInt(),
+            cardProp[6].trim().toInt(),
+            cardProp[7].trim().toInt(),
             color
         )
 //        // add card to level one stack
