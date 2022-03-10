@@ -15,8 +15,13 @@ class GameServiceTest {
 
     /** tests if games start correctly */
     @Test
-    fun testCreateNewGame(){
+    fun testCreateNewGame() {
+        // set currentPlayerIndex
+        root.gameService.currentPlayerIndex = 1
+        assertEquals(1, root.gameService.currentPlayerIndex)
+        root.gameService.currentPlayerIndex = 0
 
+        assertEquals(null, root.currentGame)
         val playerList1 = listOf(Pair("p1",PlayerType.HUMAN))
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         val playerList3 = listOf(
@@ -57,7 +62,6 @@ class GameServiceTest {
         assertThrows<IllegalArgumentException> {
             root.gameService.startNewGame(playerList5,false,1)
         }
-
     }
 
     /** tests if isCardAcquirable works correctly */
@@ -85,6 +89,7 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
+        assertNull(root.currentGame)
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
 
         root.gameService.startNewGame(playerList2,false,1)
@@ -121,6 +126,12 @@ class GameServiceTest {
 
         assertEquals(board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
         assertEquals("p2",newPlayerList[0].name)
+
+        // test if no player can make any move
+        val tempSortedList = currentGame.playerList.sortedByDescending { player -> player.score }
+        root.gameService.consecutiveNoAction = currentGame.playerList.size
+        root.gameService.nextPlayer()
+        assertEquals(tempSortedList, currentGame.playerList)
     }
 
 

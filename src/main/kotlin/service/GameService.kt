@@ -11,7 +11,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     var consecutiveNoAction = 0
     var currentPlayerIndex = 0
 
-    //initializes a new game and connects it to the rootService
+    /** initializes a new game and connects it to the rootService */
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
@@ -40,7 +40,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         levelThreeStack.shuffle()
         val levelThreeOpen = levelThreeStack.slice(0..3).toMutableList()
 
-        for(i in 0..3){
+        for(i in 0..3) {
             levelOneStack.removeAt(i)
             levelTwoStack.removeAt(i)
             levelThreeStack.removeAt(i)
@@ -141,8 +141,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val newGameState = GameState(
             newPlayerList[currentPlayerIndex],
             newPlayerList,
-            newBoard
-        )
+            newBoard)
 
         //bind new gameState to chain and set pointer to the newGameState
         newGameState.previous = currentGameState
@@ -226,7 +225,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     }
 
 
-    // checks if the current player has more than ten gems
+    /** checks if the current player has more than ten gems */
     fun checkGems(): Boolean {
         return rootService.currentGame!!.currentGameState.currentPlayer.gems.values.sum() > 10
     }
@@ -234,7 +233,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     /*-----------------------------HELP FUNCTION-----------------------------*/
 
-    // creates nobleTiles
+    /** creates nobleTiles */
     private fun createNobleTiles(playerCount: Int): MutableList<NobleTile> {
 
         val nobleTileFile = "src/main/resources/splendor-adligenkarten.csv"
@@ -264,7 +263,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     }
 
 
-    // creates cardStacks for all devCard levels
+    /** creates cardStacks for all devCard levels */
     private fun createCardStack(level: Int): MutableList<DevCard>{
 
         val cardConfigFile = "src/main/resources/splendor-entwicklungskarten.csv"
@@ -293,7 +292,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             }
         }
         return cardList
-
     }
 
 
@@ -330,9 +328,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             tempMap,
             cardProp[6].trim().toInt(),
             cardProp[7].trim().toInt(),
-            color
-        )
-
+            color)
     }
 
     /**
@@ -373,8 +369,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             GemType.WHITE  to (playerBonus.getValue(GemType.WHITE) + playerGems.getValue(GemType.WHITE)),
             GemType.BLACK  to (playerBonus.getValue(GemType.BLACK) + playerGems.getValue(GemType.BLACK)),
             GemType.BLUE   to (playerBonus.getValue(GemType.BLUE)  + playerGems.getValue(GemType.BLUE)),
-            GemType.YELLOW to   playerGems.getValue(GemType.YELLOW)
-        )
+            GemType.YELLOW to   playerGems.getValue(GemType.YELLOW))
 
         for(i in 0..3){
             if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){
