@@ -18,8 +18,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(game.currentGameState.hasPrevious()){
             game.currentGameState = game.currentGameState.previous
             game.validGame = false
-        }
-        else throw IllegalStateException("a previous state does not exist")
+        }else throw IllegalStateException("a previous state does not exist")
     }
 
     /**
@@ -31,8 +30,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(game.currentGameState.hasNext()){
             game.currentGameState = game.currentGameState.next
             game.validGame = false
-        }
-        else throw IllegalStateException("a following state does not exist")
+        }else throw IllegalStateException("a following state does not exist")
     }
 
     /**
@@ -55,8 +53,10 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val numberOfDifferentGemTypes = currentGameState.board.gems.filter { it.value > 0 }.size
 
         // list of gem types has invalid size
-        if( types.size > 3 || (types.size < 3 && types.size != numberOfDifferentGemTypes) ||
-            (types.size == 3 && types.map { it.name }.toSet().size != 3) || (types.size > numberOfDifferentGemTypes)) {
+        if( types.size > 3
+            || (types.size < 3 && types.size != numberOfDifferentGemTypes)
+            || (types.size == 3 && types.map { it.name }.toSet().size != 3)
+            || (types.size > numberOfDifferentGemTypes)) {
             throw IllegalArgumentException("no valid gem number were chosen")
         }
         // take two same gems
