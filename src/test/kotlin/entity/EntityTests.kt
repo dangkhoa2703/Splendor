@@ -13,9 +13,12 @@ class EntityTests
     private val board = Board()
     private val gameStateOne = GameState(playerOne, listOf(playerOne, playerTwo), board)
     private val highscoreOne = Highscore(playerOne.name, playerOne.score)
-    private val splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
-        highscores = mutableListOf(highscoreOne), validGame = true)
+    private var splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
+        highscores = mutableListOf(highscoreOne))
+    private val gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3, GemType.WHITE to 3, GemType.BLACK to 4,
+        GemType.BLUE to 3, GemType.YELLOW to 1)
 
+    /** tests if Player objects can be created correctly */
     @Test
     fun testPlayer()
     {
@@ -33,12 +36,8 @@ class EntityTests
         /** change values of player's attributes */
         playerOne.score = 4
         val type = mutableListOf(GemType.YELLOW, GemType.BLUE)
-        type.forEach { type ->
-            playerOne.gems[type] = playerOne.gems.getValue(type) + 1
-        }
+        type.forEach { playerOne.gems[it] = playerOne.gems.getValue(it) + 1 }
         playerOne.bonus[GemType.RED] = playerOne.bonus.getValue(GemType.RED) + 1
-//        playerOne.gems = playerOne.gems + playerOne.gems.filterKeys { it in type }.mapValues { it.value + 1 }
-//        playerOne.bonus = playerOne.bonus + playerOne.bonus.filterKeys { it == GemType.RED }.mapValues { it.value + 1 }
 
         /** test if player's attributes can be changed correctly */
         assertEquals(4, playerOne.score)
@@ -47,6 +46,7 @@ class EntityTests
         assertEquals(1, playerOne.bonus[GemType.RED])
     }
 
+    /** tests if Board objects can be created correctly */
     @Test
     fun boardTest()
     {
@@ -59,8 +59,13 @@ class EntityTests
         assertEquals(mutableListOf(), board.levelThreeCards)
         assertEquals(mutableListOf(), board.levelThreeOpen)
         assertEquals(6, board.gems.size)
+
+        /** set and check gems */
+        board.gems = gemMap
+        assertEquals(gemMap[GemType.YELLOW], board.gems[GemType.YELLOW])
     }
 
+    /** tests if GameState objects can be created correctly */
     @Test
     fun testGameState()
     {
@@ -72,25 +77,74 @@ class EntityTests
         assertEquals(gameStateOne, gameStateOne.next)
         assertEquals(false, gameStateOne.hasNext())
         assertEquals(false, gameStateOne.hasPrevious())
+
+        /** test if gameStates connections can be changed correctly */
+        val gameStateTwo = GameState(playerOne, listOf(playerOne, playerTwo), board)
+        gameStateOne.next = gameStateTwo
+        gameStateOne.previous = gameStateTwo
+        assertEquals(true, gameStateOne.hasNext())
+        assertEquals(true, gameStateOne.hasPrevious())
+        assertEquals(gameStateTwo, gameStateOne.next)
+        assertEquals(gameStateTwo, gameStateOne.previous)
     }
 
+    /** tests if Splendor objects can be created correctly */
     @Test
     fun splendorTest()
     {
         /** test if splendor got initialized correctly */
+        splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
+            highscores = mutableListOf(highscoreOne), validGame = true)
         assertEquals(2, splendor.simulationSpeed)
         assertEquals(gameStateOne, splendor.currentGameState)
         assertEquals(1, splendor.highscores.size)
         assertEquals(true, splendor.validGame)
         assertEquals(playerOne.name, highscoreOne.playerName)
         assertEquals(playerOne.score, highscoreOne.score)
+
+        /** test if splendor's attributes can be changed correctly */
+        splendor.simulationSpeed = 3
+        splendor.validGame = false
+        val gameStateTwo = GameState(playerOne, listOf(playerOne, playerTwo), board)
+        splendor.currentGameState = gameStateTwo
+        assertEquals(3, splendor.simulationSpeed)
+        assertEquals(gameStateTwo, splendor.currentGameState)
+        assertEquals(false, splendor.validGame)
+
     }
 
+    /** tests if Gem objects can be created correctly */
     @Test
     fun gemTest()
     {
+        /** test if gem got initialized correctly */
         val gemRed = Gem(GemType.RED)
         assertEquals(GemType.RED, gemRed.gemType)
-        assertNotNull(gemRed.toString())
+        assertEquals(GemType.RED.toString(), gemRed.gemType.toString())
+        assertEquals(GemType.GREEN.toString(), Gem(GemType.GREEN).gemType.toString())
+        assertEquals(GemType.BLUE.toString(), Gem(GemType.BLUE).gemType.toString())
+        assertEquals(GemType.WHITE.toString(), Gem(GemType.WHITE).gemType.toString())
+        assertEquals(GemType.BLACK.toString(), Gem(GemType.BLACK).gemType.toString())
+        assertEquals(GemType.YELLOW.toString(), Gem(GemType.YELLOW).gemType.toString())
+    }
+
+    /** tests if Card objects can be created correctly */
+    @Test
+    fun cardTest()
+    {
+        /** test if card got initialized correctly */
+        val map = mapOf( GemType.BLUE to 2)
+        val devCard0 = DevCard(0,map,1,2,GemType.RED)
+        assertEquals(0,devCard0.id)
+        assertEquals(1,devCard0.level)
+        assertEquals(2,devCard0.prestigePoints)
+        assertEquals(GemType.RED,devCard0.bonus)
+        assertEquals(map, devCard0.price)
+
+        /** test if card's attributes can be changed correctly */
+        val nobleTile0 = NobleTile(0,map,1)
+        assertEquals(0, nobleTile0.id)
+        assertEquals(1,nobleTile0.prestigePoints)
+        assertEquals(map,nobleTile0.condition)
     }
 }

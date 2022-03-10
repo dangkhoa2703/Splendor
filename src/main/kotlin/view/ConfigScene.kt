@@ -14,6 +14,7 @@ import java.awt.MouseInfo
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.SwingUtilities
+import entity.PlayerType
 
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
@@ -39,12 +40,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
     private val knob: Label = Label(
 	width = 20, height = 20, visual = ColorVisual.WHITE,
-    ).apply {
-	onMouseClicked = {
-	    val x = MouseInfo.getPointerInfo().getLocation().getX()
-	    val y = MouseInfo.getPointerInfo().getLocation().getY()
-	}
-    }
+    )
     
     private var textFields: List<TextField> = listOf()
 
@@ -82,12 +78,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	}
     }
 
-    private val startButton = Button(
-	width = 200, height = 100,
-	posX = 1650, posY = 930,
-	text = "Start", font = Font(size = 28),
-	visual = ColorVisual(136, 221, 136)
-    )
+    
     
     val backButton = Button(
 	width = 200, height = 100,
@@ -173,14 +164,51 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		delButton.posX = width/2 - 25
 	    }
 	}
+    }
 
+    private fun start() {
+	var players: List<Pair<String, PlayerType>> = listOf()
+	for(i in 0..size) {
+	    var type: PlayerType = PlayerType.HUMAN
+	    if(selection[i*2]<1) {
+		when(selection[i*2+1]) {
+		    1 -> {
+			type = PlayerType.EASY
+		    }
+		    2 -> {
+			type = PlayerType.MEDIUM
+		    }
+		    3 -> {
+			type = PlayerType.HARD
+		    }
+		}
+	    }
+	    val namePair: Pair<String, PlayerType> = Pair("asdf", type)
+	    players+=namePair
+	}
+
+	println(players)
 	
+	rootService.gameService.startNewGame(
+	    players, true, 1
+	)
+    }
+
+    private val startButton = Button(
+	width = 200, height = 100,
+	posX = 1650, posY = 930,
+	text = "Start", font = Font(size = 28),
+	visual = ColorVisual(136, 221, 136)
+    ).apply{
+	onMouseClicked = {
+	    start()
+	}
     }
     
     init{
 	
 	val imageLoader = SplendorImageLoader()
-	val image: ImageVisual = imageLoader.humanIcon()
+	val humanIcon: ImageVisual = imageLoader.humanIcon()
 	
 	for(i in 0..3) {
 	    val textField = TextField(
@@ -195,7 +223,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	    val icon = Button(
 		posX = width/2 + 250, posY = 300+i*150,
-		text = "", visual = image,
+		text = "", visual = humanIcon,
 		width = 100, height = 100,
 	    ).apply{
 		onMouseClicked = {
@@ -230,7 +258,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	startButton.isDisabled = true
 
-	// 81,126,44 why ? 
+	// 81,126,44 why ?
 	background = ColorVisual(108, 168, 59)
 	
 	refresh()

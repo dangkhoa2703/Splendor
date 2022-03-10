@@ -11,6 +11,7 @@ enum class GemType {
     BLACK,
     YELLOW;
 
+    /** transforms the names to strings */
     override fun toString() = when(this){
         GREEN -> "green"
         RED -> "red"

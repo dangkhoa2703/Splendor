@@ -6,6 +6,14 @@ plugins {
     jacoco
     id("io.gitlab.arturbosch.detekt") version "1.18.0-RC3"
     id("org.jetbrains.dokka") version "1.4.32"
+
+    id("org.openjfx.javafxplugin") version "0.0.7"
+}
+
+javafx{
+    modules("javafx.controls", "javafx.fxml")
+
+    version = "12.0.1"
 }
 
 group = "edu.udo.cs.sopra"

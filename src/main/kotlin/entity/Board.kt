@@ -4,15 +4,18 @@ package entity
  *  class for the board of the game Splendor
  *  @param nobleTiles: List of noble cards
  *  @param gems: List of gems that can be taken by players
+ *  @property levelOneCards: stack of level one development cards (forty cards)
+ *  @property levelOneOpen: maximum four revealed level one development cards
+ *  @property levelTwoCards: stack of level one development cards (thirty cards)
+ *  @property levelTwoOpen: maximum four revealed level one development cards
+ *  @property levelThreeCards: stack of level one development cards (twenty cards)
+ *  @property levelThreeOpen: maximum four revealed level one development cards
+ *  @property gems: list of gems that can be taken by players
  * */
 class Board (
     /** List of noble cards */
     val nobleTiles: MutableList<NobleTile> = mutableListOf(),
 
-    /**
-     *  stack of level one development cards
-     *  four revealed level development cards
-     *  */
     val levelOneCards: MutableList<DevCard> = mutableListOf(),
     val levelOneOpen: MutableList<DevCard> = mutableListOf(),
 
@@ -22,7 +25,6 @@ class Board (
     val levelThreeCards: MutableList<DevCard> = mutableListOf(),
     val levelThreeOpen: MutableList<DevCard> = mutableListOf(),
 
-    /** gems: List of gems that can be taken by players */
     var gems: MutableMap<GemType,Int> = mutableMapOf(
         GemType.RED to 0,
         GemType.GREEN to 0,
