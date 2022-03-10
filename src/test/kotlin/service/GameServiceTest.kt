@@ -161,6 +161,7 @@ class GameServiceTest {
         game.currentGameState.currentPlayer.bonus[GemType.GREEN] = 4
         game.currentGameState.currentPlayer.bonus[GemType.WHITE] = 3
 
+        root.gameService.checkNobleTiles()
         assertEquals( 0,game.currentGameState.board.nobleTiles.size)
         assertEquals(3,game.currentGameState.currentPlayer.score)
     }
