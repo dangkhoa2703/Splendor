@@ -3,9 +3,7 @@ package service
 import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  *  test class for playerActionService
@@ -26,6 +24,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun takeGemsTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         val types = mutableListOf(GemType.RED,GemType.BLUE,GemType.BLACK,GemType.GREEN)
 
@@ -73,7 +72,7 @@ class PlayerActionServiceTest {
      * tests if cards from a level stack are reserved correct
      */
     @Test
-    fun reserveCardFromStackTest(){
+    fun reserveCardFromStackTest() {
         root.gameService.startNewGame(playerList,false,1)
         val devCard1 = DevCard(0,gemMap,1,0,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,0,GemType.RED)
@@ -112,7 +111,7 @@ class PlayerActionServiceTest {
      * tests if open cards are reserved correct
      */
     @Test
-    fun reserveCardFromOpenCardsTest(){
+    fun reserveCardFromOpenCardsTest() {
         root.gameService.startNewGame(playerList,false,1)
         val devCard1 = DevCard(0,gemMap,1,0,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,0,GemType.RED)
@@ -145,6 +144,7 @@ class PlayerActionServiceTest {
         assertTrue(player.reservedCards.contains(devCard3))
         assertTrue { board.levelThreeOpen.size == 2 }
         assertTrue { board.gems[GemType.YELLOW] == 0 }
+        assertNotNull(board.gems)
         assertTrue { player.gems[GemType.YELLOW] == 2 }
 
         assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
@@ -154,7 +154,8 @@ class PlayerActionServiceTest {
      * tests if card is bought correct
      */
     @Test
-    fun buyCardTest(){
+    fun buyCardTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
         val devCard1 = DevCard(0,gemMap,1,1,GemType.BLUE)
@@ -208,7 +209,8 @@ class PlayerActionServiceTest {
      * tests if nobleTiles are returned correct
      */
     @Test
-    fun selectNobleTileTest(){
+    fun selectNobleTileTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         val nobleTileOne = NobleTile(0,gemMap,1)
         root.currentGame!!.currentGameState.board.nobleTiles.add(nobleTileOne)
@@ -224,7 +226,8 @@ class PlayerActionServiceTest {
      * test to check if gems are returned correct
      */
     @Test
-    fun returnGemTest(){
+    fun returnGemTest() {
+        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         val gemTypeList = listOf(GemType.RED,GemType.BLUE)
         //set number of Players Gems
@@ -247,7 +250,7 @@ class PlayerActionServiceTest {
      * tests if undo and redo work
      */
     @Test
-    fun undoRedoTest(){
+    fun undoRedoTest() {
         val gameStateOne = GameState(playerTwo,listOf(playerOne,playerTwo), Board())
         val gameStateTwo = GameState(playerTwo, listOf(playerOne,playerTwo),Board())
         root.gameService.startNewGame(playerList,false,1)
@@ -269,5 +272,4 @@ class PlayerActionServiceTest {
         assertEquals(gameStateTwo,root.currentGame!!.currentGameState)
         assertFalse { root.currentGame!!.validGame }
     }
-
 }
