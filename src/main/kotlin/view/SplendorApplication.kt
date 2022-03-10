@@ -7,6 +7,8 @@ import tools.aqua.bgw.core.MenuScene
 class SplendorApplication: BoardGameApplication("Splendor") {
 
     private val rootService= RootService()
+
+
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()
@@ -19,6 +21,10 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
 	}
+		startButton.onMouseClicked = {
+			this@SplendorApplication.hideMenuScene()
+			this@SplendorApplication.showGameScene(GameScene(rootService))
+		}
     }
 
     private val highscoreScene: MenuScene = HighscoreScene(rootService).apply {

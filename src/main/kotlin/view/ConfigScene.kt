@@ -32,7 +32,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	text = "Configurate Game!",
 	font = Font(size=44)
     )
-    
+
     private val bar: Label = Label(
 	posX = 100, posY = 300, width = 10, height = 400,
 	visual = ColorVisual.WHITE
@@ -41,7 +41,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     private val knob: Label = Label(
 	width = 20, height = 20, visual = ColorVisual.WHITE,
     )
-    
+
     private var textFields: List<TextField> = listOf()
 
     private var icons: List<Button> = listOf()
@@ -58,7 +58,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    selection[size*2] = 1
 	    selection[size*2+1] = -2
 	    textFields[size].text = ""
-	    
+
 	    size = (size - 1)
 	    if(size<=1) size = 1
 	    refresh()
@@ -78,8 +78,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	}
     }
 
-    
-    
+
+
     val backButton = Button(
 	width = 200, height = 100,
 	posX = 50, posY = 930,
@@ -194,7 +194,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	)
     }
 
-    private val startButton = Button(
+    val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size = 28),
