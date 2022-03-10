@@ -1,11 +1,17 @@
 package service
 
-import entity.PlayerType
+import entity.*
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.*
 
+/**
+ *  test class for functions of GameService
+ * */
 class GameServiceTest {
+    /** RootService reference */
+    private var root = RootService()
 
+    /** tests if games start correctly */
     @Test
     fun testCreateNewGame(){
 
@@ -58,5 +64,18 @@ class GameServiceTest {
 
     }
 
-
+    /** tests if isCardAcquirable works correctly */
+    @Test
+    fun testIsCardAcquirable()
+    {
+        /** tests whether payment for a given card is correctly recognized as valid or invalid */
+        val devCardOne = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),
+            bonus = GemType.BLACK, prestigePoints = 0)
+        val validPaymentWithoutJoker = mapOf(GemType.YELLOW to 0, GemType.GREEN to 2, GemType.RED to 3)
+        val validPaymentWithJoker = mapOf(GemType.YELLOW to 2, GemType.GREEN to 1, GemType.RED to 2)
+        val invalidPayment = mapOf(GemType.YELLOW to 1, GemType.GREEN to 2, GemType.RED to 1)
+        assertEquals(true, root.gameService.isCardAcquirable(devCardOne, validPaymentWithoutJoker))
+        assertEquals(true, root.gameService.isCardAcquirable(devCardOne, validPaymentWithJoker))
+        assertEquals(false, root.gameService.isCardAcquirable(devCardOne, invalidPayment))
+    }
 }

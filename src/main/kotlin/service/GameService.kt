@@ -5,22 +5,21 @@ import java.io.File
 
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
-    var consecutiveNoAction = 0
-    var currentPlayerIndex = 0
+    private var consecutiveNoAction = 0
+    private var currentPlayerIndex = 0
 
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
-        simulationSpeed: Int) {
-        // Sicherheitsabfragen
-        require(players.size in 2..4) { "invalid players' number" }
+        simulationSpeed: Int)
+    { require(players.size in 2..4) { "invalid players' number" }
 
-        // Spieler erstellen
+        // create players
         val playerList = mutableListOf<Player>()
         for(player in players){
             playerList.add(Player(player.first,player.second))
         }
-        // Prüfe, ob die Reihenfolge der Spieler zufällig sein soll
+        // check if order should be randomized
         if (randomizedTurns) {
             playerList.shuffle()
         }
@@ -143,8 +142,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         return currentGameState.playerList.sortedByDescending { player -> player.score }
     }
 
-
-
     fun endTurn(){
 //
 //        val game = rootService.currentGame
@@ -185,8 +182,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     /**
      * Check which noble tiles can visit the current player
-     * automatic add prestige point to player score if there is only on afforfable card
-     * @return a multable list of indexes of the affordable noble tiles on board
+     * automatic add prestige point to player score if there is only on affordable card
+     * @return a mutable list of indexes of the affordable noble tiles on board
      */
     fun checkNobleTiles(): MutableList<Int>{
 
@@ -342,24 +339,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      * @param card the card which the player chose
      * @param payment map of gems from player
      * @return true if player can this card afford, else return false
-     */
-    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean{
+     * */
+    fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean {
 
-        var acquirableNoJoker = true
-        var totalGemNeeded = 0
-        var totalGemAvailable = 0
-        var acquirableWithJoker = true
+        val tempGemMap = card.price.toMutableMap()
 
-        card.price.forEach { (gemType, gemNum) ->
-            acquirableNoJoker = acquirableNoJoker && (payment.getValue(gemType) >= gemNum)
-            totalGemNeeded =+ gemNum
-            totalGemAvailable += payment.getValue(gemType)
-        }
-        if(!acquirableNoJoker) {
-            acquirableWithJoker = (totalGemAvailable + payment.getValue(GemType.YELLOW)) >= totalGemNeeded
+        card.price.forEach { (gemType) ->
+            tempGemMap[gemType] = tempGemMap.getValue(gemType) - payment.getValue(gemType)
         }
 
-        return acquirableNoJoker || acquirableWithJoker
+        val gemsNeeded = tempGemMap.filterValues { it >= 0 }.values.sum()
+        return (gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW))
     }
 
     /**
@@ -367,7 +357,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      *
      * @return a list of Pair( level, cardIndex ) of acquirable card
      */
-    fun acquirableCards(): MutableList<Pair<Int,Int>>{
+    private fun acquirableCards(): MutableList<Pair<Int,Int>>{
 
         val game = rootService.currentGame
         checkNotNull(game)
@@ -413,13 +403,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val currentPlayer = game.currentGameState.currentPlayer
         var totalGemsOnBoard = 0
         val affordableCard = acquirableCards().size
-        val reservCards = currentPlayer.gems.size
+        val reservedCards = currentPlayer.gems.size
 
         //calculate total gems on board
         board.gems.forEach{ (_,v) ->
             totalGemsOnBoard += v
         }
 
-        return (totalGemsOnBoard != 0) || (affordableCard != 0) || (reservCards < 3)
+        return (totalGemsOnBoard != 0) || (affordableCard != 0) || (reservedCards < 3)
     }
 }
