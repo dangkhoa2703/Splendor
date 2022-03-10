@@ -3,11 +3,15 @@ package service
 import entity.*
 import java.io.File
 
+/**
+ *  class for basic game functionalities
+ * */
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
     var consecutiveNoAction = 0
     var currentPlayerIndex = 0
 
+    //initializes a new game and connects it to the rootService
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
@@ -82,7 +86,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val board = game.currentGameState.board
-        val currentPlayer = currentGameState.currentPlayer
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
         val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
@@ -216,23 +219,16 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         return affordableNobleTile
     }
 
-    fun checkGems(): Boolean{
 
-        val game = rootService.currentGame
-        checkNotNull(game)
-        val player = game.currentGameState.currentPlayer
-        var totalGems = 0
-
-        player.gems.forEach{ (_,v) ->
-            totalGems += v
-        }
-
-        return totalGems >= 10
+    // checks if the current player has more than ten gems
+    fun checkGems(): Boolean {
+        return rootService.currentGame!!.currentGameState.currentPlayer.gems.values.sum() > 10
     }
 
 
     /*-----------------------------HELP FUNCTION-----------------------------*/
 
+    // creates nobleTiles
     private fun createNobleTiles(playerCount: Int): MutableList<NobleTile> {
 
         val nobleTileFile = "src/main/resources/splendor-adligenkarten.csv"
@@ -262,6 +258,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     }
 
 
+    // creates cardStacks for all devCard levels
     private fun createCardStack(level: Int): MutableList<DevCard>{
 
         val cardConfigFile = "src/main/resources/splendor-entwicklungskarten.csv"

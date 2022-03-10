@@ -56,7 +56,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
         val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
 
-        // list of gem types has invalid size
+        // list of gem types has invalid size or content
         if( types.size > 3 || (types.size == 3 && numDiffGemTypesInTypes != 3)) {
             throw IllegalArgumentException("no valid gem/type number")
         }
@@ -66,12 +66,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         else if ( types.size == 2 && numDiffGemTypesInTypes == 1 && board.gems.getValue(types[0]) < 4) {
             throw IllegalArgumentException("two same gems can only be chosen if four gems of their GemType are left")
         }
-        // take two same gems
-        else if((types.size == 2) && (types[0] == types[1])) {
-            player.gems[types[0]] = player.gems.getValue(types[0]) + 2
-            board.gems[types[0]] = board.gems.getValue(types[0]) - 2
-        }
-        // take one to three different gems
+        // take gems
         else{
             types.forEach{ gemType ->
                 player.gems[gemType] = player.gems.getValue(gemType) + 1
@@ -80,9 +75,9 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }
         rootService.gameService.consecutiveNoAction = 0
         // update GUI
-        //refreshAfterTakeThreeGems()
+        // refreshAfterTakeThreeGems()
         // visit by nobleTiles, check gems
-//        rootService.gameService.endTurn()
+        // rootService.gameService.endTurn()
     }
 
     /**

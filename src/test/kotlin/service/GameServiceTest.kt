@@ -23,11 +23,6 @@ class GameServiceTest {
             Pair("p1",PlayerType.HUMAN),
             Pair("p2",PlayerType.HUMAN),
             Pair("p3",PlayerType.HUMAN))
-        val playerList4 = listOf(
-            Pair("p1",PlayerType.HUMAN),
-            Pair("p2",PlayerType.HUMAN),
-            Pair("p3",PlayerType.HUMAN),
-            Pair("p4",PlayerType.HUMAN))
         val playerList5 = listOf(
             Pair("p1",PlayerType.HUMAN),
             Pair("p2",PlayerType.HUMAN),
@@ -35,7 +30,6 @@ class GameServiceTest {
             Pair("p4",PlayerType.HUMAN),
             Pair("p5",PlayerType.HUMAN))
 
-        val root = RootService()
         root.gameService.startNewGame(playerList2,true,1)
         val game = root.currentGame
         checkNotNull(game)
@@ -55,7 +49,7 @@ class GameServiceTest {
         val newGame = root.currentGame
         checkNotNull(newGame)
         assertEquals(3,newGame.currentGameState.playerList.size)
-        assertEquals("p1",currentGame.playerList[0].name)
+        assertEquals("p1", newGame.currentGameState.playerList[0].name)
 
         assertThrows<IllegalArgumentException> {
             root.gameService.startNewGame(playerList1,false,1)
@@ -79,28 +73,25 @@ class GameServiceTest {
         assertEquals(true, root.gameService.isCardAcquirable(devCardOne, validPaymentWithJoker))
         assertEquals(false, root.gameService.isCardAcquirable(devCardOne, invalidPayment))
     }
+
+    /** tests if one createCard works correctly */
     @Test
-    fun TestCreateCard(){
-
-        val root = RootService()
-
+    fun testCreateCard() {
         assertThrows<IllegalArgumentException> {
             root.gameService.createCard(listOf( "0", "0", "0", "0", "2", "1", "0", "1", "diamante"))
         }
-
     }
 
+    /** tests if nextPlayer works correctly */
     @Test
-    fun testNextPlayer(){
+    fun testNextPlayer() {
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
 
-        val root = RootService()
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
         checkNotNull(game)
         val currentGame = game.currentGameState
         val board = currentGame.board
-        val player = currentGame.playerList
 
         currentGame.playerList[1].reservedCards = mutableListOf(
             root.gameService.createCard(listOf( "0", "0", "0", "0", "2", "1", "0", "1", "diamant")),
@@ -130,7 +121,20 @@ class GameServiceTest {
 
         assertEquals(board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
         assertEquals("p2",newPlayerList[0].name)
+    }
 
+    /** tests if checkGems works correctly */
+    @Test
+    fun testCheckGems() {
+        val playerList = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
+        root.gameService.startNewGame(playerList, false, 1)
+        val player1 = root.currentGame!!.currentGameState.currentPlayer
 
+        /** currentPlayer has less or equal than ten gems */
+        assertEquals(false, root.gameService.checkGems())
+
+        /** currentPlayer has more than ten gems */
+        player1.gems[GemType.BLUE] = player1.gems.getValue(GemType.BLUE) + 11
+        assertEquals(true, root.gameService.checkGems())
     }
 }
