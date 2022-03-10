@@ -14,6 +14,8 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
 	}
+
+
     }
 
     private val configScene: MenuScene = ConfigScene(rootService).apply {
@@ -31,6 +33,8 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
+
+
 	}
     }
     
@@ -48,6 +52,7 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	    exit()
 	}
     }
+
 
     init{
 	this.showMenuScene(startScene)

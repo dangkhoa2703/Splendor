@@ -213,6 +213,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	val imageLoader = SplendorImageLoader()
 	val humanIcon: ImageVisual = imageLoader.humanIcon()
 	
+	
 	for(i in 0..3) {
 	    val textField = TextField(
 		posX = width/2 - 200, posY = 300+i*150,

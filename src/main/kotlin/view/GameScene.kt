@@ -8,6 +8,8 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.ImageVisual
 import java.awt.image.BufferedImage
+import tools.aqua.bgw.components.ComponentView
+import tools.aqua.bgw.components.uicomponents.Label
 
 class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080), Refreshable {
 
@@ -27,16 +29,16 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
     )
 
 	private val undoButton = Button(
-		width = 100, height = 100,
-		posX = 50, posY = 350,
+		width = 50, height = 50,
+		posX = 50, posY = 150,
 		text = "",
 		font = Font(size = 28),
 		visual = undo
 	)
 
 	private val redoButton = Button(
-		width = 100, height = 100,
-		posX = 200, posY = 350,
+		width = 50, height = 50,
+		posX = 200, posY = 150,
 		text = "",
 		font = Font(size = 28),
 		visual = redo
@@ -81,6 +83,10 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 		font = Font(size = 28),
 		visual = image
 	)
+//TODO add name of current Player into the currentPlayer label in refreshable Method
+	private val currentPlayer = Label(
+		posX = 700, posY= 50, width = 300 , height= 50, text = "TestPlayer", font = Font(size = 30), visual = image
+	)
 
     init {
 
@@ -89,6 +95,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 
 	addComponents(
 	    quitButton,
+		undoButton,
+		redoButton,
+		nextPlayerButton,
+		returnGemsButton,
+		loadHighscoreButton,
+		hintButton,
+		saveGameButton,
+		currentPlayer
 	)
     }
 }
