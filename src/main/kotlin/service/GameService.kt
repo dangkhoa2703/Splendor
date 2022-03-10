@@ -86,6 +86,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val board = game.currentGameState.board
+        val currentPlayer = currentGameState.currentPlayer
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
         val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
@@ -205,15 +206,20 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val affordableNobleTile = mutableListOf<Int>()
 
         board.nobleTiles.forEach { nobleTile ->
-            var affordable = true
-            nobleTile.condition.forEach { (type, num) ->
-                affordable = affordable && (player.bonus.getValue(type) >= num )
+            // extract each card out of noble tiles
+            val tempGemMap = nobleTile.condition.toMutableMap()
+            tempGemMap.forEach { (gemType, value) ->
+                // check if the noble can visit the player
+                tempGemMap[gemType] = tempGemMap.getValue(gemType) - player.bonus.getValue(gemType)
+                if (tempGemMap.filterValues { it >= 0 }.values.sum() == 0) {
+                    affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile))
+                }
             }
-            if(affordable){ affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile)) }
         }
 
         if(affordableNobleTile.size == 1){
             player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints
+            board.nobleTiles.removeAt(affordableNobleTile[0])
         }
 
         return affordableNobleTile
@@ -291,7 +297,12 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     }
 
 
-    // create and ass a development card to board with input of list of card's properties
+    /**
+     * Create a development card
+     *
+     * @param cardProp card properties as String
+     * @return a development card object
+     */
     fun createCard(cardProp: List<String>): DevCard {
 
         val tempMap = mapOf(

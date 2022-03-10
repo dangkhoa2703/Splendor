@@ -66,7 +66,7 @@ class GameServiceTest {
         /** tests whether payment for a given card is correctly recognized as valid or invalid */
         val devCardOne = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
             bonus = GemType.BLACK, prestigePoints = 0)
-        val validPaymentWithoutJoker = mapOf(GemType.YELLOW to 0, GemType.GREEN to 2, GemType.RED to 3)
+        val validPaymentWithoutJoker = mapOf(GemType.YELLOW to 0, GemType.GREEN to 3, GemType.RED to 4)
         val validPaymentWithJoker = mapOf(GemType.YELLOW to 2, GemType.GREEN to 1, GemType.RED to 2)
         val invalidPayment = mapOf(GemType.YELLOW to 1, GemType.GREEN to 2, GemType.RED to 1)
         assertEquals(true, root.gameService.isCardAcquirable(devCardOne, validPaymentWithoutJoker))
@@ -121,6 +121,34 @@ class GameServiceTest {
 
         assertEquals(board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
         assertEquals("p2",newPlayerList[0].name)
+    }
+
+
+    @Test
+    fun testCheckNobleTiles(){
+        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
+
+        val root = RootService()
+        root.gameService.startNewGame(playerList2,false,1)
+        val game =  root.currentGame
+        checkNotNull(game)
+        game.currentGameState.board.nobleTiles.clear()
+
+        game.currentGameState.board.nobleTiles.add(
+            NobleTile(
+                1,
+                mapOf(GemType.RED to 2,GemType.GREEN to 3, GemType.WHITE to 3),
+                3
+            )
+        )
+
+        game.currentGameState.currentPlayer.bonus[GemType.RED] = 3
+        game.currentGameState.currentPlayer.bonus[GemType.GREEN] = 4
+        game.currentGameState.currentPlayer.bonus[GemType.WHITE] = 3
+
+        val nobleTile = root.gameService.checkNobleTiles()
+        assertEquals( 0,game.currentGameState.board.nobleTiles.size)
+        assertEquals(3,game.currentGameState.currentPlayer.score)
     }
 
     /** tests if checkGems works correctly */
