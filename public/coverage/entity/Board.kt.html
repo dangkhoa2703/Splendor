@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Board.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">projekt2</a> &gt; <a href="index.source.html" class="el_package">entity</a> &gt; <span class="el_source">Board.kt</span></div><h1>Board.kt</h1><pre class="source lang-java linenums">package entity
+
+/**
+ *  class for the board of the game Splendor
+ *  @param nobleTiles: List of noble cards
+ *  @param gems: List of gems that can be taken by players
+ * */
+<span class="fc" id="L8">class Board (</span>
+    /** List of noble cards */
+<span class="pc" id="L10">    val nobleTiles: MutableList&lt;NobleTile&gt; = mutableListOf(),</span>
+
+    /**
+     *  stack of level one development cards
+     *  four revealed level development cards
+     *  */
+<span class="pc" id="L16">    val levelOneCards: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+<span class="pc" id="L17">    val levelOneOpen: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+
+<span class="pc" id="L19">    val levelTwoCards: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+<span class="pc" id="L20">    val levelTwoOpen: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+
+<span class="pc" id="L22">    val levelThreeCards: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+<span class="pc" id="L23">    val levelThreeOpen: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+
+    /** gems: List of gems that can be taken by players */
+<span class="pc" id="L26">    var gems: MutableMap&lt;GemType,Int&gt; = mutableMapOf(</span>
+<span class="fc" id="L27">        GemType.RED to 0,</span>
+<span class="fc" id="L28">        GemType.GREEN to 0,</span>
+<span class="fc" id="L29">        GemType.WHITE to 0,</span>
+<span class="fc" id="L30">        GemType.BLACK to 0,</span>
+<span class="fc" id="L31">        GemType.BLUE to 0,</span>
+<span class="pc" id="L32">        GemType.YELLOW to 0)</span>
+<span class="fc" id="L33">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
