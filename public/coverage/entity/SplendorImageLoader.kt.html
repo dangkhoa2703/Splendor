@@ -5,13 +5,86 @@ import javax.imageio.ImageIO
 import tools.aqua.bgw.visual.ImageVisual
 
 private const val HUMAN_ICON = &quot;/human_green.jpg&quot;
+private const val DRAG_N_DROP_ICON = &quot;/dragAndDrop.png&quot;
+private const val START_BACKGROUND = &quot;/Splendor-background.jpg&quot;
+private const val BUTTON_IMAGE = &quot;/button.jpg&quot;
+private const val REDO_IMAGE = &quot;/redo.png&quot;
+private const val UNDO_IMAGE = &quot;/Undo.png&quot;
+private const val HINT_IMAGE = &quot;/hint.png&quot;
+private const val TABLE_IMAGE = &quot;/Table.png&quot;
 
-<span class="nc" id="L9">class SplendorImageLoader {</span>
+<span class="nc" id="L16">class SplendorImageLoader {</span>
 	fun humanIcon(): ImageVisual {
-<span class="nc" id="L11">		val image: BufferedImage = ImageIO.read(</span>
-<span class="nc" id="L12">			SplendorImageLoader::class.java.getResource(HUMAN_ICON)</span>
+<span class="nc" id="L18">		val image: BufferedImage = ImageIO.read(</span>
+<span class="nc" id="L19">			SplendorImageLoader::class.java.getResource(HUMAN_ICON)</span>
 		)
-<span class="nc" id="L14">		return ImageVisual(image)</span>
+<span class="nc" id="L21">		return ImageVisual(image)</span>
 	}
+
+	fun dragAndDrop(): ImageVisual {
+<span class="nc" id="L25">	    val image: BufferedImage = ImageIO.read(</span>
+<span class="nc" id="L26">		SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)</span>
+	    )
+<span class="nc" id="L28">	    return ImageVisual(image)</span>
+	}
+
+	fun frontImageFor(id: Int): ImageVisual {
+<span class="nc" id="L32">	    val idString = (id+1).toString()</span>
+<span class="nc" id="L33">	    return ImageVisual(</span>
+<span class="nc" id="L34">		ImageIO.read(</span>
+<span class="nc" id="L35">		    SplendorImageLoader::class.java.getResource(&quot;/cards/&quot;+idString+&quot;.jpg&quot;)</span>
+		)
+	    )
+	}
+
+	fun startBackground(): ImageVisual {
+<span class="nc" id="L41">	    return ImageVisual(</span>
+<span class="nc" id="L42">		ImageIO.read(</span>
+<span class="nc" id="L43">		    SplendorImageLoader::class.java.getResource(START_BACKGROUND)</span>
+		)
+	    )
+	}
+
+	fun button(): ImageVisual {
+<span class="nc" id="L49">		return ImageVisual(</span>
+<span class="nc" id="L50">			ImageIO.read(</span>
+<span class="nc" id="L51">				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)</span>
+			)
+		)
+	}
+
+	fun redoButton(): ImageVisual {
+<span class="nc" id="L57">		return ImageVisual(</span>
+<span class="nc" id="L58">			ImageIO.read(</span>
+<span class="nc" id="L59">				SplendorImageLoader::class.java.getResource(REDO_IMAGE)</span>
+			)
+		)
+	}
+
+	fun hintButton(): ImageVisual {
+<span class="nc" id="L65">		return ImageVisual(</span>
+<span class="nc" id="L66">			ImageIO.read(</span>
+<span class="nc" id="L67">				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)</span>
+			)
+		)
+	}
+
+	fun undoButton(): ImageVisual {
+<span class="nc" id="L73">		return ImageVisual(</span>
+<span class="nc" id="L74">			ImageIO.read(</span>
+<span class="nc" id="L75">				SplendorImageLoader::class.java.getResource(UNDO_IMAGE)</span>
+			)
+		)
+	}
+
+	fun table(): ImageVisual {
+<span class="nc" id="L81">		return ImageVisual(</span>
+<span class="nc" id="L82">			ImageIO.read(</span>
+<span class="nc" id="L83">				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)</span>
+			)
+		)
+	}
+
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

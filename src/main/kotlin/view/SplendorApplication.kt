@@ -7,7 +7,6 @@ import tools.aqua.bgw.core.MenuScene
 class SplendorApplication: BoardGameApplication("Splendor") {
 
     private val rootService= RootService()
-
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()

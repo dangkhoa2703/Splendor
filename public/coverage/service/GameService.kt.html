@@ -3,157 +3,162 @@
 import entity.*
 import java.io.File
 
-<span class="nc" id="L6">class GameService(private val rootService: RootService): AbstractRefreshingService() {</span>
+<span class="fc" id="L6">class GameService(private val rootService: RootService): AbstractRefreshingService() {</span>
 
-<span class="nc" id="L8">    var consecutiveNoAction = 0</span>
-<span class="nc" id="L9">    var currentPlayerIndex = 0</span>
+<span class="fc" id="L8">    var consecutiveNoAction = 0</span>
+<span class="pc" id="L9">    var currentPlayerIndex = 0</span>
 
     fun startNewGame(
         players: List&lt;Pair&lt;String,PlayerType&gt;&gt;,
         randomizedTurns: Boolean,
         simulationSpeed: Int) {
-        // Sicherheitsabfragen
-<span class="nc bnc" id="L16" title="All 6 branches missed.">        require( players.size &lt; 2 || players.size &gt; 4 ) { &quot;invalid players' number&quot; }</span>
+<span class="fc bfc" id="L15" title="All 6 branches covered.">        require(players.size in 2..4) { &quot;invalid players' number&quot; }</span>
 
-        // Spieler erstellen
-<span class="nc" id="L19">        val playerList = mutableListOf&lt;Player&gt;()</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">        for(player in players){</span>
-<span class="nc" id="L21">            playerList.add(Player(player.first,player.second))</span>
+        // create players
+<span class="fc" id="L18">        val playerList = mutableListOf&lt;Player&gt;()</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        for(player in players){</span>
+<span class="fc" id="L20">            playerList.add(Player(player.first,player.second))</span>
         }
-        // PrÃ¼fe, ob die Reihenfolge der Spieler zufÃ¤llig sein soll
-<span class="nc bnc" id="L24" title="All 2 branches missed.">        if (randomizedTurns) {</span>
-<span class="nc" id="L25">            playerList.shuffle()</span>
+        // check if order should be randomized
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (randomizedTurns) {</span>
+<span class="fc" id="L24">            playerList.shuffle()</span>
         }
 
-<span class="nc" id="L28">        val levelOneStack = createCardStack(1)</span>
-<span class="nc" id="L29">        val levelOneOpen = levelOneStack.slice(0..2).toMutableList()</span>
+<span class="fc" id="L27">        val levelOneStack = createCardStack(1)</span>
+<span class="fc" id="L28">        levelOneStack.shuffle()</span>
+<span class="fc" id="L29">        val levelOneOpen = levelOneStack.slice(0..3).toMutableList()</span>
 
-<span class="nc" id="L31">        val levelTwoStack = createCardStack(2)</span>
-<span class="nc" id="L32">        val levelTwoOpen = levelTwoStack.slice(0..2).toMutableList()</span>
+<span class="fc" id="L31">        val levelTwoStack = createCardStack(2)</span>
+<span class="fc" id="L32">        levelTwoStack.shuffle()</span>
+<span class="fc" id="L33">        val levelTwoOpen = levelTwoStack.slice(0..3).toMutableList()</span>
 
-<span class="nc" id="L34">        val levelThreeStack = createCardStack(3)</span>
-<span class="nc" id="L35">        val levelThreeOpen = levelThreeStack.slice(0..2).toMutableList()</span>
+<span class="fc" id="L35">        val levelThreeStack = createCardStack(3)</span>
+<span class="fc" id="L36">        levelThreeStack.shuffle()</span>
+<span class="fc" id="L37">        val levelThreeOpen = levelThreeStack.slice(0..3).toMutableList()</span>
 
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        for(i in 0..2){</span>
-<span class="nc" id="L38">            levelOneStack.removeAt(i)</span>
-<span class="nc" id="L39">            levelTwoStack.removeAt(i)</span>
-<span class="nc" id="L40">            levelThreeStack.removeAt(i)</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for(i in 0..3){</span>
+<span class="fc" id="L40">            levelOneStack.removeAt(i)</span>
+<span class="fc" id="L41">            levelTwoStack.removeAt(i)</span>
+<span class="fc" id="L42">            levelThreeStack.removeAt(i)</span>
         }
 
         // create Board
-<span class="nc" id="L44">        val board = Board(</span>
-<span class="nc" id="L45">            createNobleTiles(players.size),</span>
-<span class="nc" id="L46">            levelOneStack,</span>
-<span class="nc" id="L47">            levelOneOpen,</span>
-<span class="nc" id="L48">            levelTwoStack,</span>
-<span class="nc" id="L49">            levelTwoOpen,</span>
-<span class="nc" id="L50">            levelThreeStack,</span>
-<span class="nc" id="L51">            levelThreeOpen</span>
+<span class="fc" id="L46">        val board = Board(</span>
+<span class="fc" id="L47">            createNobleTiles(players.size),</span>
+<span class="fc" id="L48">            levelOneStack,</span>
+<span class="fc" id="L49">            levelOneOpen,</span>
+<span class="fc" id="L50">            levelTwoStack,</span>
+<span class="fc" id="L51">            levelTwoOpen,</span>
+<span class="fc" id="L52">            levelThreeStack,</span>
+<span class="fc" id="L53">            levelThreeOpen</span>
         )
         //create GameState
-<span class="nc" id="L54">        val gameState = GameState(</span>
-<span class="nc" id="L55">            playerList[0],</span>
-<span class="nc" id="L56">            playerList,</span>
-<span class="nc" id="L57">            board</span>
+<span class="fc" id="L56">        val gameState = GameState(</span>
+<span class="fc" id="L57">            playerList[0],</span>
+<span class="fc" id="L58">            playerList,</span>
+<span class="fc" id="L59">            board</span>
         )
         //create Splendor(current game)
-<span class="nc" id="L60">        val splendor = Splendor(</span>
-<span class="nc" id="L61">            simulationSpeed,</span>
-<span class="nc" id="L62">            gameState,</span>
-<span class="nc" id="L63">            mutableListOf&lt;Highscore&gt;()</span>
+<span class="fc" id="L62">        val splendor = Splendor(</span>
+<span class="fc" id="L63">            simulationSpeed,</span>
+<span class="fc" id="L64">            gameState,</span>
+<span class="fc" id="L65">            mutableListOf()</span>
         )
 
-<span class="nc" id="L66">        rootService.currentGame = splendor</span>
+<span class="fc" id="L68">        consecutiveNoAction = 0</span>
+<span class="fc" id="L69">        currentPlayerIndex = 0</span>
+
+<span class="fc" id="L71">        rootService.currentGame = splendor</span>
 
 //        onAllRefreshable { refreshAfterStartGame() }
-<span class="nc" id="L69">    }</span>
+<span class="fc" id="L74">    }</span>
 
     /**
      * create a new game state, link it to the chain and set the pointer to this game state
      * if nobody can make a move or the current Player hat 15 point -&gt; endGame()
      */
     fun nextPlayer(){
-<span class="nc" id="L76">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L78">        val currentGameState = game.currentGameState</span>
-<span class="nc" id="L79">        val board = game.currentGameState.board</span>
+<span class="fc" id="L81">        val game = rootService.currentGame</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        checkNotNull(game)</span>
+<span class="fc" id="L83">        val currentGameState = game.currentGameState</span>
+<span class="fc" id="L84">        val board = game.currentGameState.board</span>
+<span class="fc" id="L85">        val currentPlayer = currentGameState.currentPlayer</span>
 
-<span class="nc" id="L81">        currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size</span>
+<span class="fc" id="L87">        currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size</span>
+<span class="fc" id="L88">        val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)</span>
+<span class="fc" id="L89">        val affordableCards = acquirableCards().size</span>
+<span class="fc" id="L90">        val reservedCards = currentGameState.playerList[currentPlayerIndex].reservedCards.size</span>
 
         //check if there are any valid move, if nobody can make a move -&gt; endGame()
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if(!checkValidAction()){</span>
+<span class="pc bpc" id="L93" title="2 of 6 branches missed.">        if((totalGemsOnBoard == 0) &amp;&amp; (affordableCards == 0) &amp;&amp; (reservedCards == 3)){</span>
 //            onAllRefreshables { refreshIfNoValidAction() }
-<span class="nc" id="L86">            consecutiveNoAction++</span>
-        }
-<span class="nc bnc" id="L88" title="All 2 branches missed.">        if(currentGameState.currentPlayer.score &gt;= 15</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">            || consecutiveNoAction == currentGameState.playerList.size){</span>
-<span class="nc" id="L90">            endGame()</span>
-<span class="nc" id="L91">            return</span>
+<span class="fc" id="L95">            consecutiveNoAction++</span>
         }
 
-<span class="nc" id="L94">        val newPlayerList = mutableListOf&lt;Player&gt;()</span>
-<span class="nc" id="L95">        val newBoard = Board(</span>
-<span class="nc" id="L96">            board.nobleTiles.toMutableList(),</span>
-<span class="nc" id="L97">            board.levelOneCards.toMutableList(),</span>
-<span class="nc" id="L98">            board.levelOneOpen.toMutableList(),</span>
-<span class="nc" id="L99">            board.levelTwoCards.toMutableList(),</span>
-<span class="nc" id="L100">            board.levelTwoCards.toMutableList(),</span>
-<span class="nc" id="L101">            board.levelThreeCards.toMutableList(),</span>
-<span class="nc" id="L102">            board.levelThreeOpen.toMutableList(),</span>
-<span class="nc" id="L103">            board.gems.toMutableMap()</span>
+        // if one player reach 15 or above -&gt; end game
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if(currentGameState.playerList[currentPlayerIndex].score &gt;= 15){</span>
+<span class="fc" id="L100">            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -&gt; player.score }</span>
+<span class="fc" id="L101">            println(currentGameState.playerList.toString())</span>
+//            onAllRefreshables { refreshAfterEndGame(false) }
+<span class="fc" id="L103">            return</span>
+        }
+        // if no player can make any move, end game with tie result
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if(consecutiveNoAction == currentGameState.playerList.size){</span>
+<span class="nc" id="L107">            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -&gt; player.score }</span>
+//            onAllRefreshables { refreshAfterEndGame(true) }
+<span class="nc" id="L109">            return</span>
+        }
+
+<span class="fc" id="L112">        val newPlayerList = mutableListOf&lt;Player&gt;()</span>
+<span class="fc" id="L113">        val newBoard = Board(</span>
+<span class="fc" id="L114">            board.nobleTiles.toMutableList(),</span>
+<span class="fc" id="L115">            board.levelOneCards.toMutableList(),</span>
+<span class="fc" id="L116">            board.levelOneOpen.toMutableList(),</span>
+<span class="fc" id="L117">            board.levelTwoCards.toMutableList(),</span>
+<span class="fc" id="L118">            board.levelTwoCards.toMutableList(),</span>
+<span class="fc" id="L119">            board.levelThreeCards.toMutableList(),</span>
+<span class="fc" id="L120">            board.levelThreeOpen.toMutableList(),</span>
+<span class="fc" id="L121">            board.gems.toMutableMap()</span>
         )
 
         // create a new players list with the properties of the current list
-<span class="nc" id="L107">        currentGameState.playerList.forEach { player -&gt;</span>
-<span class="nc" id="L108">            newPlayerList.add(</span>
-<span class="nc" id="L109">                Player(</span>
-<span class="nc" id="L110">                    player.name,</span>
-<span class="nc" id="L111">                    player.playerType,</span>
-<span class="nc" id="L112">                    player.gems,</span>
-<span class="nc" id="L113">                    player.bonus</span>
+<span class="fc" id="L125">        currentGameState.playerList.forEach { player -&gt;</span>
+<span class="fc" id="L126">            newPlayerList.add(</span>
+<span class="fc" id="L127">                Player(</span>
+<span class="fc" id="L128">                    player.name,</span>
+<span class="fc" id="L129">                    player.playerType,</span>
+<span class="fc" id="L130">                    player.gems,</span>
+<span class="fc" id="L131">                    player.bonus</span>
                 )
             )
-<span class="nc" id="L116">        }</span>
+<span class="fc" id="L134">        }</span>
 
         //create new GameState
-<span class="nc" id="L119">        val newGameState = GameState(</span>
-<span class="nc" id="L120">            newPlayerList[currentPlayerIndex],</span>
-<span class="nc" id="L121">            newPlayerList,</span>
-<span class="nc" id="L122">            newBoard</span>
+<span class="fc" id="L137">        val newGameState = GameState(</span>
+<span class="fc" id="L138">            newPlayerList[currentPlayerIndex],</span>
+<span class="fc" id="L139">            newPlayerList,</span>
+<span class="fc" id="L140">            newBoard</span>
         )
 
         //bind new gameState to chain and set pointer to the newGameState
-<span class="nc" id="L126">        newGameState.previous = currentGameState</span>
-<span class="nc" id="L127">        game.currentGameState = newGameState</span>
+<span class="fc" id="L144">        newGameState.previous = currentGameState</span>
+<span class="fc" id="L145">        game.currentGameState = newGameState</span>
 
 //        onAllRefreshables { refreshAfterNextPlayer }
-<span class="nc" id="L130">    }</span>
+<span class="fc" id="L148">    }</span>
 
-    /**
-     * End game
-     *
-     * @return a list sort by players' score
-     */
-    fun endGame(): List&lt;Player&gt;{
-<span class="nc" id="L138">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L140">        val currentGameState = game.currentGameState</span>
-<span class="nc" id="L141">        val board = game.currentGameState.board</span>
-
-<span class="nc" id="L143">        return currentGameState.playerList.sortedByDescending { player -&gt; player.score }</span>
-    }
-
-
-
-    fun endTurn(){
-//
+//    /**
+//     * End game
+//     *
+//     * @return a list sort by players' score
+//     */
+//    fun endGame(){
 //        val game = rootService.currentGame
 //        checkNotNull(game)
-//        val board = game.currentGameState.board
+//        val currentGameState = game.currentGameState
 //
-//        checkNobleTiles()
-////        checkGems()
-<span class="nc" id="L156">    }</span>
+//        currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -&gt; player.score }
+//    }
 
     /**
      * deal a new card to the same place, where a card was removed
@@ -162,67 +167,67 @@ import java.io.File
      * @param index  index of the removed card
      */
     fun refill(level: Int,index: Int){
-<span class="nc" id="L165">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L166" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L167">        val board = game.currentGameState.board</span>
+<span class="nc" id="L170">        val game = rootService.currentGame</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        checkNotNull(game)</span>
+<span class="nc" id="L172">        val board = game.currentGameState.board</span>
 
-<span class="nc bnc" id="L169" title="All 4 branches missed.">        when(level){</span>
+<span class="nc bnc" id="L174" title="All 4 branches missed.">        when(level){</span>
             1 -&gt; {
-<span class="nc" id="L171">                board.levelOneOpen.add(index,board.levelOneCards[0])</span>
-<span class="nc" id="L172">                board.levelOneCards.removeAt(0)</span>
+<span class="nc" id="L176">                board.levelOneOpen.add(index,board.levelOneCards[0])</span>
+<span class="nc" id="L177">                board.levelOneCards.removeAt(0)</span>
             }
             2 -&gt; {
-<span class="nc" id="L175">                board.levelTwoOpen.add(index,board.levelTwoCards[0])</span>
-<span class="nc" id="L176">                board.levelTwoCards.removeAt(0)</span>
+<span class="nc" id="L180">                board.levelTwoOpen.add(index,board.levelTwoCards[0])</span>
+<span class="nc" id="L181">                board.levelTwoCards.removeAt(0)</span>
             }
             3 -&gt; {
-<span class="nc" id="L179">                board.levelThreeOpen.add(index,board.levelThreeCards[0])</span>
-<span class="nc" id="L180">                board.levelThreeCards.removeAt(0)</span>
+<span class="nc" id="L184">                board.levelThreeOpen.add(index,board.levelThreeCards[0])</span>
+<span class="nc" id="L185">                board.levelThreeCards.removeAt(0)</span>
             }
         }
-<span class="nc" id="L183">    }</span>
+<span class="nc" id="L188">    }</span>
 
 
     /**
-     * Check if which noble tiles can visit the current player
-     * automatic add prestige point to player score if there is only on afforfable card
-     * @return a multable list of indexes of the affordable noble tiles on board
+     * Check which noble tiles can visit the current player
+     * automatic add prestige point to player score if there is only on affordable card
+     * @return a mutable list of indexes of the affordable noble tiles on board
      */
     fun checkNobleTiles(): MutableList&lt;Int&gt;{
 
-<span class="nc" id="L193">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L194" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L195">        val board = game.currentGameState.board</span>
-<span class="nc" id="L196">        val player = game.currentGameState.currentPlayer</span>
-<span class="nc" id="L197">        val affordableNobleTile = mutableListOf&lt;Int&gt;()</span>
+<span class="nc" id="L198">        val game = rootService.currentGame</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        checkNotNull(game)</span>
+<span class="nc" id="L200">        val board = game.currentGameState.board</span>
+<span class="nc" id="L201">        val player = game.currentGameState.currentPlayer</span>
+<span class="nc" id="L202">        val affordableNobleTile = mutableListOf&lt;Int&gt;()</span>
 
-<span class="nc" id="L199">        board.nobleTiles.forEach { nobleTile -&gt;</span>
-<span class="nc" id="L200">            var affordable = true</span>
-<span class="nc" id="L201">            nobleTile.condition.forEach { type, num -&gt;</span>
-<span class="nc bnc" id="L202" title="All 4 branches missed.">                affordable = affordable &amp;&amp; (player.bonus.getValue(type) &gt;= num )</span>
-<span class="nc" id="L203">            }</span>
-<span class="nc bnc" id="L204" title="All 2 branches missed.">            if(affordable){ affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile)) }</span>
-<span class="nc" id="L205">        }</span>
+<span class="nc" id="L204">        board.nobleTiles.forEach { nobleTile -&gt;</span>
+<span class="nc" id="L205">            var affordable = true</span>
+<span class="nc" id="L206">            nobleTile.condition.forEach { (type, num) -&gt;</span>
+<span class="nc bnc" id="L207" title="All 4 branches missed.">                affordable = affordable &amp;&amp; (player.bonus.getValue(type) &gt;= num )</span>
+<span class="nc" id="L208">            }</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            if(affordable){ affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile)) }</span>
+<span class="nc" id="L210">        }</span>
 
-<span class="nc bnc" id="L207" title="All 2 branches missed.">        if(affordableNobleTile.size == 1){</span>
-<span class="nc" id="L208">            player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if(affordableNobleTile.size == 1){</span>
+<span class="nc" id="L213">            player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints</span>
         }
 
-<span class="nc" id="L211">        return affordableNobleTile</span>
+<span class="nc" id="L216">        return affordableNobleTile</span>
     }
 
     fun checkGems(): Boolean{
 
-<span class="nc" id="L216">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L217" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L218">        val player = game.currentGameState.currentPlayer</span>
-<span class="nc" id="L219">        var totalGems = 0</span>
+<span class="nc" id="L221">        val game = rootService.currentGame</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        checkNotNull(game)</span>
+<span class="nc" id="L223">        val player = game.currentGameState.currentPlayer</span>
+<span class="nc" id="L224">        var totalGems = 0</span>
 
-<span class="nc" id="L221">        player.gems.forEach{ (_,v) -&gt;</span>
-<span class="nc" id="L222">            totalGems += v</span>
-<span class="nc" id="L223">        }</span>
+<span class="nc" id="L226">        player.gems.forEach{ (_,v) -&gt;</span>
+<span class="nc" id="L227">            totalGems += v</span>
+<span class="nc" id="L228">        }</span>
 
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        return totalGems &gt;= 10</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        return totalGems &gt;= 10</span>
     }
 
 
@@ -230,120 +235,97 @@ import java.io.File
 
     private fun createNobleTiles(playerCount: Int): MutableList&lt;NobleTile&gt; {
 
-<span class="nc" id="L233">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L235">        val currentGame = game.currentGameState</span>
-<span class="nc" id="L236">        val board = game.currentGameState.board</span>
+<span class="fc" id="L238">        val nobleTileFile = &quot;src/main/resources/splendor-adligenkarten.csv&quot;</span>
+<span class="fc" id="L239">        val cardProps: MutableList&lt;String&gt; = File(nobleTileFile).readLines().toMutableList()</span>
+<span class="fc" id="L240">        cardProps.removeAt(0)</span>
+<span class="fc" id="L241">        val nobleCards = mutableListOf&lt;NobleTile&gt;()</span>
 
-<span class="nc" id="L238">        val nobleTileFile = &quot;/splendor-adligenkarten.csv&quot;</span>
-<span class="nc" id="L239">        val cardProp: MutableList&lt;String&gt; = File(nobleTileFile).readLines().toMutableList()</span>
-<span class="nc" id="L240">        cardProp.removeAt(0)</span>
-<span class="nc" id="L241">        val nobleCards = mutableListOf&lt;NobleTile&gt;()</span>
-
-<span class="nc bnc" id="L243" title="All 2 branches missed.">        for (nobleTileConfig in cardProp) {</span>
-<span class="nc" id="L244">            val tempMap = mapOf(</span>
-<span class="nc" id="L245">                GemType.WHITE to cardProp[1].toInt(),</span>
-<span class="nc" id="L246">                GemType.BLUE to cardProp[2].toInt(),</span>
-<span class="nc" id="L247">                GemType.GREEN to cardProp[3].toInt(),</span>
-<span class="nc" id="L248">                GemType.RED to cardProp[4].toInt(),</span>
-<span class="nc" id="L249">                GemType.BLACK to cardProp[5].toInt()</span>
+<span class="fc" id="L243">        cardProps.forEach { cardProp -&gt;</span>
+<span class="fc" id="L244">            val cardConfig = cardProp.split(&quot;, &quot;)</span>
+<span class="fc" id="L245">            val tempMap = mapOf(</span>
+<span class="fc" id="L246">                GemType.WHITE to cardConfig[1].trim().toInt(),</span>
+<span class="fc" id="L247">                GemType.BLUE to cardConfig[2].trim().toInt(),</span>
+<span class="fc" id="L248">                GemType.GREEN to cardConfig[3].trim().toInt(),</span>
+<span class="fc" id="L249">                GemType.RED to cardConfig[4].trim().toInt(),</span>
+<span class="fc" id="L250">                GemType.BLACK to cardConfig[5].trim().toInt()</span>
             )
-<span class="nc" id="L251">            nobleCards.add(</span>
-<span class="nc" id="L252">                NobleTile(</span>
-<span class="nc" id="L253">                    cardProp[0].toInt(),</span>
-<span class="nc" id="L254">                    tempMap,</span>
-<span class="nc" id="L255">                    cardProp[6].toInt()</span>
+<span class="fc" id="L252">            nobleCards.add(</span>
+<span class="fc" id="L253">                NobleTile(</span>
+<span class="fc" id="L254">                    cardConfig[0].trim().toInt(),</span>
+<span class="fc" id="L255">                    tempMap,</span>
+<span class="fc" id="L256">                    cardConfig[6].trim().toInt()</span>
                 )
             )
-        }
-<span class="nc" id="L259">        nobleCards.shuffle()</span>
-<span class="nc" id="L260">        return  nobleCards.slice(0..playerCount).toMutableList()</span>
+<span class="fc" id="L259">        }</span>
+<span class="fc" id="L260">        nobleCards.shuffle()</span>
+<span class="fc" id="L261">        return  nobleCards.slice(0..playerCount).toMutableList()</span>
     }
 
 
     private fun createCardStack(level: Int): MutableList&lt;DevCard&gt;{
 
-<span class="nc" id="L266">        val cardConfigFile = &quot;/splendor-entwicklungskarten.csv&quot;</span>
-<span class="nc" id="L267">        val cardConfigs: MutableList&lt;String&gt; = File(cardConfigFile).readLines().toMutableList()</span>
-<span class="nc" id="L268">        cardConfigs.removeAt(0)</span>
-<span class="nc" id="L269">        val cardList = mutableListOf&lt;DevCard&gt;()</span>
+<span class="fc" id="L267">        val cardConfigFile = &quot;src/main/resources/splendor-entwicklungskarten.csv&quot;</span>
+<span class="fc" id="L268">        val cardConfigs: MutableList&lt;String&gt; = File(cardConfigFile.trim()).readLines().toMutableList()</span>
+<span class="fc" id="L269">        cardConfigs.removeAt(0)</span>
+<span class="fc" id="L270">        val cardList = mutableListOf&lt;DevCard&gt;()</span>
 
-<span class="nc bnc" id="L271" title="All 3 branches missed.">        when (level) {</span>
+<span class="fc bfc" id="L272" title="All 3 branches covered.">        when (level) {</span>
             1 -&gt; {
-<span class="nc bnc" id="L273" title="All 2 branches missed.">                for(i in 1..40){</span>
-<span class="nc" id="L274">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
-<span class="nc" id="L275">                    cardList.add(createCard(cardConfigs))</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">                for(i in 0..39){</span>
+<span class="fc" id="L275">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
+<span class="fc" id="L276">                    cardList.add(createCard(cardConfig))</span>
                 }
             }
             2 -&gt; {
-<span class="nc bnc" id="L279" title="All 2 branches missed.">                for(i in 41..69){</span>
-<span class="nc" id="L280">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
-<span class="nc" id="L281">                    cardList.add(createCard(cardConfigs))</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">                for(i in 40..69){</span>
+<span class="fc" id="L281">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
+<span class="fc" id="L282">                    cardList.add(createCard(cardConfig))</span>
                 }
             }
             else -&gt; {
-<span class="nc bnc" id="L285" title="All 2 branches missed.">                for(i in 70..90){</span>
-<span class="nc" id="L286">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
-<span class="nc" id="L287">                    cardList.add(createCard(cardConfigs))</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">                for(i in 70..89){</span>
+<span class="fc" id="L287">                    val cardConfig = cardConfigs[i].split(&quot;, &quot;)</span>
+<span class="fc" id="L288">                    cardList.add(createCard(cardConfig))</span>
                 }
             }
         }
-<span class="nc" id="L291">        return cardList</span>
+<span class="fc" id="L292">        return cardList</span>
 
     }
 
 
     // create and ass a development card to board with input of list of card's properties
-    private fun createCard(cardProp: List&lt;String&gt;): DevCard {
+    fun createCard(cardProp: List&lt;String&gt;): DevCard {
 
-<span class="nc" id="L299">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L300" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L301">        val currentGame = game.currentGameState</span>
-<span class="nc" id="L302">        val board = game.currentGameState.board</span>
-
-<span class="nc" id="L304">        val tempMap = mapOf(</span>
-<span class="nc" id="L305">            GemType.WHITE to cardProp[1].toInt(),</span>
-<span class="nc" id="L306">            GemType.BLUE to cardProp[2].toInt(),</span>
-<span class="nc" id="L307">            GemType.GREEN to cardProp[3].toInt(),</span>
-<span class="nc" id="L308">            GemType.RED to cardProp[4].toInt(),</span>
-<span class="nc" id="L309">            GemType.BLACK to cardProp[5].toInt()</span>
+<span class="fc" id="L300">        val tempMap = mapOf(</span>
+<span class="fc" id="L301">            GemType.WHITE to cardProp[1].trim().toInt(),</span>
+<span class="fc" id="L302">            GemType.BLUE to cardProp[2].trim().toInt(),</span>
+<span class="fc" id="L303">            GemType.GREEN to cardProp[3].trim().toInt(),</span>
+<span class="fc" id="L304">            GemType.RED to cardProp[4].trim().toInt(),</span>
+<span class="fc" id="L305">            GemType.BLACK to cardProp[5].trim().toInt()</span>
         )
-<span class="nc bnc" id="L311" title="All 6 branches missed.">        val color = when (cardProp[8]) {</span>
-<span class="nc" id="L312">            &quot;diamant&quot; -&gt; GemType.WHITE</span>
-<span class="nc" id="L313">            &quot;saphir&quot; -&gt; GemType.BLUE</span>
-<span class="nc" id="L314">            &quot;smaragd&quot; -&gt; GemType.GREEN</span>
-<span class="nc" id="L315">            &quot;rubin&quot; -&gt; GemType.RED</span>
-<span class="nc" id="L316">            &quot;onyx&quot; -&gt; GemType.BLACK</span>
+<span class="fc bfc" id="L307" title="All 6 branches covered.">        val color = when (cardProp[8].trim()) {</span>
+<span class="fc" id="L308">            &quot;diamant&quot; -&gt; GemType.WHITE</span>
+<span class="fc" id="L309">            &quot;saphir&quot; -&gt; GemType.BLUE</span>
+<span class="fc" id="L310">            &quot;smaragd&quot; -&gt; GemType.GREEN</span>
+<span class="fc" id="L311">            &quot;rubin&quot; -&gt; GemType.RED</span>
+<span class="fc" id="L312">            &quot;onyx&quot; -&gt; GemType.BLACK</span>
             else -&gt; {
-<span class="nc" id="L318">                throw java.lang.IllegalArgumentException(</span>
-<span class="nc" id="L319">                    &quot;invalid gem type&quot;</span>
+<span class="fc" id="L314">                throw java.lang.IllegalArgumentException(</span>
+<span class="fc" id="L315">                    &quot;invalid gem type&quot;</span>
                 )
             }
         }
         //create card
-<span class="nc" id="L324">        return DevCard(</span>
-<span class="nc" id="L325">            cardProp[0].toInt(),</span>
-<span class="nc" id="L326">            tempMap,</span>
-<span class="nc" id="L327">            cardProp[6].toInt(),</span>
-<span class="nc" id="L328">            cardProp[7].toInt(),</span>
-<span class="nc" id="L329">            color</span>
+<span class="fc" id="L320">        return DevCard(</span>
+<span class="fc" id="L321">            cardProp[0].trim().toInt(),</span>
+<span class="fc" id="L322">            tempMap,</span>
+<span class="fc" id="L323">            cardProp[6].trim().toInt(),</span>
+<span class="fc" id="L324">            cardProp[7].trim().toInt(),</span>
+<span class="fc" id="L325">            color</span>
         )
-//        // add card to level one stack
-//        if(cardProp[7].toInt() == 1) { board.levelOneCards.add(devCard) }
-//        //add card to level two stack
-//        if(cardProp[7].toInt() == 2) { board.levelTwoCards.add(devCard) }
-//        //add card to level three stack
-//        if(cardProp[7].toInt() == 3) { board.levelThreeCards.add(devCard) }
-    }
 
-//    fun checkIfAvailable(neededGem: Map&lt;GemType,Int&gt;, availableGem: Map&lt;GemType,Int&gt;): Boolean{
-//
-//        var boolean = true
-//        neededGem.forEach { (gemType, gemNum) -&gt;
-//            boolean = boolean &amp;&amp; (availableGem[gemType]!! &gt;= gemNum)
-//        }
-//        return boolean
-//    }
+    }
 
     /**
      * check if the card is for the current player affordable
@@ -351,24 +333,17 @@ import java.io.File
      * @param card the card which the player chose
      * @param payment map of gems from player
      * @return true if player can this card afford, else return false
-     */
-    fun isCardAcquirable(card: DevCard, payment: Map&lt;GemType,Int&gt;): Boolean{
+     * */
+    fun isCardAcquirable(card: DevCard, payment: Map&lt;GemType,Int&gt;): Boolean {
 
-<span class="nc" id="L357">        var acquirableNoJoker = true</span>
-<span class="nc" id="L358">        var totalGemNeeded = 0</span>
-<span class="nc" id="L359">        var totalGemAvailable = 0</span>
-<span class="nc" id="L360">        var acquirableWithJoker = true</span>
+<span class="fc" id="L339">        val tempGemMap = card.price.toMutableMap()</span>
 
-<span class="nc" id="L362">        card.price.forEach { (gemType, gemNum) -&gt;</span>
-<span class="nc bnc" id="L363" title="All 4 branches missed.">            acquirableNoJoker = acquirableNoJoker &amp;&amp; (payment.getValue(gemType) &gt;= gemNum)</span>
-<span class="nc" id="L364">            totalGemNeeded =+ gemNum</span>
-<span class="nc" id="L365">            totalGemAvailable += payment.getValue(gemType)</span>
-<span class="nc" id="L366">        }</span>
-<span class="nc bnc" id="L367" title="All 2 branches missed.">        if(!acquirableNoJoker) {</span>
-<span class="nc bnc" id="L368" title="All 2 branches missed.">            acquirableWithJoker = (totalGemAvailable + payment.getValue(GemType.YELLOW)) &gt;= totalGemNeeded</span>
-        }
+<span class="fc" id="L341">        card.price.forEach { (gemType) -&gt;</span>
+<span class="fc" id="L342">            tempGemMap[gemType] = tempGemMap.getValue(gemType) - payment.getValue(gemType)</span>
+<span class="fc" id="L343">        }</span>
 
-<span class="nc bnc" id="L371" title="All 4 branches missed.">        return acquirableNoJoker || acquirableWithJoker</span>
+<span class="pc bpc" id="L345" title="2 of 4 branches missed.">        val gemsNeeded = tempGemMap.filterValues { it &gt;= 0 }.values.sum()</span>
+<span class="fc bfc" id="L346" title="All 4 branches covered.">        return (gemsNeeded == 0) || (gemsNeeded &lt;= payment.getValue(GemType.YELLOW))</span>
     }
 
     /**
@@ -376,60 +351,55 @@ import java.io.File
      *
      * @return a list of Pair( level, cardIndex ) of acquirable card
      */
-    fun acquirableCards(): MutableList&lt;Pair&lt;Int,Int&gt;&gt;{
+    private fun acquirableCards(): MutableList&lt;Pair&lt;Int,Int&gt;&gt;{
 
-<span class="nc" id="L381">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L382" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L383">        val board = game.currentGameState.board</span>
-<span class="nc" id="L384">        val playerBonus = game.currentGameState.currentPlayer.bonus</span>
-<span class="nc" id="L385">        val playerGems = game.currentGameState.currentPlayer.gems</span>
-<span class="nc" id="L386">        val listOfAcquirableCards = mutableListOf&lt;Pair&lt;Int,Int&gt;&gt;()</span>
-<span class="nc" id="L387">        val totalOwn : Map&lt;GemType,Int&gt; = mapOf(</span>
-<span class="nc" id="L388">            GemType.RED    to (playerBonus.getValue(GemType.RED)   + playerGems.getValue(GemType.RED)),</span>
-<span class="nc" id="L389">            GemType.GREEN  to (playerBonus.getValue(GemType.GREEN) + playerGems.getValue(GemType.GREEN)),</span>
-<span class="nc" id="L390">            GemType.WHITE  to (playerBonus.getValue(GemType.WHITE) + playerGems.getValue(GemType.WHITE)),</span>
-<span class="nc" id="L391">            GemType.BLACK  to (playerBonus.getValue(GemType.BLACK) + playerGems.getValue(GemType.BLACK)),</span>
-<span class="nc" id="L392">            GemType.BLUE   to (playerBonus.getValue(GemType.BLUE)  + playerGems.getValue(GemType.BLUE)),</span>
-<span class="nc" id="L393">            GemType.YELLOW to   playerGems.getValue(GemType.YELLOW)</span>
+<span class="fc" id="L356">        val game = rootService.currentGame</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">        checkNotNull(game)</span>
+<span class="fc" id="L358">        val board = game.currentGameState.board</span>
+<span class="fc" id="L359">        val playerBonus = game.currentGameState.currentPlayer.bonus</span>
+<span class="fc" id="L360">        val playerGems = game.currentGameState.currentPlayer.gems</span>
+<span class="fc" id="L361">        val listOfAcquirableCards = mutableListOf&lt;Pair&lt;Int,Int&gt;&gt;()</span>
+<span class="fc" id="L362">        val totalOwn : Map&lt;GemType,Int&gt; = mapOf(</span>
+<span class="fc" id="L363">            GemType.RED    to (playerBonus.getValue(GemType.RED)   + playerGems.getValue(GemType.RED)),</span>
+<span class="fc" id="L364">            GemType.GREEN  to (playerBonus.getValue(GemType.GREEN) + playerGems.getValue(GemType.GREEN)),</span>
+<span class="fc" id="L365">            GemType.WHITE  to (playerBonus.getValue(GemType.WHITE) + playerGems.getValue(GemType.WHITE)),</span>
+<span class="fc" id="L366">            GemType.BLACK  to (playerBonus.getValue(GemType.BLACK) + playerGems.getValue(GemType.BLACK)),</span>
+<span class="fc" id="L367">            GemType.BLUE   to (playerBonus.getValue(GemType.BLUE)  + playerGems.getValue(GemType.BLUE)),</span>
+<span class="fc" id="L368">            GemType.YELLOW to   playerGems.getValue(GemType.YELLOW)</span>
         )
 
-<span class="nc bnc" id="L396" title="All 2 branches missed.">        for(i in 0..3){</span>
-<span class="nc bnc" id="L397" title="All 2 branches missed.">            if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){</span>
-<span class="nc" id="L398">                listOfAcquirableCards.add(Pair(1,i))</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">        for(i in 0..3){</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">            if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){</span>
+<span class="nc" id="L373">                listOfAcquirableCards.add(Pair(1,i))</span>
             }
-<span class="nc bnc" id="L400" title="All 2 branches missed.">            if(isCardAcquirable(board.levelTwoOpen[i], totalOwn)){</span>
-<span class="nc" id="L401">                listOfAcquirableCards.add(Pair(2,i))</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">            if(isCardAcquirable(board.levelTwoOpen[i], totalOwn)){</span>
+<span class="nc" id="L376">                listOfAcquirableCards.add(Pair(2,i))</span>
             }
-<span class="nc bnc" id="L403" title="All 2 branches missed.">            if(isCardAcquirable(board.levelThreeOpen[i], totalOwn)){</span>
-<span class="nc" id="L404">                listOfAcquirableCards.add(Pair(3,i))</span>
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">            if(isCardAcquirable(board.levelThreeOpen[i], totalOwn)){</span>
+<span class="nc" id="L379">                listOfAcquirableCards.add(Pair(3,i))</span>
             }
         }
 
-<span class="nc" id="L408">        return listOfAcquirableCards</span>
+<span class="fc" id="L383">        return listOfAcquirableCards</span>
     }
 
-    /**
-     * Check if the current player can perform any valid move in this turn
-     *
-     * @return true if there are at least one valid action
-     * @return false if there is no valid action
-     */
-    fun checkValidAction(): Boolean{
-
-<span class="nc" id="L419">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L420" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L421">        val board = game.currentGameState.board</span>
-<span class="nc" id="L422">        val currentPlayer = game.currentGameState.currentPlayer</span>
-<span class="nc" id="L423">        var totalGemsOnBoard = 0</span>
-<span class="nc" id="L424">        val affordableCard = acquirableCards().size</span>
-<span class="nc" id="L425">        val reservCards = currentPlayer.gems.size</span>
-
-        //calculate total gems on board
-<span class="nc" id="L428">        board.gems.forEach{ (_,v) -&gt;</span>
-<span class="nc" id="L429">            totalGemsOnBoard += v</span>
-<span class="nc" id="L430">        }</span>
-
-<span class="nc bnc" id="L432" title="All 6 branches missed.">        return (totalGemsOnBoard != 0) || (affordableCard != 0) || (reservCards &lt; 3)</span>
-    }
+//    /**
+//     * Check if the current player can perform any valid move in this turn
+//     *
+//     * @return true if there are at least one valid action. False if there is no valid action.
+//     *
+//     */
+//    fun checkValidAction(): Boolean{
+//
+//        val game = rootService.currentGame
+//        checkNotNull(game)
+//        val board = game.currentGameState.board
+//        val currentPlayer = game.currentGameState.currentPlayer
+//        var totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
+//        val affordableCards = acquirableCards().size
+//        val reservedCards = currentPlayer.gems.size
+//
+//        return (totalGemsOnBoard != 0) || (affordableCards != 0) || (reservedCards &lt; 3)
+//    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

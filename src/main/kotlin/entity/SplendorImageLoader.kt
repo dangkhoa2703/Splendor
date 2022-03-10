@@ -7,6 +7,11 @@ import tools.aqua.bgw.visual.ImageVisual
 private const val HUMAN_ICON = "/human_green.jpg"
 private const val DRAG_N_DROP_ICON = "/dragAndDrop.png"
 private const val START_BACKGROUND = "/Splendor-background.jpg"
+private const val BUTTON_IMAGE = "/button.jpg"
+private const val REDO_IMAGE = "/redo.png"
+private const val UNDO_IMAGE = "/Undo.png"
+private const val HINT_IMAGE = "/hint.png"
+private const val TABLE_IMAGE = "/Table.png"
 
 class SplendorImageLoader {
 	fun humanIcon(): ImageVisual {
@@ -39,4 +44,46 @@ class SplendorImageLoader {
 		)
 	    )
 	}
+
+	fun button(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
+			)
+		)
+	}
+
+	fun redoButton(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(REDO_IMAGE)
+			)
+		)
+	}
+
+	fun hintButton(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
+			)
+		)
+	}
+
+	fun undoButton(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(UNDO_IMAGE)
+			)
+		)
+	}
+
+	fun table(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)
+			)
+		)
+	}
+
+
 }
