@@ -5,14 +5,14 @@ import java.io.File
 
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
-     var consecutiveNoAction = 0
-     var currentPlayerIndex = 0
+    var consecutiveNoAction = 0
+    var currentPlayerIndex = 0
 
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
-        simulationSpeed: Int)
-    { require(players.size in 2..4) { "invalid players' number" }
+        simulationSpeed: Int) {
+        require(players.size in 2..4) { "invalid players' number" }
 
         // create players
         val playerList = mutableListOf<Player>()
@@ -25,12 +25,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         }
 
         val levelOneStack = createCardStack(1)
+        levelOneStack.shuffle()
         val levelOneOpen = levelOneStack.slice(0..3).toMutableList()
 
         val levelTwoStack = createCardStack(2)
+        levelTwoStack.shuffle()
         val levelTwoOpen = levelTwoStack.slice(0..3).toMutableList()
 
         val levelThreeStack = createCardStack(3)
+        levelThreeStack.shuffle()
         val levelThreeOpen = levelThreeStack.slice(0..3).toMutableList()
 
         for(i in 0..3){
@@ -62,6 +65,9 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             mutableListOf()
         )
 
+        consecutiveNoAction = 0
+        currentPlayerIndex = 0
+
         rootService.currentGame = splendor
 
 //        onAllRefreshable { refreshAfterStartGame() }
@@ -76,17 +82,30 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val board = game.currentGameState.board
+        val currentPlayer = currentGameState.currentPlayer
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
+        val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
+        val affordableCards = acquirableCards().size
+        val reservedCards = currentGameState.playerList[currentPlayerIndex].reservedCards.size
 
         //check if there are any valid move, if nobody can make a move -> endGame()
-        if(!checkValidAction()){
+        if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
             consecutiveNoAction++
         }
-        if(currentGameState.currentPlayer.score >= 15
-            || consecutiveNoAction == currentGameState.playerList.size){
-            endGame()
+
+        // if one player reach 15 or above -> end game
+        if(currentGameState.playerList[currentPlayerIndex].score >= 15){
+            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
+            println(currentGameState.playerList.toString())
+//            onAllRefreshables { refreshAfterEndGame(false) }
+            return
+        }
+        // if no player can make any move, end game with tie result
+        if(consecutiveNoAction == currentGameState.playerList.size){
+            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
+//            onAllRefreshables { refreshAfterEndGame(true) }
             return
         }
 
@@ -128,29 +147,18 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //        onAllRefreshables { refreshAfterNextPlayer }
     }
 
-    /**
-     * End game
-     *
-     * @return a list sort by players' score
-     */
-    fun endGame(): List<Player>{
-        val game = rootService.currentGame
-        checkNotNull(game)
-        val currentGameState = game.currentGameState
-        val board = game.currentGameState.board
-
-        return currentGameState.playerList.sortedByDescending { player -> player.score }
-    }
-
-    fun endTurn(){
-//
+//    /**
+//     * End game
+//     *
+//     * @return a list sort by players' score
+//     */
+//    fun endGame(){
 //        val game = rootService.currentGame
 //        checkNotNull(game)
-//        val board = game.currentGameState.board
+//        val currentGameState = game.currentGameState
 //
-//        checkNobleTiles()
-////        checkGems()
-    }
+//        currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
+//    }
 
     /**
      * deal a new card to the same place, where a card was removed
@@ -287,7 +295,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
 
     // create and ass a development card to board with input of list of card's properties
-    private fun createCard(cardProp: List<String>): DevCard {
+    fun createCard(cardProp: List<String>): DevCard {
 
         val tempMap = mapOf(
             GemType.WHITE to cardProp[1].trim().toInt(),
@@ -316,22 +324,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             cardProp[7].trim().toInt(),
             color
         )
-//        // add card to level one stack
-//        if(cardProp[7].toInt() == 1) { board.levelOneCards.add(devCard) }
-//        //add card to level two stack
-//        if(cardProp[7].toInt() == 2) { board.levelTwoCards.add(devCard) }
-//        //add card to level three stack
-//        if(cardProp[7].toInt() == 3) { board.levelThreeCards.add(devCard) }
-    }
 
-//    fun checkIfAvailable(neededGem: Map<GemType,Int>, availableGem: Map<GemType,Int>): Boolean{
-//
-//        var boolean = true
-//        neededGem.forEach { (gemType, gemNum) ->
-//            boolean = boolean && (availableGem[gemType]!! >= gemNum)
-//        }
-//        return boolean
-//    }
+    }
 
     /**
      * check if the card is for the current player affordable
@@ -389,27 +383,22 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         return listOfAcquirableCards
     }
 
-    /**
-     * Check if the current player can perform any valid move in this turn
-     *
-     * @return true if there are at least one valid action
-     * @return false if there is no valid action
-     */
-    fun checkValidAction(): Boolean{
-
-        val game = rootService.currentGame
-        checkNotNull(game)
-        val board = game.currentGameState.board
-        val currentPlayer = game.currentGameState.currentPlayer
-        var totalGemsOnBoard = 0
-        val affordableCard = acquirableCards().size
-        val reservedCards = currentPlayer.gems.size
-
-        //calculate total gems on board
-        board.gems.forEach{ (_,v) ->
-            totalGemsOnBoard += v
-        }
-
-        return (totalGemsOnBoard != 0) || (affordableCard != 0) || (reservedCards < 3)
-    }
+//    /**
+//     * Check if the current player can perform any valid move in this turn
+//     *
+//     * @return true if there are at least one valid action. False if there is no valid action.
+//     *
+//     */
+//    fun checkValidAction(): Boolean{
+//
+//        val game = rootService.currentGame
+//        checkNotNull(game)
+//        val board = game.currentGameState.board
+//        val currentPlayer = game.currentGameState.currentPlayer
+//        var totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
+//        val affordableCards = acquirableCards().size
+//        val reservedCards = currentPlayer.gems.size
+//
+//        return (totalGemsOnBoard != 0) || (affordableCards != 0) || (reservedCards < 3)
+//    }
 }

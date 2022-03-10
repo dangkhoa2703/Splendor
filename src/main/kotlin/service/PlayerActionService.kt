@@ -82,7 +82,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         // update GUI
         //refreshAfterTakeThreeGems()
         // visit by nobleTiles, check gems
-        rootService.gameService.endTurn()
+//        rootService.gameService.endTurn()
     }
 
     /**
@@ -134,7 +134,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         // update GUI
         //refreshAfterBuyCard()
         // visit by nobleTiles, check gems
-        rootService.gameService.endTurn()
+//        rootService.gameService.endTurn()
     }
 
     /**
@@ -186,7 +186,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         // update GUI
         //refreshAfterReserveCard()
         // visit by nobleTiles, check gems
-        rootService.gameService.endTurn()
+//        rootService.gameService.endTurn()
     }
 
     /**

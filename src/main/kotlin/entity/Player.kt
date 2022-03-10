@@ -31,8 +31,8 @@ class Player (
     )
     )
 {
-    val reservedCards : MutableList<DevCard> = mutableListOf()
-    val nobleTiles : MutableList<NobleTile> = mutableListOf()
+    var reservedCards : MutableList<DevCard> = mutableListOf()
+    var nobleTiles : MutableList<NobleTile> = mutableListOf()
     var score : Int = 0
-    val devCards : MutableList<DevCard> = mutableListOf()
+    var devCards : MutableList<DevCard> = mutableListOf()
 }

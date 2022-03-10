@@ -10,7 +10,7 @@ package entity
  * */
 class GameState(
     val currentPlayer: Player,
-    val playerList: List<Player>,
+    var playerList: List<Player>,
     val board: Board )
 {
     var next: GameState = this
