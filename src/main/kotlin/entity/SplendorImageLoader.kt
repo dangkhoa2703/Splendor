@@ -22,27 +22,27 @@ class SplendorImageLoader {
 	}
 
 	fun dragAndDrop(): ImageVisual {
-	    val image: BufferedImage = ImageIO.read(
-		SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
-	    )
-	    return ImageVisual(image)
+		val image: BufferedImage = ImageIO.read(
+			SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
+		)
+		return ImageVisual(image)
 	}
 
 	fun frontImageFor(id: Int): ImageVisual {
-	    val idString = (id+1).toString()
-	    return ImageVisual(
-		ImageIO.read(
-		    SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
+		val idString = (id+1).toString()
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
+			)
 		)
-	    )
 	}
 
 	fun startBackground(): ImageVisual {
-	    return ImageVisual(
-		ImageIO.read(
-		    SplendorImageLoader::class.java.getResource(START_BACKGROUND)
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(START_BACKGROUND)
+			)
 		)
-	    )
 	}
 
 	fun button(): ImageVisual {
@@ -64,7 +64,7 @@ class SplendorImageLoader {
 	fun hintButton(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(HINT_IMAGE)
+				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
 			)
 		)
 	}
@@ -84,6 +84,4 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
-
 }
