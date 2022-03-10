@@ -114,7 +114,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 board.gems[gemType] = player.gems.getValue(gemType) + value
             }
 
-            player.score += card.PrestigePoints
+            player.score += card.prestigePoints
             player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1
             player.devCards.add(card)
         } else

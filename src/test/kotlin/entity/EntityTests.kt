@@ -137,7 +137,7 @@ class EntityTests
         val devCard0 = DevCard(0,map,1,2,GemType.RED)
         assertEquals(0,devCard0.id)
         assertEquals(1,devCard0.level)
-        assertEquals(2,devCard0.PrestigePoints)
+        assertEquals(2,devCard0.prestigePoints)
         assertEquals(GemType.RED,devCard0.bonus)
         assertEquals(map, devCard0.price)
 

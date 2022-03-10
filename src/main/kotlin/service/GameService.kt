@@ -13,7 +13,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         randomizedTurns: Boolean,
         simulationSpeed: Int) {
         // Sicherheitsabfragen
-        require( players.size >= 2 && players.size <= 4 ) { "invalid players' number" }
+        require(players.size in 2..4) { "invalid players' number" }
 
         // Spieler erstellen
         val playerList = mutableListOf<Player>()
@@ -60,7 +60,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val splendor = Splendor(
             simulationSpeed,
             gameState,
-            mutableListOf<Highscore>()
+            mutableListOf()
         )
 
         rootService.currentGame = splendor
@@ -184,7 +184,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
 
     /**
-     * Check if which noble tiles can visit the current player
+     * Check which noble tiles can visit the current player
      * automatic add prestige point to player score if there is only on afforfable card
      * @return a multable list of indexes of the affordable noble tiles on board
      */
@@ -198,7 +198,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         board.nobleTiles.forEach { nobleTile ->
             var affordable = true
-            nobleTile.condition.forEach { type, num ->
+            nobleTile.condition.forEach { (type, num) ->
                 affordable = affordable && (player.bonus.getValue(type) >= num )
             }
             if(affordable){ affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile)) }
