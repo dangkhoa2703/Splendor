@@ -4,7 +4,6 @@ import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -26,11 +25,11 @@ class PlayerActionServiceTest {
      * tests if takeGems(types) works correct
      */
     @Test
-    fun takeGemsTest(){
+    fun takeGemsTest() {
         root.gameService.startNewGame(playerList,false,1)
         val types = mutableListOf(GemType.RED,GemType.BLUE,GemType.BLACK,GemType.GREEN)
 
-        //Excpetion:
+        //Exception:
         //exception if types is too long
         assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types) }
         val boardGems = root.currentGame!!.currentGameState.board.gems
@@ -53,23 +52,21 @@ class PlayerActionServiceTest {
         //Functionality:
         //take two same gems
         boardGems[GemType.RED] = 4
-        val palyersGemCountRed = root.currentGame!!.currentGameState.currentPlayer.gems.getValue(GemType.RED)
+        val playersGemCountRed = root.currentGame!!.currentGameState.currentPlayer.gems.getValue(GemType.RED)
         root.playerActionService.takeGems(types)
         assertEquals(2,boardGems[GemType.RED])
-        assertEquals(palyersGemCountRed+2,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.RED])
+        assertEquals(playersGemCountRed+2,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.RED])
         //take three different gems
         types.removeAt(0)
         types.add(GemType.GREEN)
         types.add(GemType.BLUE)
-        val palyersGemCountBlue = root.currentGame!!.currentGameState.currentPlayer.gems.getValue(GemType.BLUE)
-        val palyersGemCountGreen = root.currentGame!!.currentGameState.currentPlayer.gems.getValue(GemType.GREEN)
         root.playerActionService.takeGems(types)
         assertEquals(1,boardGems[GemType.RED])
         assertEquals(1,boardGems[GemType.BLUE])
         assertEquals(1,boardGems[GemType.GREEN])
-        assertEquals(palyersGemCountRed+3,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.RED])
-        assertEquals(palyersGemCountRed+1,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.BLUE])
-        assertEquals(palyersGemCountRed+1,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.GREEN])
+        assertEquals(playersGemCountRed+3,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.RED])
+        assertEquals(playersGemCountRed+1,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.BLUE])
+        assertEquals(playersGemCountRed+1,root.currentGame!!.currentGameState.currentPlayer.gems[GemType.GREEN])
     }
 
     /**
@@ -172,7 +169,7 @@ class PlayerActionServiceTest {
         val score = player.score
         player.bonus[GemType.BLUE] = 0
 
-        //exception if card is not aquirable
+        //exception if card is not acquirable
         val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
             GemType.BLUE to 0, GemType.YELLOW to 0)
         assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1,true,map,0) }
@@ -238,7 +235,7 @@ class PlayerActionServiceTest {
         //get numbers of gems on the board
         val numberRedGemsOnBoard  = root.currentGame!!.currentGameState.board.gems.getValue(GemType.RED)
         val numberBlueGemsOnBoard = root.currentGame!!.currentGameState.board.gems.getValue(GemType.BLUE)
-        //check if chenges are correct
+        //check if changes are correct
         root.playerActionService.returnGems(gemTypeList)
         assertEquals(numberRedGemsOnBoard+1,root.currentGame!!.currentGameState.board.gems[GemType.RED])
         assertEquals(numberBlueGemsOnBoard+1,root.currentGame!!.currentGameState.board.gems[GemType.BLUE])
