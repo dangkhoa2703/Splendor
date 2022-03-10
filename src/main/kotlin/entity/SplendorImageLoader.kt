@@ -11,23 +11,33 @@ private const val BUTTON_IMAGE = "/button.jpg"
 private const val REDO_IMAGE = "/redo.png"
 private const val UNDO_IMAGE = "/Undo.png"
 private const val HINT_IMAGE = "/hint.png"
-private const val TABLE_IMAGE = "/Table.png"
+private const val TABLE_IMAGE = "/Table.jpg"
 
+/**
+ * Class to load Images from ressources
+ */
 class SplendorImageLoader {
+	/**
+	 * function that returns Human Icon
+	 */
 	fun humanIcon(): ImageVisual {
 		val image: BufferedImage = ImageIO.read(
 			SplendorImageLoader::class.java.getResource(HUMAN_ICON)
 		)
 		return ImageVisual(image)
 	}
-
+	/**
+	 * function that returns drag and drop image
+	 */
 	fun dragAndDrop(): ImageVisual {
 		val image: BufferedImage = ImageIO.read(
 			SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
 		)
 		return ImageVisual(image)
 	}
-
+	/**
+	 * function that returns Card Image
+	 */
 	fun frontImageFor(id: Int): ImageVisual {
 		val idString = (id+1).toString()
 		return ImageVisual(
@@ -36,7 +46,9 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
+	/**
+	 * function that returns Start Background
+	 */
 	fun startBackground(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
@@ -44,7 +56,9 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
+	/**
+	 * function that returns Button Design
+	 */
 	fun button(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
@@ -52,7 +66,9 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
+	/**
+	 * function that returns Redo Button Image
+	 */
 	fun redoButton(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
@@ -60,15 +76,19 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
+	/**
+	 * function that returns Hint Button Image
+	 */
 	fun hintButton(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
+				SplendorImageLoader::class.java.getResource(HINT_IMAGE)
 			)
 		)
 	}
-
+	/**
+	 * function that returns Undo Button Image
+	 */
 	fun undoButton(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
@@ -76,7 +96,9 @@ class SplendorImageLoader {
 			)
 		)
 	}
-
+	/**
+	 * function that returns Table Background Image
+	 */
 	fun table(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(

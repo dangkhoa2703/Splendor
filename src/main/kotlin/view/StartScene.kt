@@ -15,7 +15,7 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
     val startNewGameButton = Button(
 		width = 400, height = 100,
-		posX = width/2 - 200, posY = 200,
+		posX = width/2 - 200, posY = 500,
 		text = "Start New Game",
 		font = Font(size = 30),
 		visual = image
@@ -23,7 +23,7 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
     val loadGameButton = Button(
 		width = 400, height = 100,
-		posX = width/2 - 200, posY = 350,
+		posX = width/2 - 200, posY = 650,
 		text = "Load Game",
 		font = Font(size = 30),
 		visual = image
@@ -31,7 +31,7 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
     val loadHighscoreButton = Button(
 		width = 400, height = 100,
-		posX = width/2 - 200, posY = 500,
+		posX = width/2 - 200, posY = 800,
 		text = "Load Highscore",
 		font = Font(size = 30),
 		visual = image
@@ -41,7 +41,8 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 		width = 200, height = 100,
 		posX = 50, posY = 930,
 		text = "Exit",
-		font = Font(size = 28), visual = ColorVisual(221, 136, 136)
+		font = Font(size = 28),
+		visual = image
     )
 
     

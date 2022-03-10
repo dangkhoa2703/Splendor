@@ -18,6 +18,9 @@ import entity.PlayerType
 
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
+	val imageLoader = SplendorImageLoader()
+	val image = imageLoader.button()
+
     private val difficulties: Array<String> = arrayOf(
 	"NEVER USED", "EASY", "MEDIUM", "HARD"
     )
@@ -52,7 +55,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
     private val delButton = Button(
 	width = 50, height = 50,
-	text = "-", visual = ColorVisual(221, 136, 136)
+	text = "-", visual = image
     ).apply {
 	onMouseClicked = {
 	    selection[size*2] = 1
@@ -68,7 +71,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
     private val addButton = Button(
 	width = 50, height = 50,
-	text = "+", visual = ColorVisual(136, 221, 136)
+	text = "+", visual = image
     ).apply {
 	onMouseClicked = {
 	    size = (size + 1)
@@ -84,7 +87,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	width = 200, height = 100,
 	posX = 50, posY = 930,
 	text = "Back",
-	font = Font(size = 28), visual = ColorVisual(136, 136, 221)
+	font = Font(size = 28), visual = image
     )
 
     private fun refreshStartButton() {

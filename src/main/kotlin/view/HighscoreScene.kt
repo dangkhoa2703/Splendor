@@ -7,10 +7,13 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.Highscore
+import entity.SplendorImageLoader
 import tools.aqua.bgw.util.Font.FontStyle
 
 class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
 
+	val imageLoader = SplendorImageLoader()
+	val image = imageLoader.button()
     private val headLineLabel = Label(
 	width = 300, height = 200,
 	posX = width/2 - 150, posY = 50,
@@ -24,7 +27,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	width = 200, height = 100,
 	posX = 50, posY = 930,
 	text = "Back",
-	font = Font(size = 28), visual = ColorVisual(136, 136, 221)
+	font = Font(size = 28), visual = image
     )
 
     private fun loadHighscores(highscoreList: MutableList<Highscore>) {

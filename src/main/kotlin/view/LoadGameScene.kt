@@ -13,6 +13,8 @@ import tools.aqua.bgw.visual.ImageVisual
 
 class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
+	val imageLoader = SplendorImageLoader()
+	val image = imageLoader.button()
     private val fileChooser = FileChooser()
     private var openedFileChooser: Boolean = false
 
@@ -39,7 +41,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	width = 100, height = 50,
 	posX = 1260, posY = 815,
 	text = "Load File", font = Font(size=16),
-	visual = ColorVisual(255, 255, 255)
+	visual = image
     ).apply{
 	onMouseClicked = {
 	    if(!openedFileChooser) {
@@ -58,14 +60,14 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size=18),
-	visual = ColorVisual(136, 221, 136)
+	visual = image
     ) 
 
     val backButton = Button(
 	width = 200, height = 100,
 	posX = 50, posY = 930,
 	text = "Back",
-	font = Font(size = 28), visual = ColorVisual(136, 136, 221)
+	font = Font(size = 28), visual = image
     )
     
     init{
