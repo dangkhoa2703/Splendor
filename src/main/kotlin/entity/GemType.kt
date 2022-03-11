@@ -11,14 +11,14 @@ enum class GemType {
     BLACK,
     YELLOW;
 
-    /** transforms the names to strings */
-    override fun toString() = when(this){
-        GREEN -> "green"
-        RED -> "red"
-        BLUE -> "blue"
-        WHITE -> "white"
-        BLACK -> "black"
-        YELLOW -> "yellow"
-    }
+//    /** transforms the names to strings */
+//    override fun toString() = when(this){
+//        GREEN -> "green"
+//        RED -> "red"
+//        BLUE -> "blue"
+//        WHITE -> "white"
+//        BLACK -> "black"
+//        YELLOW -> "yellow"
+//    }
 
 }

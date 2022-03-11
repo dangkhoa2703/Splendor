@@ -6,6 +6,6 @@ package entity
  *  @property card: tbd
  *  */
 class Turn(
-    var gems: Map<GemType,Int>,
+    val gems: Map<GemType,Int>,
     val card: List<DevCard>
 )

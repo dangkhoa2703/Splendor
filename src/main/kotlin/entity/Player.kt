@@ -28,11 +28,12 @@ class Player (
         GemType.BLACK to 0,
         GemType.BLUE to 0,
         GemType.YELLOW to 0
-    )
+    ),
+    val reservedCards : MutableList<DevCard> = mutableListOf(),
+    val nobleTiles : MutableList<NobleTile> = mutableListOf(),
+    var score : Int = 0,
+    var devCards : MutableList<DevCard> = mutableListOf()
     )
 {
-    var reservedCards : MutableList<DevCard> = mutableListOf()
-    var nobleTiles : MutableList<NobleTile> = mutableListOf()
-    var score : Int = 0
-    var devCards : MutableList<DevCard> = mutableListOf()
+
 }

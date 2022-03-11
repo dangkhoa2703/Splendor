@@ -94,28 +94,34 @@ class GameServiceTest {
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
         checkNotNull(game)
-        val currentGame = game.currentGameState
-        val board = currentGame.board
-
-        currentGame.playerList[1].reservedCards = mutableListOf(
-            root.gameService.createCard(listOf( "0", "0", "0", "0", "2", "1", "0", "1", "diamant")),
-            root.gameService.createCard(listOf( "1", "1", "0", "0", "0", "2", "0", "1", "saphir")),
-            root.gameService.createCard(listOf( "2", "2", "1", "0", "0", "0", "0", "1", "smaragd"))
-        )
-        currentGame.playerList[1].score = 15
-        for (gem in currentGame.board.gems) {
-            gem.setValue(0)
-        }
 
         root.gameService.nextPlayer()
         assertEquals(1,root.gameService.currentPlayerIndex)
-        assertEquals(1,root.gameService.consecutiveNoAction)
-        assertEquals("p2",currentGame.playerList[0].name)
+        assertEquals(0,root.gameService.consecutiveNoAction)
 
-        currentGame.playerList[1].score = 14
+        //next player cannot make any move
+        game.currentGameState.playerList[0].reservedCards.addAll(
+            mutableListOf(
+                root.gameService.createCard(listOf( "0", "0", "0", "0", "2", "1", "0", "1", "diamant")),
+                root.gameService.createCard(listOf( "1", "1", "0", "0", "0", "2", "0", "1", "saphir")),
+                root.gameService.createCard(listOf( "2", "2", "1", "0", "0", "0", "0", "1", "smaragd"))
+            )
+        )
+        for (gem in game.currentGameState.board.gems) {
+            gem.setValue(0)
+        }
+
+
         root.gameService.nextPlayer()
-        assertEquals("p2",currentGame.playerList[0].name)
+        println(game.currentGameState.board.gems.toString())
+        assertEquals(0,root.gameService.currentPlayerIndex)
+        assertEquals(1,root.gameService.consecutiveNoAction)
 
+        game.currentGameState.playerList[0].score = 15
+        root.gameService.nextPlayer()
+        assertEquals("p1",game.currentGameState.playerList[0].name)
+
+        // test if game state are correctly create
         root.gameService.consecutiveNoAction = 0
         root.gameService.nextPlayer()
         val newGame = root.currentGame
@@ -123,17 +129,53 @@ class GameServiceTest {
         val newBoard = newGame.currentGameState.board
         val newPlayerList = newGame.currentGameState.playerList
 
-        assertEquals(board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
-        assertEquals("p2",newPlayerList[0].name)
+        assertEquals(game.currentGameState.board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
+        assertEquals("p1",newPlayerList[0].name)
 
         // test if no player can make any move
-        val tempSortedList = currentGame.playerList.sortedByDescending { player -> player.score }
-        root.gameService.consecutiveNoAction = currentGame.playerList.size
+        val tempSortedList = game.currentGameState.playerList.sortedByDescending { player -> player.score }
+        root.gameService.consecutiveNoAction = game.currentGameState.playerList.size
         root.gameService.nextPlayer()
-        assertEquals(tempSortedList, currentGame.playerList)
+        assertEquals(tempSortedList, game.currentGameState.playerList)
+
+        assertThrows<IllegalStateException> {
+            root.currentGame = null
+            root.gameService.nextPlayer()
+        }
     }
 
+    /**
+     * Test accquirable cards
+     *
+     */
+    @Test
+    fun testAccquirableCards(){
 
+        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
+        root.gameService.startNewGame(playerList2,false,1)
+        val game = root.currentGame
+        checkNotNull(game)
+        val player = game.currentGameState.currentPlayer
+
+        for (gem in player.gems) {
+            gem.setValue(8)
+        }
+
+        val acquirableCards =  root.gameService.acquirableCards()
+        assertEquals(1,acquirableCards[0].first)
+        assertEquals(2,acquirableCards[1].first)
+        assertEquals(3,acquirableCards[2].first)
+
+        assertThrows<IllegalStateException> {
+            root.currentGame = null
+            root.gameService.acquirableCards()
+        }
+    }
+
+    /**
+     * Test check noble tiles
+     *
+     */
     /** tests if checkNobleTiles works correctly */
     @Test
     fun testCheckNobleTiles(){

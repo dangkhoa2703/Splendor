@@ -84,36 +84,23 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun nextPlayer(){
         val game = rootService.currentGame
         checkNotNull(game)
-        val currentGameState = game.currentGameState
-        val board = game.currentGameState.board
+        var currentGameState = game.currentGameState
+        var board = game.currentGameState.board
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
-        val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
-        val affordableCards = acquirableCards().size
-        val reservedCards = currentGameState.playerList[currentPlayerIndex].reservedCards.size
 
-        //check if there are any valid move, if nobody can make a move -> endGame()
-        if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
-//            onAllRefreshables { refreshIfNoValidAction() }
-            consecutiveNoAction++
-        }
-
-        // if one player reach 15 or above -> end game
-        if(currentGameState.playerList[currentPlayerIndex].score >= 15){
+        // if current player reach 15 or above -> end game
+        if(currentGameState.currentPlayer.score >= 15){
             currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
             println(currentGameState.playerList.toString())
 //            onAllRefreshables { refreshAfterEndGame(false) }
             return
         }
-        // if no player can make any move, end game with tie result
-        if(consecutiveNoAction == currentGameState.playerList.size){
-            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
-//            onAllRefreshables { refreshAfterEndGame(true) }
-            return
-        }
 
+        //create new state
         val newPlayerList = mutableListOf<Player>()
-        val newBoard = Board(
+        println(board.gems.toString())
+        val tempBoard = Board(
             board.nobleTiles.toMutableList(),
             board.levelOneCards.toMutableList(),
             board.levelOneOpen.toMutableList(),
@@ -131,21 +118,45 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
                     player.name,
                     player.playerType,
                     player.gems,
-                    player.bonus
+                    player.bonus,
+                    player.reservedCards,
+                    player.nobleTiles,
+                    player.score,
+                    player.devCards
                 )
             )
         }
-
-        //create new GameState
         val newGameState = GameState(
             newPlayerList[currentPlayerIndex],
             newPlayerList,
-            newBoard)
+            tempBoard)
 
         //bind new gameState to chain and set pointer to the newGameState
         newGameState.previous = currentGameState
         game.currentGameState = newGameState
+        val newCurrentGameState = game.currentGameState
+        val newBoard = game.currentGameState.board
 
+        //update currentPlayerIndex and check if the next player can make a valid move
+//        currentPlayerIndex = (currentPlayerIndex + 1) % newCurrentGameState.playerList.size
+        val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
+        val affordableCards = acquirableCards().size
+        val reservedCards = newCurrentGameState.currentPlayer.reservedCards.size
+        println(totalGemsOnBoard)
+        println(affordableCards)
+        println(reservedCards)
+        if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
+//            onAllRefreshables { refreshIfNoValidAction() }
+            consecutiveNoAction++
+            println("plus one")
+        }
+
+        // if no player can make any move, end game with tie result
+        if(consecutiveNoAction == newCurrentGameState.playerList.size){
+            newCurrentGameState.playerList = newCurrentGameState.playerList.sortedByDescending { player -> player.score }
+//            onAllRefreshables { refreshAfterEndGame(true) }
+            return
+        }
 //        onAllRefreshables { refreshAfterNextPlayer }
     }
 
