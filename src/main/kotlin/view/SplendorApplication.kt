@@ -2,10 +2,11 @@ package view
 
 import service.GameService
 import tools.aqua.bgw.core.BoardGameApplication
+import tools.aqua.bgw.core.BoardGameScene
 import service.RootService
 import tools.aqua.bgw.core.MenuScene
 
-class SplendorApplication: BoardGameApplication("Splendor") {
+class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 
     private val rootService= RootService()
 
@@ -14,13 +15,12 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 		}
 	}
 
+
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
 	}
-
-
     }
 
     private val configScene: MenuScene = ConfigScene(rootService).apply {
@@ -28,18 +28,12 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
 	}
-		startButton.onMouseClicked = {
-			this@SplendorApplication.hideMenuScene()
-			this@SplendorApplication.showGameScene(GameScene(rootService))
-		}
     }
 
     private val highscoreScene: MenuScene = HighscoreScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()
 	    this@SplendorApplication.showMenuScene(startScene)
-
-
 	}
     }
     
@@ -58,8 +52,19 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 	}
     }
 
-
+    override fun refreshAfterStartNewGame() {
+	this@SplendorApplication.hideMenuScene()
+	this@SplendorApplication.showGameScene(gameScene)
+    }
+    
     init{
+	rootService.addRefreshables(
+	    this as Refreshable,
+	    gameScene,
+	    loadGameScene as Refreshable , startScene as Refreshable,
+	    highscoreScene as Refreshable, configScene as Refreshable
+	)
+	
 	this.showMenuScene(startScene)
     }
 }

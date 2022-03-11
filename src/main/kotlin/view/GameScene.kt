@@ -15,6 +15,10 @@ import tools.aqua.bgw.core.DEFAULT_CARD_HEIGHT
 import tools.aqua.bgw.core.DEFAULT_CARD_WIDTH
 import tools.aqua.bgw.visual.Visual
 import tools.aqua.bgw.components.container.LinearLayout
+import tools.aqua.bgw.util.BidirectionalMap
+import entity.DevCard
+import entity.NobleTile
+import tools.aqua.bgw.core.Alignment
 
 class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080), Refreshable {
 
@@ -90,50 +94,89 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 	visual = buttonImage
     )
 
-    private val nobleTilesLayout: LinearLayout<CardView> = LinearLayout(
-	posX = 300, posY = 200, width = 1100, height = 250, spacing=30
-    )
-
-    private val nobleTile1 = CardView(
-	300,200,
-	DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT,
-	front= imageLoader.frontImageFor(3), back = cardBack
-    )
-    private val nobleTile2: CardView  = CardView(
-	450,200,
-	DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT,
-	front= Visual.EMPTY, back = cardBack
-    )
-
-    private val nobleTile3 = CardView(
-	600,200,
-	DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT,
-	front= Visual.EMPTY, back = cardBack
-    )
-    private val nobleTile4 = CardView(
-	750,200,
-	DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT,
-	front= Visual.EMPTY, back = cardBack
-    )
-    private val nobleTile5 = CardView(
-	900,200,
-	DEFAULT_CARD_WIDTH, DEFAULT_CARD_HEIGHT,
-	front= Visual.EMPTY, back = cardBack
-    )
-
     //TODO add name of current Player into the currentPlayer label in refreshable Method
     private val currentPlayer = Label(
-	posX = 700, posY= 50, width = 300 , height= 50, text = "TestPlayer", font = Font(size = 30), visual = buttonImage
+	posX = width/2 - 150, posY= 50, width = 300 , height= 50, text = "TestPlayer", font = Font(size = 30), visual = buttonImage
     )
+
+    private val devCardMap: BidirectionalMap<DevCard, CardView> = BidirectionalMap()
+    private val nobleTileMap: BidirectionalMap<NobleTile, CardView> = BidirectionalMap()
+
+    private val gameLists: MutableList<LinearLayout<CardView>> = mutableListOf()
+    private val gameStack: MutableList<LabeledStackView> = mutableListOf()
+
+    override fun refreshAfterStartNewGame() {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found." }
+	
+	devCardMap.clear()
+	nobleTileMap.clear()
+	gameLists.forEach{ list -> list.clear() }
+	gameLists.clear()
+
+	initializeNobleCardsView(game.currentGameState.board.nobleTiles)
+
+	initializeDevCardStack(game.currentGameState.board.levelOneCards, 1)
+	initializeDevCardList(game.currentGameState.board.levelOneOpen, 1)
+	initializeDevCardList(game.currentGameState.board.levelTwoOpen, 2)
+	initializeDevCardList(game.currentGameState.board.levelThreeOpen, 3)
+
+	gameLists.forEach{ addComponents(it) }
+    }
+
+    private fun initializeNobleCardsView(nobleTiles: MutableList<NobleTile>) {
+	val layout: LinearLayout<CardView> = LinearLayout(
+	    posX = width/2 - 550, posY = 100, width = 1100, height = 180, spacing=30,
+	    alignment = Alignment.CENTER
+	)
+
+	for(i in 0..nobleTiles.size-1) {
+	    println(nobleTiles[i].id)
+	    val cardView = CardView(
+		height = 150, width = 95,
+		front = imageLoader.frontImageFor(nobleTiles[i].id),
+		back = cardBack,
+	    )
+	    cardView.showFront()
+	    nobleTileMap.add(nobleTiles[i] to cardView)
+	    layout.add(cardView)
+	}
+	
+	gameLists.add(layout)
+    }
+
+    private fun initializeDevCardStack(devCards: MutableList<DevCard>, level: Int) {
+	
+    }
+
+    private fun initializeDevCardList(devCards: MutableList<DevCard>, level: Int) {
+	val layout: LinearLayout<CardView> = LinearLayout(
+	    posX = width/2 - 440, posY = 650-(level-1)*180, width = 880, height = 180, spacing=30,
+	    alignment = Alignment.CENTER
+	)
+
+	for(i in 0..devCards.size-1) {
+	    val cardView = CardView(
+		height = 150, width = 95,
+		front = imageLoader.frontImageFor(devCards[i].id),
+		back = cardBack,
+	    )
+	    cardView.isDraggable = true
+	    cardView.onDragGestureEnded =
+		{ _, succes ->
+		      if(succes) {
+			  cardView.isDraggable = false
+		      }
+		}
+	    cardView.showFront()
+	    devCardMap.add(devCards[i] to cardView)
+	    layout.add(cardView)
+	}
+	
+	gameLists.add(layout)
+    }
     
     init {
-	println(DEFAULT_CARD_WIDTH)
-	
-	nobleTilesLayout.add(nobleTile1)
-	nobleTilesLayout.add(nobleTile2)
-	nobleTilesLayout.add(nobleTile3)
-	nobleTilesLayout.add(nobleTile4)
-	nobleTilesLayout.add(nobleTile5)
 
 	background = tableImage
 
@@ -148,7 +191,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
 	    hintButton,
 	    saveGameButton,
 	    currentPlayer,
-	    nobleTilesLayout
 	)
     }
 
