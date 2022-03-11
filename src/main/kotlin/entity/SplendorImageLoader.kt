@@ -115,4 +115,20 @@ class SplendorImageLoader {
 			)
 		)
 	}
+
+	fun velocity(index: Int): ImageVisual {
+	    return ImageVisual(
+		ImageIO.read(
+		    SplendorImageLoader::class.java.getResource("/velocity/velocity_"+index.toString()+".png")
+		)
+	    )
+	}
+
+	fun shuffleImage(index: Int): ImageVisual {
+	    return ImageVisual(
+		ImageIO.read(
+		    SplendorImageLoader::class.java.getResource("/shuffle/shuffle_"+index.toString()+".png")
+		)
+	    )
+	}
 }

@@ -15,18 +15,23 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.SwingUtilities
 import entity.PlayerType
+import tools.aqua.bgw.components.uicomponents.CheckBox
 
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
-	val imageLoader = SplendorImageLoader()
-	val image = imageLoader.button()
+    private val imageLoader = SplendorImageLoader()
+    private val image = imageLoader.button()
+
+    private val speeds: Array<String> = arrayOf(
+	" SLOW ", "NORMAL", " FAST "
+    )
 
     private val difficulties: Array<String> = arrayOf(
 	"NEVER USED", "EASY", "MEDIUM", "HARD"
     )
     
     private val selection: IntArray = intArrayOf(
-	1, -2, 1, -2, 1, -2, 1, -2,
+	1, -2, 1, -2, 1, -2, 1, -2, 1, 0
     )
     
     private val headLineLabel = Label(
@@ -36,20 +41,15 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	font = Font(size=44)
     )
 
-    private val bar: Label = Label(
-	posX = 100, posY = 300, width = 10, height = 400,
-	visual = ColorVisual.WHITE
-    )
-
-    private val knob: Label = Label(
-	width = 20, height = 20, visual = ColorVisual.WHITE,
-    )
-
     private var textFields: List<TextField> = listOf()
 
     private var icons: List<Button> = listOf()
 
     private var difficultyTexts: List<Button> = listOf()
+
+    private var speedButtons: List<Button> = listOf()
+
+    private var shuffleButtons: List<Button> = listOf()
 
     private var size = 1
 
@@ -80,8 +80,6 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    refreshStartButton()
 	}
     }
-
-
 
     val backButton = Button(
 	width = 200, height = 100,
@@ -124,6 +122,9 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     }
 
     private fun refresh() {
+	speedButtons.forEach{ it.isVisible= false}
+	shuffleButtons.forEach{ it.isVisible = false}
+	shuffleButtons[selection[9]].isVisible = true
 	textFields.forEach{ it.isVisible = false }
 	icons.forEach{
 	    it.isVisible = false
@@ -138,14 +139,19 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    but.text = difficulties[absIndex]
 	}
 
+	var speedVisible: Boolean = true
 	for(i in 0..size) {
 	    textFields[i].isVisible = true
 	    icons[i].isVisible = true
-	    if(selection[i*2]>0) icons[i].opacity = 1.0
+	    if(selection[i*2]>0) {
+		icons[i].opacity = 1.0
+		speedVisible = false
+	    }
 	    difficultyTexts[i].isVisible = true
 	    if(selection[i*2+1]>0) difficultyTexts[i].opacity = 1.0
 	}
-
+	speedButtons[selection[8]].isVisible = speedVisible
+	
 	addButton.posY = 300.0+(size+1)*150.0
 	delButton.posY = 300.0+(size+1)*150.0
 
@@ -186,14 +192,12 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		    }
 		}
 	    }
-	    val namePair: Pair<String, PlayerType> = Pair("asdf", type)
+	    val namePair: Pair<String, PlayerType> = Pair(textFields[i].text, type)
 	    players+=namePair
 	}
-
-	println(players)
 	
 	rootService.gameService.startNewGame(
-	    players, true, 1
+	    players, selection[9]==0, selection[8]
 	)
     }
 
@@ -209,8 +213,6 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     }
     
     init{
-	
-	val imageLoader = SplendorImageLoader()
 	val humanIcon: ImageVisual = imageLoader.humanIcon()
 	
 	
@@ -248,17 +250,43 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		}
 	    }
 
+	    if(i<3) {
+		val speedButton = Button(
+		    posX = 150, posY = 650, width = 100, height = 100,
+		    text="", visual = imageLoader.velocity(i)
+		).apply {
+		    onMouseClicked = {
+			selection[8]=(selection[8]+1)%3
+			refresh()
+		    }
+		}
+		speedButtons+=speedButton
+	    }
+
+	    if(i<2) {
+		val shuffleButton = Button(
+		    posX = 300, posY = 650, width = 100, height = 100,
+		    text="", visual = imageLoader.shuffleImage(i)
+		).apply{
+		    onMouseClicked = {
+			selection[9]=1-selection[9]
+			refresh()
+		    }
+		}
+		shuffleButtons+=shuffleButton
+	    }
+
 	    textFields+=textField
 	    icons+=icon
 	    difficultyTexts+=difficultyText
+	    
 	}
 	
 	icons.forEach{ addComponents(it)}
 	textFields.forEach{ addComponents(it) }
 	difficultyTexts.forEach{ addComponents(it) }
-
-	knob.posY = bar.posY - knob.height/2
-	knob.posX = bar.posX + bar.width/2 - knob.width/2
+	speedButtons.forEach{ addComponents(it) }
+	shuffleButtons.forEach{ addComponents(it) }
 
 	startButton.isDisabled = true
 
@@ -272,8 +300,6 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    backButton,
 	    addButton,
 	    delButton,
-	    bar,
-	    knob,
 	    startButton,
 	)
     }
