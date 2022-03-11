@@ -12,6 +12,7 @@ private const val REDO_IMAGE = "/redo.png"
 private const val UNDO_IMAGE = "/Undo.png"
 private const val HINT_IMAGE = "/hint.png"
 private const val TABLE_IMAGE = "/Table.jpg"
+private const val CARD_BACK = "/card_back.jpg"
 
 /**
  * Class to load Images from ressources
@@ -103,6 +104,14 @@ class SplendorImageLoader {
 		return ImageVisual(
 			ImageIO.read(
 				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)
+			)
+		)
+	}
+
+	fun cardBack(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(CARD_BACK)
 			)
 		)
 	}
