@@ -14,26 +14,26 @@ import entity.NobleTile
      * @throws IllegalStateException if a previous state does not exist
      */
     fun undo(){
-<span class="nc" id="L17">        val game = rootService.currentGame!!</span>
-<span class="nc bnc" id="L18" title="All 2 branches missed.">        if(game.currentGameState.hasPrevious()){</span>
-<span class="nc" id="L19">            game.currentGameState = game.currentGameState.previous</span>
-<span class="nc" id="L20">            game.validGame = false</span>
+<span class="fc" id="L17">        val game = rootService.currentGame!!</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if(game.currentGameState.hasPrevious()){</span>
+<span class="fc" id="L19">            game.currentGameState = game.currentGameState.previous</span>
+<span class="fc" id="L20">            game.validGame = false</span>
         }
-<span class="nc" id="L22">        else throw IllegalStateException(&quot;a previous state does not exist&quot;)</span>
-<span class="nc" id="L23">    }</span>
+<span class="fc" id="L22">        else throw IllegalStateException(&quot;a previous state does not exist&quot;)</span>
+<span class="fc" id="L23">    }</span>
 
     /**
      * redoes the last undone player-game-action
      * @throws IllegalStateException if a following state does not exist
      */
     fun redo(){
-<span class="nc" id="L30">        val game = rootService.currentGame!!</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">        if(game.currentGameState.hasNext()){</span>
-<span class="nc" id="L32">            game.currentGameState = game.currentGameState.next</span>
-<span class="nc" id="L33">            game.validGame = false</span>
+<span class="fc" id="L30">        val game = rootService.currentGame!!</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if(game.currentGameState.hasNext()){</span>
+<span class="fc" id="L32">            game.currentGameState = game.currentGameState.next</span>
+<span class="fc" id="L33">            game.validGame = false</span>
         }
-<span class="nc" id="L35">        else throw IllegalStateException(&quot;a following state does not exist&quot;)</span>
-<span class="nc" id="L36">    }</span>
+<span class="fc" id="L35">        else throw IllegalStateException(&quot;a following state does not exist&quot;)</span>
+<span class="fc" id="L36">    }</span>
 
     /**
      * @return a hint for the best next move for the current player and current situation
@@ -46,44 +46,39 @@ import entity.NobleTile
      * @param types mutable list of gem types, which player chosen
      */
     fun takeGems(types : MutableList&lt;GemType&gt;){
-<span class="nc" id="L49">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L51">        val currentGameState = game.currentGameState</span>
-<span class="nc" id="L52">        val player = currentGameState.currentPlayer</span>
-<span class="nc" id="L53">        val board = currentGameState.board</span>
+<span class="fc" id="L49">        val game = rootService.currentGame</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        checkNotNull(game)</span>
+<span class="fc" id="L51">        val currentGameState = game.currentGameState</span>
+<span class="fc" id="L52">        val player = currentGameState.currentPlayer</span>
+<span class="fc" id="L53">        val board = currentGameState.board</span>
 
-<span class="nc" id="L55">        val numDiffTypes =</span>
-<span class="nc bnc" id="L56" title="All 8 branches missed.">            currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it &gt; 0 }.size</span>
-<span class="nc" id="L57">        val numDiffGemTypesInTypes = types.map { it.name }.toSet().size</span>
+<span class="fc" id="L55">        val numDiffTypes =</span>
+<span class="pc bpc" id="L56" title="2 of 8 branches missed.">            currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it &gt; 0 }.size</span>
+<span class="fc" id="L57">        val numDiffGemTypesInTypes = types.map { it.name }.toSet().size</span>
 
-        // list of gem types has invalid size
-<span class="nc bnc" id="L60" title="All 6 branches missed.">        if( types.size &gt; 3 || (types.size == 3 &amp;&amp; numDiffGemTypesInTypes != 3)) {</span>
-<span class="nc" id="L61">            throw IllegalArgumentException(&quot;no valid gem/type number&quot;)</span>
+        // list of gem types has invalid size or content
+<span class="fc bfc" id="L60" title="All 6 branches covered.">        if( types.size &gt; 3 || (types.size == 3 &amp;&amp; numDiffGemTypesInTypes != 3)) {</span>
+<span class="fc" id="L61">            throw IllegalArgumentException(&quot;no valid gem/type number&quot;)</span>
         }
-<span class="nc bnc" id="L63" title="All 6 branches missed.">        else if (types.size &lt; 3 &amp;&amp; numDiffGemTypesInTypes == types.size &amp;&amp; types.size != numDiffTypes) {</span>
-<span class="nc" id="L64">            throw IllegalArgumentException(&quot;no valid gem/type number&quot;)</span>
+<span class="pc bpc" id="L63" title="1 of 6 branches missed.">        else if (types.size &lt; 3 &amp;&amp; numDiffGemTypesInTypes == types.size &amp;&amp; types.size != numDiffTypes) {</span>
+<span class="fc" id="L64">            throw IllegalArgumentException(&quot;no valid gem/type number&quot;)</span>
         }
-<span class="nc bnc" id="L66" title="All 6 branches missed.">        else if ( types.size == 2 &amp;&amp; numDiffGemTypesInTypes == 1 &amp;&amp; board.gems.getValue(types[0]) &lt; 4) {</span>
-<span class="nc" id="L67">            throw IllegalArgumentException(&quot;two same gems can only be chosen if four gems of their GemType are left&quot;)</span>
+<span class="pc bpc" id="L66" title="1 of 6 branches missed.">        else if ( types.size == 2 &amp;&amp; numDiffGemTypesInTypes == 1 &amp;&amp; board.gems.getValue(types[0]) &lt; 4) {</span>
+<span class="fc" id="L67">            throw IllegalArgumentException(&quot;two same gems can only be chosen if four gems of their GemType are left&quot;)</span>
         }
-        // take two same gems
-<span class="nc bnc" id="L70" title="All 4 branches missed.">        else if((types.size == 2) &amp;&amp; (types[0] == types[1])) {</span>
-<span class="nc" id="L71">            player.gems[types[0]] = player.gems.getValue(types[0]) + 2</span>
-<span class="nc" id="L72">            board.gems[types[0]] = board.gems.getValue(types[0]) - 2</span>
-        }
-        // take one to three different gems
+        // take gems
         else{
-<span class="nc" id="L76">            types.forEach{ gemType -&gt;</span>
-<span class="nc" id="L77">                player.gems[gemType] = player.gems.getValue(gemType) + 1</span>
-<span class="nc" id="L78">                board.gems[gemType] = board.gems.getValue(gemType) - 1</span>
-<span class="nc" id="L79">            }</span>
+<span class="fc" id="L71">            types.forEach{ gemType -&gt;</span>
+<span class="fc" id="L72">                player.gems[gemType] = player.gems.getValue(gemType) + 1</span>
+<span class="fc" id="L73">                board.gems[gemType] = board.gems.getValue(gemType) - 1</span>
+<span class="fc" id="L74">            }</span>
         }
-<span class="nc" id="L81">        rootService.gameService.consecutiveNoAction = 0</span>
+<span class="fc" id="L76">        rootService.gameService.consecutiveNoAction = 0</span>
         // update GUI
-        //refreshAfterTakeThreeGems()
+        // refreshAfterTakeThreeGems()
         // visit by nobleTiles, check gems
-//        rootService.gameService.endTurn()
-<span class="nc" id="L86">    }</span>
+        // rootService.gameService.endTurn()
+<span class="fc" id="L81">    }</span>
 
     /**
      * player buys a card
@@ -94,48 +89,48 @@ import entity.NobleTile
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
     fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map&lt;GemType, Int&gt;, index: Int){
-<span class="nc" id="L97">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L99">        val board = game.currentGameState.board</span>
-<span class="nc" id="L100">        val player = game.currentGameState.currentPlayer</span>
+<span class="fc" id="L92">        val game = rootService.currentGame</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        checkNotNull(game)</span>
+<span class="fc" id="L94">        val board = game.currentGameState.board</span>
+<span class="fc" id="L95">        val player = game.currentGameState.currentPlayer</span>
 
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if( rootService.gameService.isCardAcquirable(card, payment)) {</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">            if (boardGameCard) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if( rootService.gameService.isCardAcquirable(card, payment)) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if (boardGameCard) {</span>
                 //move card from board to player.devCards
-<span class="nc bnc" id="L105" title="All 3 branches missed.">                when (card.level) {</span>
+<span class="fc bfc" id="L100" title="All 3 branches covered.">                when (card.level) {</span>
                     1 -&gt; {
-<span class="nc" id="L107">                        board.levelOneOpen.remove(card)</span>
+<span class="fc" id="L102">                        board.levelOneOpen.remove(card)</span>
                     }
                     2 -&gt; {
-<span class="nc" id="L110">                        board.levelTwoOpen.remove(card)</span>
+<span class="fc" id="L105">                        board.levelTwoOpen.remove(card)</span>
                     }
                     else -&gt; {
-<span class="nc" id="L113">                        board.levelThreeOpen.remove(card)</span>
+<span class="fc" id="L108">                        board.levelThreeOpen.remove(card)</span>
                     }
                 }
-<span class="nc" id="L116">                rootService.gameService.refill(card.level,index)</span>
+<span class="fc" id="L111">                rootService.gameService.refill(card.level,index)</span>
             } else {
                 //move card from player.reservedCards to player.devCards
-<span class="nc" id="L119">                player.reservedCards.remove(card)</span>
+<span class="fc" id="L114">                player.reservedCards.remove(card)</span>
             }
             //move the gems in payment from player's hand back to board
-<span class="nc" id="L122">            card.price.forEach{ (gemType, value) -&gt;</span>
-<span class="nc" id="L123">                player.gems[gemType] = player.gems.getValue(gemType) - value</span>
-<span class="nc" id="L124">                board.gems[gemType] = board.gems.getValue(gemType) + value</span>
-<span class="nc" id="L125">            }</span>
+<span class="fc" id="L117">            card.price.forEach{ (gemType, value) -&gt;</span>
+<span class="fc" id="L118">                player.gems[gemType] = player.gems.getValue(gemType) - value</span>
+<span class="fc" id="L119">                board.gems[gemType] = board.gems.getValue(gemType) + value</span>
+<span class="fc" id="L120">            }</span>
 
-<span class="nc" id="L127">            player.score += card.prestigePoints</span>
-<span class="nc" id="L128">            player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1</span>
-<span class="nc" id="L129">            player.devCards.add(card)</span>
+<span class="fc" id="L122">            player.score += card.prestigePoints</span>
+<span class="fc" id="L123">            player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1</span>
+<span class="fc" id="L124">            player.devCards.add(card)</span>
         } else
-<span class="nc" id="L131">            throw IllegalArgumentException(&quot;card is not acquirable&quot;)</span>
+<span class="fc" id="L126">            throw IllegalArgumentException(&quot;card is not acquirable&quot;)</span>
 
-<span class="nc" id="L133">        rootService.gameService.consecutiveNoAction = 0</span>
+<span class="fc" id="L128">        rootService.gameService.consecutiveNoAction = 0</span>
         // update GUI
         //refreshAfterBuyCard()
         // visit by nobleTiles, check gems
 //        rootService.gameService.endTurn()
-<span class="nc" id="L138">    }</span>
+<span class="fc" id="L133">    }</span>
 
     /**
      * player reserves a card
@@ -144,80 +139,79 @@ import entity.NobleTile
      * @throws IllegalArgumentException if the player already has three reserved cards
      */
     fun reserveCard(card: DevCard, index:Int){
-<span class="nc" id="L147">        val board = rootService.currentGame!!.currentGameState.board</span>
-<span class="nc" id="L148">        val player = rootService.currentGame!!.currentGameState.currentPlayer</span>
+<span class="fc" id="L142">        val board = rootService.currentGame!!.currentGameState.board</span>
+<span class="fc" id="L143">        val player = rootService.currentGame!!.currentGameState.currentPlayer</span>
 
-<span class="nc bnc" id="L150" title="All 2 branches missed.">        if(player.reservedCards.size &lt; 3) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if(player.reservedCards.size &lt; 3) {</span>
             //move card from board to player.reservedCards
-<span class="nc" id="L152">            val level = card.level</span>
-<span class="nc bnc" id="L153" title="All 3 branches missed.">            if (level == 1) {</span>
-<span class="nc bnc" id="L154" title="All 2 branches missed.">                if(board.levelOneOpen.contains(card)){</span>
-<span class="nc" id="L155">                    board.levelOneOpen.remove(card)</span>
-<span class="nc" id="L156">                    rootService.gameService.refill(card.level,index)</span>
+<span class="fc" id="L147">            val level = card.level</span>
+<span class="fc bfc" id="L148" title="All 3 branches covered.">            if (level == 1) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                if(board.levelOneOpen.contains(card)){</span>
+<span class="fc" id="L150">                    board.levelOneOpen.remove(card)</span>
+<span class="fc" id="L151">                    rootService.gameService.refill(card.level,index)</span>
                 }
-<span class="nc" id="L158">                else{board.levelOneCards.remove(card)}</span>
+<span class="fc" id="L153">                else{board.levelOneCards.remove(card)}</span>
             }else if (level == 2) {
-<span class="nc bnc" id="L160" title="All 2 branches missed.">                if(board.levelTwoOpen.contains(card)){</span>
-<span class="nc" id="L161">                    board.levelTwoOpen.remove(card)</span>
-<span class="nc" id="L162">                    rootService.gameService.refill(card.level,index)</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                if(board.levelTwoOpen.contains(card)){</span>
+<span class="fc" id="L156">                    board.levelTwoOpen.remove(card)</span>
+<span class="fc" id="L157">                    rootService.gameService.refill(card.level,index)</span>
                 }
-<span class="nc" id="L164">                else{board.levelTwoCards.remove(card)}</span>
+<span class="fc" id="L159">                else{board.levelTwoCards.remove(card)}</span>
             }else {
-<span class="nc bnc" id="L166" title="All 2 branches missed.">                if(board.levelThreeOpen.contains(card)){</span>
-<span class="nc" id="L167">                    board.levelThreeOpen.remove(card)</span>
-<span class="nc" id="L168">                    rootService.gameService.refill(card.level,index)</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">                if(board.levelThreeOpen.contains(card)){</span>
+<span class="fc" id="L162">                    board.levelThreeOpen.remove(card)</span>
+<span class="fc" id="L163">                    rootService.gameService.refill(card.level,index)</span>
                 }
-<span class="nc" id="L170">                else{board.levelThreeCards.remove(card)}</span>
+<span class="fc" id="L165">                else{board.levelThreeCards.remove(card)}</span>
             }
-<span class="nc" id="L172">            player.reservedCards.add(card)</span>
+<span class="fc" id="L167">            player.reservedCards.add(card)</span>
 
-<span class="nc" id="L174">            val numberGold = board.gems[GemType.YELLOW]</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">            checkNotNull(numberGold)</span>
-<span class="nc bnc" id="L176" title="All 2 branches missed.">            if(numberGold != 0) {</span>
+<span class="fc" id="L169">            val numberGold = board.gems[GemType.YELLOW]</span>
+<span class="pc bpc" id="L170" title="1 of 4 branches missed.">            if(numberGold != 0) {</span>
                 //move gold gem from game.board to player
-<span class="nc" id="L178">                player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1</span>
-<span class="nc" id="L179">                board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1</span>
+<span class="fc" id="L172">                player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1</span>
+<span class="fc" id="L173">                board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1</span>
             }
         }
         else
-<span class="nc" id="L183">            throw IllegalArgumentException(&quot;a player can only reserve up to three cards&quot;)</span>
+<span class="fc" id="L177">            throw IllegalArgumentException(&quot;a player can only reserve up to three cards&quot;)</span>
 
-<span class="nc" id="L185">        rootService.gameService.consecutiveNoAction = 0</span>
+<span class="fc" id="L179">        rootService.gameService.consecutiveNoAction = 0</span>
         // update GUI
         //refreshAfterReserveCard()
         // visit by nobleTiles, check gems
 //        rootService.gameService.endTurn()
-<span class="nc" id="L190">    }</span>
+<span class="fc" id="L184">    }</span>
 
     /**
      * gives the player a selected nobleTile
      * @param card the selected nobleTile
      */
     fun selectNobleTile(card: NobleTile){
-<span class="nc" id="L197">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L198" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L199">        val board = game.currentGameState.board</span>
-<span class="nc" id="L200">        val player = game.currentGameState.currentPlayer</span>
+<span class="fc" id="L191">        val game = rootService.currentGame</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        checkNotNull(game)</span>
+<span class="fc" id="L193">        val board = game.currentGameState.board</span>
+<span class="fc" id="L194">        val player = game.currentGameState.currentPlayer</span>
 
-<span class="nc" id="L202">        board.nobleTiles.remove(card)</span>
-<span class="nc" id="L203">        player.nobleTiles.add(card)</span>
-<span class="nc" id="L204">        player.score += card.prestigePoints</span>
-<span class="nc" id="L205">    }</span>
+<span class="fc" id="L196">        board.nobleTiles.remove(card)</span>
+<span class="fc" id="L197">        player.nobleTiles.add(card)</span>
+<span class="fc" id="L198">        player.score += card.prestigePoints</span>
+<span class="fc" id="L199">    }</span>
 
     /**
      * return selected gems from the player to the board
      * @param gems the selected gems
      */
     fun returnGems(gems: List&lt;GemType&gt;){
-<span class="nc" id="L212">        val game = rootService.currentGame</span>
-<span class="nc bnc" id="L213" title="All 2 branches missed.">        checkNotNull(game)</span>
-<span class="nc" id="L214">        val board = game.currentGameState.board</span>
-<span class="nc" id="L215">        val player = game.currentGameState.currentPlayer</span>
+<span class="fc" id="L206">        val game = rootService.currentGame</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        checkNotNull(game)</span>
+<span class="fc" id="L208">        val board = game.currentGameState.board</span>
+<span class="fc" id="L209">        val player = game.currentGameState.currentPlayer</span>
 
-<span class="nc" id="L217">        gems.forEach{ gemType -&gt;</span>
-<span class="nc" id="L218">            player.gems[gemType] = player.gems.getValue(gemType) - 1</span>
-<span class="nc" id="L219">            board.gems[gemType] = board.gems.getValue(gemType) + 1</span>
-<span class="nc" id="L220">        }</span>
-<span class="nc" id="L221">    }</span>
+<span class="fc" id="L211">        gems.forEach{ gemType -&gt;</span>
+<span class="fc" id="L212">            player.gems[gemType] = player.gems.getValue(gemType) - 1</span>
+<span class="fc" id="L213">            board.gems[gemType] = board.gems.getValue(gemType) + 1</span>
+<span class="fc" id="L214">        }</span>
+<span class="fc" id="L215">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

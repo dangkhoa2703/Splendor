@@ -13,16 +13,16 @@
 <span class="fc" id="L13">    var playerList: List&lt;Player&gt;,</span>
 <span class="fc" id="L14">    val board: Board )</span>
 {
-<span class="pc" id="L16">    var next: GameState = this</span>
-<span class="pc" id="L17">    var previous: GameState = this</span>
+<span class="fc" id="L16">    var next: GameState = this</span>
+<span class="fc" id="L17">    var previous: GameState = this</span>
 
     /** gets indication whether a gameState follows */
     fun hasNext(): Boolean{
-<span class="nc bnc" id="L21" title="All 2 branches missed.">        return (next != this)</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        return (next != this)</span>
     }
     /** gets indication whether a gameState precedes */
     fun hasPrevious(): Boolean{
-<span class="nc bnc" id="L25" title="All 2 branches missed.">        return (previous != this)</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        return (previous != this)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

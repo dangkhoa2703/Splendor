@@ -72,11 +72,11 @@ pre {
 
 <div>
   <ul>
-    <li>44 number of properties</li>
-    <li>17 number of functions</li>
-    <li>33 number of classes</li>
+    <li>352 number of properties</li>
+    <li>102 number of functions</li>
+    <li>44 number of classes</li>
     <li>4 number of packages</li>
-    <li>17 number of kt files</li>
+    <li>31 number of kt files</li>
   </ul>
 </div>
 
@@ -85,147 +85,99 @@ pre {
 
 <div>
   <ul>
-    <li>712 lines of code (loc)</li>
-    <li>461 source lines of code (sloc)</li>
-    <li>315 logical lines of code (lloc)</li>
-    <li>120 comment lines of code (cloc)</li>
-    <li>78 cyclomatic complexity (mcc)</li>
-    <li>13 cognitive complexity</li>
-    <li>28 number of total code smells</li>
-    <li>26% comment source ratio</li>
-    <li>247 mcc per 1,000 lloc</li>
-    <li>88 code smells per 1,000 lloc</li>
+    <li>3,101 lines of code (loc)</li>
+    <li>2,259 source lines of code (sloc)</li>
+    <li>1,741 logical lines of code (lloc)</li>
+    <li>450 comment lines of code (cloc)</li>
+    <li>283 cyclomatic complexity (mcc)</li>
+    <li>155 cognitive complexity</li>
+    <li>67 number of total code smells</li>
+    <li>19% comment source ratio</li>
+    <li>162 mcc per 1,000 lloc</li>
+    <li>38 code smells per 1,000 lloc</li>
   </ul>
 </div>
 
 
 <h2>Findings</h2>
-<div>Total: 28
-  <h3>comments: 16</h3>
+<div>Total: 67
+  <h3>comments: 29</h3>
   <details id="UndocumentedPublicClass" open="open">
-    <summary class="rule-container"><span class="rule">UndocumentedPublicClass: 12 </span><span class="description">Public classes, interfaces and objects require documentation.</span></summary>
+    <summary class="rule-container"><span class="rule">UndocumentedPublicClass: 7 </span><span class="description">Public classes, interfaces and objects require documentation.</span></summary>
     <ul>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:5:7</span><span class="message">SplendorImageLoader is missing required documentation.</span>
-        <pre><code><span class="lineno">   2 </span>
-<span class="lineno">   3 </span>private const val HUMAN_ICON &quot;./human.jpg&quot;
-<span class="lineno">   4 </span>
-<span class="lineno">   5 </span>class <span class="error">SplendorImageLoader</span> {
-<span class="lineno">   6 </span>    fun getHumanIcon(): ImageVisual {
-<span class="lineno">   7 </span>	val image: BufferedImage = ImageIO.read(
-<span class="lineno">   8 </span>	    CardImageLoader::class.java.getResource(HUMAN_ICON)
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/ConfigScene.kt:20:7</span><span class="message">ConfigScene is missing required documentation.</span>
+        <pre><code><span class="lineno">  17 </span>import entity.PlayerType
+<span class="lineno">  18 </span>import tools.aqua.bgw.components.uicomponents.CheckBox
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span>class <span class="error">ConfigScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
+<span class="lineno">  21 </span>
+<span class="lineno">  22 </span>    private val imageLoader = SplendorImageLoader()
+<span class="lineno">  23 </span>    private val image = imageLoader.button()
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/GameService.kt:3:7</span><span class="message">GameService is missing required documentation.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class <span class="error">GameService</span>(private val rootService: RootService): AbstractRefreshingService() {
-<span class="lineno">   4 </span>    
-<span class="lineno">   5 </span>}
-<span class="lineno">   6 </span>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:23:7</span><span class="message">GameScene is missing required documentation.</span>
+        <pre><code><span class="lineno">  20 </span>import entity.NobleTile
+<span class="lineno">  21 </span>import tools.aqua.bgw.core.Alignment
+<span class="lineno">  22 </span>
+<span class="lineno">  23 </span>class <span class="error">GameScene</span>(private val rootService: RootService): BoardGameScene(1920, 1080), Refreshable {
+<span class="lineno">  24 </span>
+<span class="lineno">  25 </span>    private val imageLoader = SplendorImageLoader()
+<span class="lineno">  26 </span>    private val buttonImage = imageLoader.button()
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/PlayerActionService.kt:3:7</span><span class="message">PlayerActionService is missing required documentation.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class <span class="error">PlayerActionService</span>(private val rootService: RootService): AbstractRefreshingService() {
-<span class="lineno">   4 </span>    
-<span class="lineno">   5 </span>}
-<span class="lineno">   6 </span>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/HighscoreScene.kt:13:7</span><span class="message">HighscoreScene is missing required documentation.</span>
+        <pre><code><span class="lineno">  10 </span>import entity.SplendorImageLoader
+<span class="lineno">  11 </span>import tools.aqua.bgw.util.Font.FontStyle
+<span class="lineno">  12 </span>
+<span class="lineno">  13 </span>class <span class="error">HighscoreScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
+<span class="lineno">  14 </span>
+<span class="lineno">  15 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  16 </span>	val image = imageLoader.button()
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/RootService.kt:5:7</span><span class="message">RootService is missing required documentation.</span>
-        <pre><code><span class="lineno">   2 </span>
-<span class="lineno">   3 </span>import view.Refreshable
-<span class="lineno">   4 </span>
-<span class="lineno">   5 </span>class <span class="error">RootService</span> {
-<span class="lineno">   6 </span>    val gameService = GameService(this)
-<span class="lineno">   7 </span>    val playerActionService = PlayerActionService(this)
-<span class="lineno">   8 </span>
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/ConfigScene.kt:12:7</span><span class="message">ConfigScene is missing required documentation.</span>
-        <pre><code><span class="lineno">   9 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">  10 </span>import tools.aqua.bgw.components.uicomponents.TextField
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>class <span class="error">ConfigScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  13 </span>    private val headLineLabel = Label(
-<span class="lineno">  14 </span>	width = 300, height = 200,
-<span class="lineno">  15 </span>	posX = width/2 - 150, posY = 50,
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:9:7</span><span class="message">GameScene is missing required documentation.</span>
-        <pre><code><span class="lineno">   6 </span>import tools.aqua.bgw.util.Font
-<span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>
-<span class="lineno">   9 </span>class <span class="error">GameScene</span>(private val rootService: RootService): BoardGameScene(1920, 1080), Refreshable {
-<span class="lineno">  10 </span>
-<span class="lineno">  11 </span>    private val quitButton = Button(
-<span class="lineno">  12 </span>	width = 200, height = 100,
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/HighscoreScene.kt:10:7</span><span class="message">HighscoreScene is missing required documentation.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class <span class="error">HighscoreScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300, height = 200,
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/LoadGameScene.kt:10:7</span><span class="message">LoadGameScene is missing required documentation.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class <span class="error">LoadGameScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300, height = 200,
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/LoadGameScene.kt:14:7</span><span class="message">LoadGameScene is missing required documentation.</span>
+        <pre><code><span class="lineno">  11 </span>import entity.SplendorImageLoader
+<span class="lineno">  12 </span>import tools.aqua.bgw.visual.ImageVisual
+<span class="lineno">  13 </span>
+<span class="lineno">  14 </span>class <span class="error">LoadGameScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  17 </span>	val image = imageLoader.button()
 </code></pre>
       </li>
       <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:3:11</span><span class="message">Refreshable is missing required documentation.</span>
         <pre><code><span class="lineno">   1 </span>package view
 <span class="lineno">   2 </span>
 <span class="lineno">   3 </span>interface <span class="error">Refreshable</span> {
-<span class="lineno">   4 </span>    
-<span class="lineno">   5 </span>}
-<span class="lineno">   6 </span>
+<span class="lineno">   4 </span>    fun refreshAfterStartNewGame() : Unit {}
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span>    fun refreshAfterEndGame() : Unit {}
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/SplendorApplication.kt:7:7</span><span class="message">SplendorApplication is missing required documentation.</span>
-        <pre><code><span class="lineno">   4 </span>import service.RootService
-<span class="lineno">   5 </span>import tools.aqua.bgw.core.MenuScene
-<span class="lineno">   6 </span>
-<span class="lineno">   7 </span>class <span class="error">SplendorApplication</span>: BoardGameApplication(&quot;Splendor&quot;) {
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/SplendorApplication.kt:9:7</span><span class="message">SplendorApplication is missing required documentation.</span>
+        <pre><code><span class="lineno">   6 </span>import service.RootService
+<span class="lineno">   7 </span>import tools.aqua.bgw.core.MenuScene
 <span class="lineno">   8 </span>
-<span class="lineno">   9 </span>    private val rootService= RootService()
+<span class="lineno">   9 </span>class <span class="error">SplendorApplication</span>: BoardGameApplication(&quot;Splendor&quot;), Refreshable{
 <span class="lineno">  10 </span>
+<span class="lineno">  11 </span>    private val rootService = RootService()
+<span class="lineno">  12 </span>
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/StartScene.kt:10:7</span><span class="message">StartScene is missing required documentation.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import service.RootService
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class <span class="error">StartScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300 ,height = 200,
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/test/kotlin/entity/CardImageLoaderTest.kt:7:7</span><span class="message">CardImageLoaderTest is missing required documentation.</span>
-        <pre><code><span class="lineno">   4 </span>import javax.imageio.ImageIO
-<span class="lineno">   5 </span>import kotlin.test.*
-<span class="lineno">   6 </span>
-<span class="lineno">   7 </span>class <span class="error">CardImageLoaderTest</span> {
-<span class="lineno">   8 </span>    /**
-<span class="lineno">   9 </span>     * The [CardImageLoader] that is tested with this test class
-<span class="lineno">  10 </span>     */
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/StartScene.kt:11:7</span><span class="message">StartScene is missing required documentation.</span>
+        <pre><code><span class="lineno">   8 </span>import service.RootService
+<span class="lineno">   9 </span>import entity.SplendorImageLoader
+<span class="lineno">  10 </span>
+<span class="lineno">  11 </span>class <span class="error">StartScene</span>(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
+<span class="lineno">  12 </span>
+<span class="lineno">  13 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  14 </span>	val image = imageLoader.button()
 </code></pre>
       </li>
     </ul>
   </details>
   <details id="UndocumentedPublicFunction" open="open">
-    <summary class="rule-container"><span class="rule">UndocumentedPublicFunction: 4 </span><span class="description">Public functions require documentation.</span></summary>
+    <summary class="rule-container"><span class="rule">UndocumentedPublicFunction: 22 </span><span class="description">Public functions require documentation.</span></summary>
     <ul>
       <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/Main.kt:3:5</span><span class="message">The function main is missing documentation.</span>
         <pre><code><span class="lineno">   1 </span>import view.SplendorApplication
@@ -236,166 +188,644 @@ pre {
 <span class="lineno">   6 </span>}
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:6:9</span><span class="message">The function getHumanIcon is missing documentation.</span>
-        <pre><code><span class="lineno">   3 </span>private const val HUMAN_ICON &quot;./human.jpg&quot;
-<span class="lineno">   4 </span>
-<span class="lineno">   5 </span>class SplendorImageLoader {
-<span class="lineno">   6 </span>    fun <span class="error">getHumanIcon</span>(): ImageVisual {
-<span class="lineno">   7 </span>	val image: BufferedImage = ImageIO.read(
-<span class="lineno">   8 </span>	    CardImageLoader::class.java.getResource(HUMAN_ICON)
-<span class="lineno">   9 </span>	)
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:113:6</span><span class="message">The function cardBack is missing documentation.</span>
+        <pre><code><span class="lineno"> 110 </span>		)
+<span class="lineno"> 111 </span>	}
+<span class="lineno"> 112 </span>
+<span class="lineno"> 113 </span>	fun <span class="error">cardBack</span>(): ImageVisual {
+<span class="lineno"> 114 </span>		return ImageVisual(
+<span class="lineno"> 115 </span>			ImageIO.read(
+<span class="lineno"> 116 </span>				SplendorImageLoader::class.java.getResource(CARD_BACK)
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/RootService.kt:9:9</span><span class="message">The function addRefreshables is missing documentation.</span>
-        <pre><code><span class="lineno">   6 </span>    val gameService = GameService(this)
-<span class="lineno">   7 </span>    val playerActionService = PlayerActionService(this)
-<span class="lineno">   8 </span>
-<span class="lineno">   9 </span>    fun <span class="error">addRefreshables</span>(vararg newRefreshables: Refreshable) {
-<span class="lineno">  10 </span>        newRefreshables.forEach { addRefreshable(it) }
-<span class="lineno">  11 </span>    }
-<span class="lineno">  12 </span>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:121:6</span><span class="message">The function velocity is missing documentation.</span>
+        <pre><code><span class="lineno"> 118 </span>		)
+<span class="lineno"> 119 </span>	}
+<span class="lineno"> 120 </span>
+<span class="lineno"> 121 </span>	fun <span class="error">velocity</span>(index: Int): ImageVisual {
+<span class="lineno"> 122 </span>	    return ImageVisual(
+<span class="lineno"> 123 </span>		ImageIO.read(
+<span class="lineno"> 124 </span>		    SplendorImageLoader::class.java.getResource(&quot;/velocity/velocity_&quot;+index.toString()+&quot;.png&quot;)
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/RootService.kt:13:9</span><span class="message">The function addRefreshable is missing documentation.</span>
-        <pre><code><span class="lineno">  10 </span>        newRefreshables.forEach { addRefreshable(it) }
-<span class="lineno">  11 </span>    }
-<span class="lineno">  12 </span>
-<span class="lineno">  13 </span>    fun <span class="error">addRefreshable</span>(newRefreshable: Refreshable) {
-<span class="lineno">  14 </span>	gameService.addRefreshable(newRefreshable)
-<span class="lineno">  15 </span>	playerActionService.addRefreshable(newRefreshable)
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:129:6</span><span class="message">The function shuffleImage is missing documentation.</span>
+        <pre><code><span class="lineno"> 126 </span>	    )
+<span class="lineno"> 127 </span>	}
+<span class="lineno"> 128 </span>
+<span class="lineno"> 129 </span>	fun <span class="error">shuffleImage</span>(index: Int): ImageVisual {
+<span class="lineno"> 130 </span>	    return ImageVisual(
+<span class="lineno"> 131 </span>		ImageIO.read(
+<span class="lineno"> 132 </span>		    SplendorImageLoader::class.java.getResource(&quot;/shuffle/shuffle_&quot;+index.toString()+&quot;.png&quot;)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:137:6</span><span class="message">The function backButton is missing documentation.</span>
+        <pre><code><span class="lineno"> 134 </span>	    )
+<span class="lineno"> 135 </span>	}
+<span class="lineno"> 136 </span>
+<span class="lineno"> 137 </span>	fun <span class="error">backButton</span>(): ImageVisual {
+<span class="lineno"> 138 </span>		return ImageVisual(
+<span class="lineno"> 139 </span>			ImageIO.read(
+<span class="lineno"> 140 </span>				SplendorImageLoader::class.java.getResource(BACK_IMAGE)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:145:6</span><span class="message">The function configBackground is missing documentation.</span>
+        <pre><code><span class="lineno"> 142 </span>		)
+<span class="lineno"> 143 </span>	}
+<span class="lineno"> 144 </span>
+<span class="lineno"> 145 </span>	fun <span class="error">configBackground</span>(): ImageVisual {
+<span class="lineno"> 146 </span>		return ImageVisual(
+<span class="lineno"> 147 </span>			ImageIO.read(
+<span class="lineno"> 148 </span>				SplendorImageLoader::class.java.getResource(CONFIG_BACKGROUND)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:153:6</span><span class="message">The function highscoreBackground is missing documentation.</span>
+        <pre><code><span class="lineno"> 150 </span>		)
+<span class="lineno"> 151 </span>	}
+<span class="lineno"> 152 </span>
+<span class="lineno"> 153 </span>	fun <span class="error">highscoreBackground</span>(): ImageVisual {
+<span class="lineno"> 154 </span>		return ImageVisual(
+<span class="lineno"> 155 </span>			ImageIO.read(
+<span class="lineno"> 156 </span>				SplendorImageLoader::class.java.getResource(HIGHSCORE_BACKGROUND)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:4:9</span><span class="message">The function refreshAfterStartNewGame is missing documentation.</span>
+        <pre><code><span class="lineno">   1 </span>package view
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>interface Refreshable {
+<span class="lineno">   4 </span>    fun <span class="error">refreshAfterStartNewGame</span>() : Unit {}
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span>    fun refreshAfterEndGame() : Unit {}
+<span class="lineno">   7 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:6:9</span><span class="message">The function refreshAfterEndGame is missing documentation.</span>
+        <pre><code><span class="lineno">   3 </span>interface Refreshable {
+<span class="lineno">   4 </span>    fun refreshAfterStartNewGame() : Unit {}
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span>    fun <span class="error">refreshAfterEndGame</span>() : Unit {}
+<span class="lineno">   7 </span>
+<span class="lineno">   8 </span>    fun refreshAfterShowHighscores() : Unit {}
+<span class="lineno">   9 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:8:9</span><span class="message">The function refreshAfterShowHighscores is missing documentation.</span>
+        <pre><code><span class="lineno">   5 </span>
+<span class="lineno">   6 </span>    fun refreshAfterEndGame() : Unit {}
+<span class="lineno">   7 </span>
+<span class="lineno">   8 </span>    fun <span class="error">refreshAfterShowHighscores</span>() : Unit {}
+<span class="lineno">   9 </span>
+<span class="lineno">  10 </span>    fun refreshAfterEndTurn() : Unit {}
+<span class="lineno">  11 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:10:9</span><span class="message">The function refreshAfterEndTurn is missing documentation.</span>
+        <pre><code><span class="lineno">   7 </span>
+<span class="lineno">   8 </span>    fun refreshAfterShowHighscores() : Unit {}
+<span class="lineno">   9 </span>
+<span class="lineno">  10 </span>    fun <span class="error">refreshAfterEndTurn</span>() : Unit {}
+<span class="lineno">  11 </span>
+<span class="lineno">  12 </span>    fun refreshAfterTakeTwoGems() : Unit {}
+<span class="lineno">  13 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:12:9</span><span class="message">The function refreshAfterTakeTwoGems is missing documentation.</span>
+        <pre><code><span class="lineno">   9 </span>
+<span class="lineno">  10 </span>    fun refreshAfterEndTurn() : Unit {}
+<span class="lineno">  11 </span>
+<span class="lineno">  12 </span>    fun <span class="error">refreshAfterTakeTwoGems</span>() : Unit {}
+<span class="lineno">  13 </span>
+<span class="lineno">  14 </span>    fun refreshAfterTakeThreeGems() : Unit {}
+<span class="lineno">  15 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:14:9</span><span class="message">The function refreshAfterTakeThreeGems is missing documentation.</span>
+        <pre><code><span class="lineno">  11 </span>
+<span class="lineno">  12 </span>    fun refreshAfterTakeTwoGems() : Unit {}
+<span class="lineno">  13 </span>
+<span class="lineno">  14 </span>    fun <span class="error">refreshAfterTakeThreeGems</span>() : Unit {}
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>    fun refreshAfterBuyCard() : Unit {}
+<span class="lineno">  17 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:16:9</span><span class="message">The function refreshAfterBuyCard is missing documentation.</span>
+        <pre><code><span class="lineno">  13 </span>
+<span class="lineno">  14 </span>    fun refreshAfterTakeThreeGems() : Unit {}
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>    fun <span class="error">refreshAfterBuyCard</span>() : Unit {}
+<span class="lineno">  17 </span>
+<span class="lineno">  18 </span>    fun refreshAfterReserveCard() : Unit {}
+<span class="lineno">  19 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:18:9</span><span class="message">The function refreshAfterReserveCard is missing documentation.</span>
+        <pre><code><span class="lineno">  15 </span>
+<span class="lineno">  16 </span>    fun refreshAfterBuyCard() : Unit {}
+<span class="lineno">  17 </span>
+<span class="lineno">  18 </span>    fun <span class="error">refreshAfterReserveCard</span>() : Unit {}
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span>    fun refreshAfterLoadGame() : Unit {}
+<span class="lineno">  21 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:20:9</span><span class="message">The function refreshAfterLoadGame is missing documentation.</span>
+        <pre><code><span class="lineno">  17 </span>
+<span class="lineno">  18 </span>    fun refreshAfterReserveCard() : Unit {}
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span>    fun <span class="error">refreshAfterLoadGame</span>() : Unit {}
+<span class="lineno">  21 </span>
+<span class="lineno">  22 </span>    fun refreshAfterUndo() : Unit {}
+<span class="lineno">  23 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:22:9</span><span class="message">The function refreshAfterUndo is missing documentation.</span>
+        <pre><code><span class="lineno">  19 </span>
+<span class="lineno">  20 </span>    fun refreshAfterLoadGame() : Unit {}
+<span class="lineno">  21 </span>
+<span class="lineno">  22 </span>    fun <span class="error">refreshAfterUndo</span>() : Unit {}
+<span class="lineno">  23 </span>
+<span class="lineno">  24 </span>    fun refreshAfterRedo() : Unit {}
+<span class="lineno">  25 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:24:9</span><span class="message">The function refreshAfterRedo is missing documentation.</span>
+        <pre><code><span class="lineno">  21 </span>
+<span class="lineno">  22 </span>    fun refreshAfterUndo() : Unit {}
+<span class="lineno">  23 </span>
+<span class="lineno">  24 </span>    fun <span class="error">refreshAfterRedo</span>() : Unit {}
+<span class="lineno">  25 </span>
+<span class="lineno">  26 </span>    fun refreshScore() : Unit {}
+<span class="lineno">  27 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:26:9</span><span class="message">The function refreshScore is missing documentation.</span>
+        <pre><code><span class="lineno">  23 </span>
+<span class="lineno">  24 </span>    fun refreshAfterRedo() : Unit {}
+<span class="lineno">  25 </span>
+<span class="lineno">  26 </span>    fun <span class="error">refreshScore</span>() : Unit {}
+<span class="lineno">  27 </span>
+<span class="lineno">  28 </span>    fun refreshAfterSelectNobleTile() : Unit {}
+<span class="lineno">  29 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:28:9</span><span class="message">The function refreshAfterSelectNobleTile is missing documentation.</span>
+        <pre><code><span class="lineno">  25 </span>
+<span class="lineno">  26 </span>    fun refreshScore() : Unit {}
+<span class="lineno">  27 </span>
+<span class="lineno">  28 </span>    fun <span class="error">refreshAfterSelectNobleTile</span>() : Unit {}
+<span class="lineno">  29 </span>
+<span class="lineno">  30 </span>    fun refreshAfterShowHint() : Unit {}
+<span class="lineno">  31 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:30:9</span><span class="message">The function refreshAfterShowHint is missing documentation.</span>
+        <pre><code><span class="lineno">  27 </span>
+<span class="lineno">  28 </span>    fun refreshAfterSelectNobleTile() : Unit {}
+<span class="lineno">  29 </span>
+<span class="lineno">  30 </span>    fun <span class="error">refreshAfterShowHint</span>() : Unit {}
+<span class="lineno">  31 </span>
+<span class="lineno">  32 </span>    fun refreshAfterReturnGems(): Unit {}
+<span class="lineno">  33 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:32:9</span><span class="message">The function refreshAfterReturnGems is missing documentation.</span>
+        <pre><code><span class="lineno">  29 </span>
+<span class="lineno">  30 </span>    fun refreshAfterShowHint() : Unit {}
+<span class="lineno">  31 </span>
+<span class="lineno">  32 </span>    fun <span class="error">refreshAfterReturnGems</span>(): Unit {}
+<span class="lineno">  33 </span>}
+<span class="lineno">  34 </span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>complexity: 8</h3>
+  <details id="LongMethod" open="open">
+    <summary class="rule-container"><span class="rule">LongMethod: 2 </span><span class="description">One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/GameService.kt:80:9</span><span class="message">The function nextPlayer is too long (60). The maximum length is 60.</span>
+        <pre><code><span class="lineno">  77 </span>     * create a new game state, link it to the chain and set the pointer to this game state
+<span class="lineno">  78 </span>     * if nobody can make a move or the current Player hat 15 point -&gt; endGame()
+<span class="lineno">  79 </span>     */
+<span class="lineno">  80 </span>    fun <span class="error">nextPlayer</span>(){
+<span class="lineno">  81 </span>        val game = rootService.currentGame
+<span class="lineno">  82 </span>        checkNotNull(game)
+<span class="lineno">  83 </span>        val currentGameState = game.currentGameState
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:12:9</span><span class="message">The function loadGame is too long (61). The maximum length is 60.</span>
+        <pre><code><span class="lineno">   9 </span>class IOService(private val rootService: RootService): AbstractRefreshingService()
+<span class="lineno">  10 </span>{
+<span class="lineno">  11 </span>    /** loads a game saved locally in a file */
+<span class="lineno">  12 </span>    fun <span class="error">loadGame</span>(path: String): Splendor? {
+<span class="lineno">  13 </span>        val gameSettingFile = File(path + &quot;gameSetting&quot;)
+<span class="lineno">  14 </span>        val playerOneFile = File(path + &quot;player1&quot;)
+<span class="lineno">  15 </span>        val playerTwoFile = File(path + &quot;player2&quot;)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="LongParameterList" open="open">
+    <summary class="rule-container"><span class="rule">LongParameterList: 2 </span><span class="description">The more parameters a function has the more complex it is. Long parameter lists are often used to control complex algorithms and violate the Single Responsibility Principle. Prefer functions with short parameter lists.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/Board.kt:15:13</span><span class="message">The constructor(nobleTiles: MutableList&lt;NobleTile&gt;, levelOneCards: MutableList&lt;DevCard&gt;, levelOneOpen: MutableList&lt;DevCard&gt;, levelTwoCards: MutableList&lt;DevCard&gt;, levelTwoOpen: MutableList&lt;DevCard&gt;, levelThreeCards: MutableList&lt;DevCard&gt;, levelThreeOpen: MutableList&lt;DevCard&gt;, gems: MutableMap&lt;GemType,Int&gt;) has too many parameters. The current threshold is set to 7.</span>
+        <pre><code><span class="lineno">  12 </span> *  @property levelThreeOpen: maximum four revealed level one development cards
+<span class="lineno">  13 </span> *  @property gems: list of gems that can be taken by players
+<span class="lineno">  14 </span> * */
+<span class="lineno">  15 </span>class Board <span class="error">(</span>
+<span class="lineno">  16 </span><span class="error">    /** List of noble cards */</span>
+<span class="lineno">  17 </span><span class="error">    val nobleTiles: MutableList&lt;NobleTile&gt; = mutableListOf(),</span>
+<span class="lineno">  18 </span><span class="error"></span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/Player.kt:14:14</span><span class="message">The constructor(name: String, playerType: PlayerType, gems: MutableMap&lt;GemType,Int&gt;, bonus: MutableMap&lt;GemType,Int&gt;, reservedCards: MutableList&lt;DevCard&gt;, nobleTiles: MutableList&lt;NobleTile&gt;, score: Int, devCards: MutableList&lt;DevCard&gt;) has too many parameters. The current threshold is set to 7.</span>
+        <pre><code><span class="lineno">  11 </span> *  @property reservedCards: currently reserved devCards
+<span class="lineno">  12 </span> *  @property devCards: purchased devCards
+<span class="lineno">  13 </span> * */
+<span class="lineno">  14 </span>class Player <span class="error">(</span>
+<span class="lineno">  15 </span><span class="error">    val name : String,</span>
+<span class="lineno">  16 </span><span class="error">    val playerType: PlayerType,</span>
+<span class="lineno">  17 </span><span class="error">    val gems : MutableMap&lt;GemType,Int&gt; = mutableMapOf(</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NestedBlockDepth" open="open">
+    <summary class="rule-container"><span class="rule">NestedBlockDepth: 2 </span><span class="description">Excessive nesting leads to hidden complexity. Prefer extracting code to make it easier to understand.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:89:9</span><span class="message">Function calculateAmountOfRoundsNeededToBuy is nested too deeply.</span>
+        <pre><code><span class="lineno">  86 </span>    /**
+<span class="lineno">  87 </span>     * Help-function that calculates amount of rounds needed to buy the card and therefore additional gems
+<span class="lineno">  88 </span>     */
+<span class="lineno">  89 </span>    fun <span class="error">calculateAmountOfRoundsNeededToBuy</span>(player: Player, card: DevCard): Pair&lt;Int, Int&gt; {
+<span class="lineno">  90 </span>        var result: Int = 0
+<span class="lineno">  91 </span>        var leftOverGems: Int = 0
+<span class="lineno">  92 </span>        var missingGems: MutableMap&lt;GemType, Int&gt; = calculateMissingGems(player, card.price)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:102:17</span><span class="message">Function readDevCards is nested too deeply.</span>
+        <pre><code><span class="lineno">  99 </span>    }
+<span class="lineno"> 100 </span>
+<span class="lineno"> 101 </span>
+<span class="lineno"> 102 </span>    private fun <span class="error">readDevCards</span>(list :List&lt;String&gt;): MutableList&lt;DevCard&gt;{
+<span class="lineno"> 103 </span>        val devCards = mutableListOf&lt;DevCard&gt;()
+<span class="lineno"> 104 </span>        val cardConfigFile = File(&quot;src/main/resources/splendor-entwicklungskarten.csv&quot;)
+<span class="lineno"> 105 </span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="TooManyFunctions" open="open">
+    <summary class="rule-container"><span class="rule">TooManyFunctions: 2 </span><span class="description">Too many functions inside a/an file/class/object/interface always indicate a violation of the single responsibility principle. Maybe the file/class/object/interface wants to manage too many things at once. Extract functionality which clearly belongs together.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/SplendorImageLoader.kt:22:7</span><span class="message">Class 'SplendorImageLoader' with '15' functions detected. Defined threshold inside classes is set to '11'</span>
+        <pre><code><span class="lineno">  19 </span>/**
+<span class="lineno">  20 </span> * Class to load Images from ressources
+<span class="lineno">  21 </span> */
+<span class="lineno">  22 </span>class <span class="error">SplendorImageLoader</span> {
+<span class="lineno">  23 </span>	/**
+<span class="lineno">  24 </span>	 * function that returns Human Icon
+<span class="lineno">  25 </span>	 */
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:3:11</span><span class="message">Interface 'Refreshable' with '15' functions detected. Defined threshold inside interfaces is set to '11'</span>
+        <pre><code><span class="lineno">   1 </span>package view
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>interface <span class="error">Refreshable</span> {
+<span class="lineno">   4 </span>    fun refreshAfterStartNewGame() : Unit {}
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span>    fun refreshAfterEndGame() : Unit {}
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>empty-blocks: 4</h3>
+  <details id="EmptyClassBlock" open="open">
+    <summary class="rule-container"><span class="rule">EmptyClassBlock: 1 </span><span class="description">Empty block of code detected. As they serve no purpose they should be removed.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/entity/Player.kt:37:1</span><span class="message">The class or object Player is empty.</span>
+        <pre><code><span class="lineno">  34 </span>    var score : Int = 0,
+<span class="lineno">  35 </span>    var devCards : MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  36 </span>    )
+<span class="lineno">  37 </span><span class="error">{</span>
+<span class="lineno">  38 </span><span class="error"></span>
+<span class="lineno">  39 </span><span class="error">}</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="EmptyFunctionBlock" open="open">
+    <summary class="rule-container"><span class="rule">EmptyFunctionBlock: 3 </span><span class="description">Empty block of code detected. As they serve no purpose they should be removed.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:215:5</span><span class="message">This empty block of code can be removed.</span>
+        <pre><code><span class="lineno"> 212 </span>
+<span class="lineno"> 213 </span>    /** deletes the file in the specified file path */
+<span class="lineno"> 214 </span>    fun deleteGame(path : String)
+<span class="lineno"> 215 </span>    <span class="error">{</span>
+<span class="lineno"> 216 </span><span class="error">    }</span>
+<span class="lineno"> 217 </span>
+<span class="lineno"> 218 </span>    /** saves a highscore to a file including highscores of different games */
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:220:5</span><span class="message">This empty block of code can be removed.</span>
+        <pre><code><span class="lineno"> 217 </span>
+<span class="lineno"> 218 </span>    /** saves a highscore to a file including highscores of different games */
+<span class="lineno"> 219 </span>    fun saveHighscore(score : Highscore)
+<span class="lineno"> 220 </span>    <span class="error">{</span>
+<span class="lineno"> 221 </span><span class="error">    }</span>
+<span class="lineno"> 222 </span>
+<span class="lineno"> 223 </span>    /** loads a file including highscores */
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:148:84</span><span class="message">This empty block of code can be removed.</span>
+        <pre><code><span class="lineno"> 145 </span>	gameLists.add(layout)
+<span class="lineno"> 146 </span>    }
+<span class="lineno"> 147 </span>
+<span class="lineno"> 148 </span>    private fun initializeDevCardStack(devCards: MutableList&lt;DevCard&gt;, level: Int) <span class="error">{</span>
+<span class="lineno"> 149 </span><span class="error">	</span>
+<span class="lineno"> 150 </span><span class="error">    }</span>
+<span class="lineno"> 151 </span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>style: 26</h3>
+  <details id="FunctionOnlyReturningConstant" open="open">
+    <summary class="rule-container"><span class="rule">FunctionOnlyReturningConstant: 3 </span><span class="description">A function that only returns a constant is misleading. Consider declaring a constant instead</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:13:9</span><span class="message">calculateBestTurn is returning a constant. Prefer declaring a constant instead.</span>
+        <pre><code><span class="lineno">  10 </span>
+<span class="lineno">  11 </span>    /** calculates the best possible Turn for the current player and returns an object of type Turn which includes
+<span class="lineno">  12 </span>     *  a map of gems and a list of at most one card whose contents depend on the TurnType */
+<span class="lineno">  13 </span>    fun <span class="error">calculateBestTurn</span>(player : Player, gameState: GameState) : Turn?
+<span class="lineno">  14 </span>    {
+<span class="lineno">  15 </span>        return null
 <span class="lineno">  16 </span>    }
 </code></pre>
       </li>
-    </ul>
-  </details>
-  <h3>empty-blocks: 3</h3>
-  <details id="EmptyClassBlock" open="open">
-    <summary class="rule-container"><span class="rule">EmptyClassBlock: 3 </span><span class="description">Empty block of code detected. As they serve no purpose they should be removed.</span></summary>
-    <ul>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/GameService.kt:3:86</span><span class="message">The class or object GameService is empty.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class GameService(private val rootService: RootService): AbstractRefreshingService() <span class="error">{</span>
-<span class="lineno">   4 </span><span class="error">    </span>
-<span class="lineno">   5 </span><span class="error">}</span>
-<span class="lineno">   6 </span>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:224:9</span><span class="message">loadHighscore is returning a constant. Prefer declaring a constant instead.</span>
+        <pre><code><span class="lineno"> 221 </span>    }
+<span class="lineno"> 222 </span>
+<span class="lineno"> 223 </span>    /** loads a file including highscores */
+<span class="lineno"> 224 </span>    fun <span class="error">loadHighscore</span>(path : String) : List&lt;Highscore&gt;?
+<span class="lineno"> 225 </span>    {
+<span class="lineno"> 226 </span>        return  null
+<span class="lineno"> 227 </span>    }
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/PlayerActionService.kt:3:94</span><span class="message">The class or object PlayerActionService is empty.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class PlayerActionService(private val rootService: RootService): AbstractRefreshingService() <span class="error">{</span>
-<span class="lineno">   4 </span><span class="error">    </span>
-<span class="lineno">   5 </span><span class="error">}</span>
-<span class="lineno">   6 </span>
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/Refreshable.kt:3:23</span><span class="message">The class or object Refreshable is empty.</span>
-        <pre><code><span class="lineno">   1 </span>package view
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>interface Refreshable <span class="error">{</span>
-<span class="lineno">   4 </span><span class="error">    </span>
-<span class="lineno">   5 </span><span class="error">}</span>
-<span class="lineno">   6 </span>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/PlayerActionService.kt:41:9</span><span class="message">showHint is returning a constant. Prefer declaring a constant instead.</span>
+        <pre><code><span class="lineno">  38 </span>    /**
+<span class="lineno">  39 </span>     * @return a hint for the best next move for the current player and current situation
+<span class="lineno">  40 </span>     */
+<span class="lineno">  41 </span>    fun <span class="error">showHint</span>():String{return &quot;&quot;}
+<span class="lineno">  42 </span>
+<span class="lineno">  43 </span>    //player-game-action
+<span class="lineno">  44 </span>    /**
 </code></pre>
       </li>
     </ul>
   </details>
-  <h3>style: 9</h3>
-  <details id="ReturnCount" open="open">
-    <summary class="rule-container"><span class="rule">ReturnCount: 1 </span><span class="description">Restrict the number of return statements in methods.</span></summary>
+  <details id="MaxLineLength" open="open">
+    <summary class="rule-container"><span class="rule">MaxLineLength: 6 </span><span class="description">Line detected that is longer than the defined maximum line length in the code style.</span></summary>
     <ul>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/test/kotlin/entity/CardImageLoaderTest.kt:78:33</span><span class="message">Function sameAs has 4 return statements which exceeds the limit of 2.</span>
-        <pre><code><span class="lineno">  75 </span> * Tests equality of two [BufferedImage]s by first checking if they have the same dimensions
-<span class="lineno">  76 </span> * and then comparing every pixels' RGB value.
-<span class="lineno">  77 </span> */
-<span class="lineno">  78 </span>private infix fun BufferedImage.<span class="error">sameAs</span>(other: Any?): Boolean {
-<span class="lineno">  79 </span>
-<span class="lineno">  80 </span>    // if the other is not even a BufferedImage, we are done already
-<span class="lineno">  81 </span>    if (other !is BufferedImage) {
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:19:6</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  16 </span>    }
+<span class="lineno">  17 </span>
+<span class="lineno">  18 </span>    /**
+<span class="lineno">  19 </span>     <span class="error">*</span> Help-function that calculates cost-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  20 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  21 </span>     */
+<span class="lineno">  22 </span>    fun calculateDevCardCostScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List&lt;Player&gt;) : Map&lt;DevCard, Double&gt; {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:22:5</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  19 </span>     * Help-function that calculates cost-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  20 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  21 </span>     */
+<span class="lineno">  22 </span>    <span class="error">fun</span> calculateDevCardCostScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List&lt;Player&gt;) : Map&lt;DevCard, Double&gt; {
+<span class="lineno">  23 </span>        val cardsOnBoard: MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  24 </span>        cardsOnBoard.addAll(board.levelOneOpen)
+<span class="lineno">  25 </span>        cardsOnBoard.addAll(board.levelTwoOpen)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:38:21</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  35 </span>                if(devCard.calculateGemPrice() == previousCard.calculateGemPrice()) {
+<span class="lineno">  36 </span>                    result[devCard] = previousCardScore
+<span class="lineno">  37 </span>                } else {
+<span class="lineno">  38 </span>                    <span class="error">result[devCard] = previousCardScore - (devCard.calculateGemPrice() - previousCard.calculateGemPrice()) * 1 / deltaCost</span>
+<span class="lineno">  39 </span>                }
+<span class="lineno">  40 </span>            }
+<span class="lineno">  41 </span>        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:46:6</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  43 </span>    }
+<span class="lineno">  44 </span>
+<span class="lineno">  45 </span>    /**
+<span class="lineno">  46 </span>     <span class="error">*</span> Help-function that calculates purchasing-power-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  47 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  48 </span>     */
+<span class="lineno">  49 </span>    fun calculateDevCardPurchasingPowerScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List&lt;Player&gt;) : Map&lt;DevCard, Double&gt; {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:49:5</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  46 </span>     * Help-function that calculates purchasing-power-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  47 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  48 </span>     */
+<span class="lineno">  49 </span>    <span class="error">fun</span> calculateDevCardPurchasingPowerScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List&lt;Player&gt;) : Map&lt;DevCard, Double&gt; {
+<span class="lineno">  50 </span>        val cardsOnBoard: MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  51 </span>        cardsOnBoard.addAll(board.levelOneOpen)
+<span class="lineno">  52 </span>        cardsOnBoard.addAll(board.levelTwoOpen)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:58:9</span><span class="message">Line detected that is longer than the defined maximum line length in the code style.</span>
+        <pre><code><span class="lineno">  55 </span>        cardsOnBoard.forEach {
+<span class="lineno">  56 </span>            mapOfRoundsNeeded[it] = calculateAmountOfRoundsNeededToBuy(player, it)
+<span class="lineno">  57 </span>        }
+<span class="lineno">  58 </span>        <span class="error">cardsOnBoard.sortWith(compareBy&lt;DevCard&gt; { mapOfRoundsNeeded[it]!!.first }.thenByDescending { mapOfRoundsNeeded[it]!!.second })</span>
+<span class="lineno">  59 </span>        var result: MutableMap&lt;DevCard, Double&gt; = mutableMapOf()
+<span class="lineno">  60 </span>        result[cardsOnBoard[0]] = 1.0
+<span class="lineno">  61 </span>        cardsOnBoard.forEachIndexed { index, devCard -&gt;
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="ThrowsCount" open="open">
+    <summary class="rule-container"><span class="rule">ThrowsCount: 1 </span><span class="description">Restrict the number of throw statements in methods.</span></summary>
+    <ul>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/PlayerActionService.kt:48:9</span><span class="message">Too many throw statements in the function takeGems. The maximum number of allowed throw statements is 2.</span>
+        <pre><code><span class="lineno">  45 </span>     * Move gems from to board to player's hand
+<span class="lineno">  46 </span>     * @param types mutable list of gem types, which player chosen
+<span class="lineno">  47 </span>     */
+<span class="lineno">  48 </span>    fun <span class="error">takeGems</span>(types : MutableList&lt;GemType&gt;){
+<span class="lineno">  49 </span>        val game = rootService.currentGame
+<span class="lineno">  50 </span>        checkNotNull(game)
+<span class="lineno">  51 </span>        val currentGameState = game.currentGameState
 </code></pre>
       </li>
     </ul>
   </details>
   <details id="UnusedPrivateMember" open="open">
-    <summary class="rule-container"><span class="rule">UnusedPrivateMember: 8 </span><span class="description">Private member is unused.</span></summary>
+    <summary class="rule-container"><span class="rule">UnusedPrivateMember: 16 </span><span class="description">Private member is unused.</span></summary>
     <ul>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/GameService.kt:3:19</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class GameService(<span class="error">private val rootService: RootService</span>): AbstractRefreshingService() {
-<span class="lineno">   4 </span>    
-<span class="lineno">   5 </span>}
-<span class="lineno">   6 </span>
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/PlayerActionService.kt:3:27</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   1 </span>package service
-<span class="lineno">   2 </span>
-<span class="lineno">   3 </span>class PlayerActionService(<span class="error">private val rootService: RootService</span>): AbstractRefreshingService() {
-<span class="lineno">   4 </span>    
-<span class="lineno">   5 </span>}
-<span class="lineno">   6 </span>
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/ConfigScene.kt:12:19</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   9 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">  10 </span>import tools.aqua.bgw.components.uicomponents.TextField
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>class ConfigScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  13 </span>    private val headLineLabel = Label(
-<span class="lineno">  14 </span>	width = 300, height = 200,
-<span class="lineno">  15 </span>	posX = width/2 - 150, posY = 50,
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/ConfigScene.kt:22:5</span><span class="message">Private property icons is unused.</span>
-        <pre><code><span class="lineno">  19 </span>
-<span class="lineno">  20 </span>    private val textFields: MutableList&lt;TextField&gt; = mutableListOf()
-<span class="lineno">  21 </span>
-<span class="lineno">  22 </span>    <span class="error">private val icons: MutableList&lt;CardViw&gt; = mutableListOf()</span>
-<span class="lineno">  23 </span>
-<span class="lineno">  24 </span>    private val tokenImage: ImageVisual
-<span class="lineno">  25 </span>
-</code></pre>
-      </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:9:17</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   6 </span>import tools.aqua.bgw.util.Font
-<span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>
-<span class="lineno">   9 </span>class GameScene(<span class="error">private val rootService: RootService</span>): BoardGameScene(1920, 1080), Refreshable {
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:8:17</span><span class="message">Private property rootService is unused.</span>
+        <pre><code><span class="lineno">   5 </span>/**
+<span class="lineno">   6 </span> *  Class for artificial intelligence
+<span class="lineno">   7 </span> * */
+<span class="lineno">   8 </span>class AIService(<span class="error">private val rootService: RootService</span>): AbstractRefreshingService()
+<span class="lineno">   9 </span>{
 <span class="lineno">  10 </span>
-<span class="lineno">  11 </span>    private val quitButton = Button(
-<span class="lineno">  12 </span>	width = 200, height = 100,
+<span class="lineno">  11 </span>    /** calculates the best possible Turn for the current player and returns an object of type Turn which includes
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/HighscoreScene.kt:10:22</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class HighscoreScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300, height = 200,
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:13:27</span><span class="message">Function parameter player is unused.</span>
+        <pre><code><span class="lineno">  10 </span>
+<span class="lineno">  11 </span>    /** calculates the best possible Turn for the current player and returns an object of type Turn which includes
+<span class="lineno">  12 </span>     *  a map of gems and a list of at most one card whose contents depend on the TurnType */
+<span class="lineno">  13 </span>    fun calculateBestTurn(<span class="error">player : Player</span>, gameState: GameState) : Turn?
+<span class="lineno">  14 </span>    {
+<span class="lineno">  15 </span>        return null
+<span class="lineno">  16 </span>    }
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/LoadGameScene.kt:10:21</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import tools.aqua.bgw.components.uicomponents.Button
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class LoadGameScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300, height = 200,
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:13:44</span><span class="message">Function parameter gameState is unused.</span>
+        <pre><code><span class="lineno">  10 </span>
+<span class="lineno">  11 </span>    /** calculates the best possible Turn for the current player and returns an object of type Turn which includes
+<span class="lineno">  12 </span>     *  a map of gems and a list of at most one card whose contents depend on the TurnType */
+<span class="lineno">  13 </span>    fun calculateBestTurn(player : Player, <span class="error">gameState: GameState</span>) : Turn?
+<span class="lineno">  14 </span>    {
+<span class="lineno">  15 </span>        return null
+<span class="lineno">  16 </span>    }
 </code></pre>
       </li>
-      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/StartScene.kt:10:18</span><span class="message">Private property rootService is unused.</span>
-        <pre><code><span class="lineno">   7 </span>import tools.aqua.bgw.visual.ColorVisual
-<span class="lineno">   8 </span>import service.RootService
-<span class="lineno">   9 </span>
-<span class="lineno">  10 </span>class StartScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
-<span class="lineno">  11 </span>
-<span class="lineno">  12 </span>    private val headLineLabel = Label(
-<span class="lineno">  13 </span>	width = 300 ,height = 200,
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:22:68</span><span class="message">Function parameter player is unused.</span>
+        <pre><code><span class="lineno">  19 </span>     * Help-function that calculates cost-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  20 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  21 </span>     */
+<span class="lineno">  22 </span>    fun calculateDevCardCostScores(devCard: DevCard, board: Board, <span class="error">player: Player</span>, enemyPlayer: List&lt;Player&gt;) : Map&lt;DevCard, Double&gt; {
+<span class="lineno">  23 </span>        val cardsOnBoard: MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  24 </span>        cardsOnBoard.addAll(board.levelOneOpen)
+<span class="lineno">  25 </span>        cardsOnBoard.addAll(board.levelTwoOpen)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:22:84</span><span class="message">Function parameter enemyPlayer is unused.</span>
+        <pre><code><span class="lineno">  19 </span>     * Help-function that calculates cost-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  20 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  21 </span>     */
+<span class="lineno">  22 </span>    fun calculateDevCardCostScores(devCard: DevCard, board: Board, player: Player, <span class="error">enemyPlayer: List&lt;Player&gt;</span>) : Map&lt;DevCard, Double&gt; {
+<span class="lineno">  23 </span>        val cardsOnBoard: MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  24 </span>        cardsOnBoard.addAll(board.levelOneOpen)
+<span class="lineno">  25 </span>        cardsOnBoard.addAll(board.levelTwoOpen)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/AIService.kt:49:95</span><span class="message">Function parameter enemyPlayer is unused.</span>
+        <pre><code><span class="lineno">  46 </span>     * Help-function that calculates purchasing-power-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+<span class="lineno">  47 </span>     * @return Map of all cards with respective scores
+<span class="lineno">  48 </span>     */
+<span class="lineno">  49 </span>    fun calculateDevCardPurchasingPowerScores(devCard: DevCard, board: Board, player: Player, <span class="error">enemyPlayer: List&lt;Player&gt;</span>) : Map&lt;DevCard, Double&gt; {
+<span class="lineno">  50 </span>        val cardsOnBoard: MutableList&lt;DevCard&gt; = mutableListOf()
+<span class="lineno">  51 </span>        cardsOnBoard.addAll(board.levelOneOpen)
+<span class="lineno">  52 </span>        cardsOnBoard.addAll(board.levelTwoOpen)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:214:20</span><span class="message">Function parameter path is unused.</span>
+        <pre><code><span class="lineno"> 211 </span>    }
+<span class="lineno"> 212 </span>
+<span class="lineno"> 213 </span>    /** deletes the file in the specified file path */
+<span class="lineno"> 214 </span>    fun deleteGame(<span class="error">path : String</span>)
+<span class="lineno"> 215 </span>    {
+<span class="lineno"> 216 </span>    }
+<span class="lineno"> 217 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:219:23</span><span class="message">Function parameter score is unused.</span>
+        <pre><code><span class="lineno"> 216 </span>    }
+<span class="lineno"> 217 </span>
+<span class="lineno"> 218 </span>    /** saves a highscore to a file including highscores of different games */
+<span class="lineno"> 219 </span>    fun saveHighscore(<span class="error">score : Highscore</span>)
+<span class="lineno"> 220 </span>    {
+<span class="lineno"> 221 </span>    }
+<span class="lineno"> 222 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/service/IOService.kt:224:23</span><span class="message">Function parameter path is unused.</span>
+        <pre><code><span class="lineno"> 221 </span>    }
+<span class="lineno"> 222 </span>
+<span class="lineno"> 223 </span>    /** loads a file including highscores */
+<span class="lineno"> 224 </span>    fun loadHighscore(<span class="error">path : String</span>) : List&lt;Highscore&gt;?
+<span class="lineno"> 225 </span>    {
+<span class="lineno"> 226 </span>        return  null
+<span class="lineno"> 227 </span>    }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/ConfigScene.kt:26:5</span><span class="message">Private property speeds is unused.</span>
+        <pre><code><span class="lineno">  23 </span>    private val image = imageLoader.button()
+<span class="lineno">  24 </span>	private val backgroundImage = imageLoader.configBackground()
+<span class="lineno">  25 </span>
+<span class="lineno">  26 </span>    <span class="error">private val speeds: Array&lt;String&gt; = arrayOf(</span>
+<span class="lineno">  27 </span><span class="error">	&quot; SLOW &quot;, &quot;NORMAL&quot;, &quot; FAST &quot;</span>
+<span class="lineno">  28 </span><span class="error">    )</span>
+<span class="lineno">  29 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:106:5</span><span class="message">Private property gameStack is unused.</span>
+        <pre><code><span class="lineno"> 103 </span>    private val nobleTileMap: BidirectionalMap&lt;NobleTile, CardView&gt; = BidirectionalMap()
+<span class="lineno"> 104 </span>
+<span class="lineno"> 105 </span>    private val gameLists: MutableList&lt;LinearLayout&lt;CardView&gt;&gt; = mutableListOf()
+<span class="lineno"> 106 </span>    <span class="error">private val gameStack: MutableList&lt;LabeledStackView&gt; = mutableListOf()</span>
+<span class="lineno"> 107 </span>
+<span class="lineno"> 108 </span>    override fun refreshAfterStartNewGame() {
+<span class="lineno"> 109 </span>	val game = rootService.currentGame
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:148:40</span><span class="message">Function parameter devCards is unused.</span>
+        <pre><code><span class="lineno"> 145 </span>	gameLists.add(layout)
+<span class="lineno"> 146 </span>    }
+<span class="lineno"> 147 </span>
+<span class="lineno"> 148 </span>    private fun initializeDevCardStack(<span class="error">devCards: MutableList&lt;DevCard&gt;</span>, level: Int) {
+<span class="lineno"> 149 </span>	
+<span class="lineno"> 150 </span>    }
+<span class="lineno"> 151 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/GameScene.kt:148:72</span><span class="message">Function parameter level is unused.</span>
+        <pre><code><span class="lineno"> 145 </span>	gameLists.add(layout)
+<span class="lineno"> 146 </span>    }
+<span class="lineno"> 147 </span>
+<span class="lineno"> 148 </span>    private fun initializeDevCardStack(devCards: MutableList&lt;DevCard&gt;, <span class="error">level: Int</span>) {
+<span class="lineno"> 149 </span>	
+<span class="lineno"> 150 </span>    }
+<span class="lineno"> 151 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/HighscoreScene.kt:13:22</span><span class="message">Private property rootService is unused.</span>
+        <pre><code><span class="lineno">  10 </span>import entity.SplendorImageLoader
+<span class="lineno">  11 </span>import tools.aqua.bgw.util.Font.FontStyle
+<span class="lineno">  12 </span>
+<span class="lineno">  13 </span>class HighscoreScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable{
+<span class="lineno">  14 </span>
+<span class="lineno">  15 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  16 </span>	val image = imageLoader.button()
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/LoadGameScene.kt:14:21</span><span class="message">Private property rootService is unused.</span>
+        <pre><code><span class="lineno">  11 </span>import entity.SplendorImageLoader
+<span class="lineno">  12 </span>import tools.aqua.bgw.visual.ImageVisual
+<span class="lineno">  13 </span>
+<span class="lineno">  14 </span>class LoadGameScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  17 </span>	val image = imageLoader.button()
+</code></pre>
+      </li>
+      <li><span class="location">E:/Documents/tu/Kotlin/Projekt2/src/main/kotlin/view/StartScene.kt:11:18</span><span class="message">Private property rootService is unused.</span>
+        <pre><code><span class="lineno">   8 </span>import service.RootService
+<span class="lineno">   9 </span>import entity.SplendorImageLoader
+<span class="lineno">  10 </span>
+<span class="lineno">  11 </span>class StartScene(<span class="error">private val rootService: RootService</span>): MenuScene(1920, 1080), Refreshable {
+<span class="lineno">  12 </span>
+<span class="lineno">  13 </span>	val imageLoader = SplendorImageLoader()
+<span class="lineno">  14 </span>	val image = imageLoader.button()
 </code></pre>
       </li>
     </ul>
@@ -403,7 +833,7 @@ pre {
 </div>
 
 
-generated with <a href="https://detekt.github.io/">detekt version 1.18.0-RC3</a> on 2022-03-04 18:46:14 UTC.
+generated with <a href="https://detekt.github.io/">detekt version 1.18.0-RC3</a> on 2022-03-11 19:00:35 UTC.
 
 </body>
 </html>

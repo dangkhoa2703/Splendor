@@ -11,80 +11,151 @@ private const val BUTTON_IMAGE = &quot;/button.jpg&quot;
 private const val REDO_IMAGE = &quot;/redo.png&quot;
 private const val UNDO_IMAGE = &quot;/Undo.png&quot;
 private const val HINT_IMAGE = &quot;/hint.png&quot;
-private const val TABLE_IMAGE = &quot;/Table.png&quot;
-
-<span class="nc" id="L16">class SplendorImageLoader {</span>
+private const val TABLE_IMAGE = &quot;/Table.jpg&quot;
+private const val CARD_BACK = &quot;/card_back.jpg&quot;
+private const val BACK_IMAGE = &quot;/Back.png&quot;
+private const val CONFIG_BACKGROUND = &quot;/configScene.jpg&quot;
+private const val HIGHSCORE_BACKGROUND = &quot;/highscorebackground.jpg&quot;
+/**
+ * Class to load Images from ressources
+ */
+<span class="nc" id="L22">class SplendorImageLoader {</span>
+	/**
+	 * function that returns Human Icon
+	 */
 	fun humanIcon(): ImageVisual {
-<span class="nc" id="L18">		val image: BufferedImage = ImageIO.read(</span>
-<span class="nc" id="L19">			SplendorImageLoader::class.java.getResource(HUMAN_ICON)</span>
+<span class="nc" id="L27">		val image: BufferedImage = ImageIO.read(</span>
+<span class="nc" id="L28">			SplendorImageLoader::class.java.getResource(HUMAN_ICON)</span>
 		)
-<span class="nc" id="L21">		return ImageVisual(image)</span>
+<span class="nc" id="L30">		return ImageVisual(image)</span>
 	}
-
+	/**
+	 * function that returns drag and drop image
+	 */
 	fun dragAndDrop(): ImageVisual {
-<span class="nc" id="L25">	    val image: BufferedImage = ImageIO.read(</span>
-<span class="nc" id="L26">		SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)</span>
-	    )
-<span class="nc" id="L28">	    return ImageVisual(image)</span>
+<span class="nc" id="L36">		val image: BufferedImage = ImageIO.read(</span>
+<span class="nc" id="L37">			SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)</span>
+		)
+<span class="nc" id="L39">		return ImageVisual(image)</span>
 	}
-
+	/**
+	 * function that returns Card Image
+	 */
 	fun frontImageFor(id: Int): ImageVisual {
-<span class="nc" id="L32">	    val idString = (id+1).toString()</span>
-<span class="nc" id="L33">	    return ImageVisual(</span>
-<span class="nc" id="L34">		ImageIO.read(</span>
-<span class="nc" id="L35">		    SplendorImageLoader::class.java.getResource(&quot;/cards/&quot;+idString+&quot;.jpg&quot;)</span>
+<span class="nc" id="L45">		val idString = (id+1).toString()</span>
+<span class="nc" id="L46">		return ImageVisual(</span>
+<span class="nc" id="L47">			ImageIO.read(</span>
+<span class="nc" id="L48">				SplendorImageLoader::class.java.getResource(&quot;/cards/&quot;+idString+&quot;.jpg&quot;)</span>
+			)
 		)
-	    )
 	}
-
+	/**
+	 * function that returns Start Background
+	 */
 	fun startBackground(): ImageVisual {
-<span class="nc" id="L41">	    return ImageVisual(</span>
-<span class="nc" id="L42">		ImageIO.read(</span>
-<span class="nc" id="L43">		    SplendorImageLoader::class.java.getResource(START_BACKGROUND)</span>
+<span class="nc" id="L56">		return ImageVisual(</span>
+<span class="nc" id="L57">			ImageIO.read(</span>
+<span class="nc" id="L58">				SplendorImageLoader::class.java.getResource(START_BACKGROUND)</span>
+			)
+		)
+	}
+	/**
+	 * function that returns Button Design
+	 */
+	fun button(): ImageVisual {
+<span class="nc" id="L66">		return ImageVisual(</span>
+<span class="nc" id="L67">			ImageIO.read(</span>
+<span class="nc" id="L68">				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)</span>
+			)
+		)
+	}
+	/**
+	 * function that returns Redo Button Image
+	 */
+	fun redoButton(): ImageVisual {
+<span class="nc" id="L76">		return ImageVisual(</span>
+<span class="nc" id="L77">			ImageIO.read(</span>
+<span class="nc" id="L78">				SplendorImageLoader::class.java.getResource(REDO_IMAGE)</span>
+			)
+		)
+	}
+	/**
+	 * function that returns Hint Button Image
+	 */
+	fun hintButton(): ImageVisual {
+<span class="nc" id="L86">		return ImageVisual(</span>
+<span class="nc" id="L87">			ImageIO.read(</span>
+<span class="nc" id="L88">				SplendorImageLoader::class.java.getResource(HINT_IMAGE)</span>
+			)
+		)
+	}
+	/**
+	 * function that returns Undo Button Image
+	 */
+	fun undoButton(): ImageVisual {
+<span class="nc" id="L96">		return ImageVisual(</span>
+<span class="nc" id="L97">			ImageIO.read(</span>
+<span class="nc" id="L98">				SplendorImageLoader::class.java.getResource(UNDO_IMAGE)</span>
+			)
+		)
+	}
+	/**
+	 * function that returns Table Background Image
+	 */
+	fun table(): ImageVisual {
+<span class="nc" id="L106">		return ImageVisual(</span>
+<span class="nc" id="L107">			ImageIO.read(</span>
+<span class="nc" id="L108">				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)</span>
+			)
+		)
+	}
+
+	fun cardBack(): ImageVisual {
+<span class="nc" id="L114">		return ImageVisual(</span>
+<span class="nc" id="L115">			ImageIO.read(</span>
+<span class="nc" id="L116">				SplendorImageLoader::class.java.getResource(CARD_BACK)</span>
+			)
+		)
+	}
+
+	fun velocity(index: Int): ImageVisual {
+<span class="nc" id="L122">	    return ImageVisual(</span>
+<span class="nc" id="L123">		ImageIO.read(</span>
+<span class="nc" id="L124">		    SplendorImageLoader::class.java.getResource(&quot;/velocity/velocity_&quot;+index.toString()+&quot;.png&quot;)</span>
 		)
 	    )
 	}
 
-	fun button(): ImageVisual {
-<span class="nc" id="L49">		return ImageVisual(</span>
-<span class="nc" id="L50">			ImageIO.read(</span>
-<span class="nc" id="L51">				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)</span>
+	fun shuffleImage(index: Int): ImageVisual {
+<span class="nc" id="L130">	    return ImageVisual(</span>
+<span class="nc" id="L131">		ImageIO.read(</span>
+<span class="nc" id="L132">		    SplendorImageLoader::class.java.getResource(&quot;/shuffle/shuffle_&quot;+index.toString()+&quot;.png&quot;)</span>
+		)
+	    )
+	}
+
+	fun backButton(): ImageVisual {
+<span class="nc" id="L138">		return ImageVisual(</span>
+<span class="nc" id="L139">			ImageIO.read(</span>
+<span class="nc" id="L140">				SplendorImageLoader::class.java.getResource(BACK_IMAGE)</span>
 			)
 		)
 	}
 
-	fun redoButton(): ImageVisual {
-<span class="nc" id="L57">		return ImageVisual(</span>
-<span class="nc" id="L58">			ImageIO.read(</span>
-<span class="nc" id="L59">				SplendorImageLoader::class.java.getResource(REDO_IMAGE)</span>
+	fun configBackground(): ImageVisual {
+<span class="nc" id="L146">		return ImageVisual(</span>
+<span class="nc" id="L147">			ImageIO.read(</span>
+<span class="nc" id="L148">				SplendorImageLoader::class.java.getResource(CONFIG_BACKGROUND)</span>
 			)
 		)
 	}
 
-	fun hintButton(): ImageVisual {
-<span class="nc" id="L65">		return ImageVisual(</span>
-<span class="nc" id="L66">			ImageIO.read(</span>
-<span class="nc" id="L67">				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)</span>
+	fun highscoreBackground(): ImageVisual {
+<span class="nc" id="L154">		return ImageVisual(</span>
+<span class="nc" id="L155">			ImageIO.read(</span>
+<span class="nc" id="L156">				SplendorImageLoader::class.java.getResource(HIGHSCORE_BACKGROUND)</span>
 			)
 		)
 	}
-
-	fun undoButton(): ImageVisual {
-<span class="nc" id="L73">		return ImageVisual(</span>
-<span class="nc" id="L74">			ImageIO.read(</span>
-<span class="nc" id="L75">				SplendorImageLoader::class.java.getResource(UNDO_IMAGE)</span>
-			)
-		)
-	}
-
-	fun table(): ImageVisual {
-<span class="nc" id="L81">		return ImageVisual(</span>
-<span class="nc" id="L82">			ImageIO.read(</span>
-<span class="nc" id="L83">				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)</span>
-			)
-		)
-	}
-
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -70,7 +70,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         currentPlayerIndex = 0
 
         rootService.currentGame = splendor
-        // onAllRefreshable { refreshAfterStartGame() }
+        onAllRefreshables { refreshAfterStartNewGame() }
     }
 
     /**

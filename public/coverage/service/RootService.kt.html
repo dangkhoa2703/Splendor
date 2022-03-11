@@ -3,18 +3,34 @@
 import entity.Splendor
 import view.Refreshable
 
-<span class="fc" id="L6">class RootService {</span>
-<span class="fc" id="L7">    val gameService = GameService(this)</span>
-<span class="pc" id="L8">    val playerActionService = PlayerActionService(this)</span>
-<span class="fc" id="L9">    var currentGame : Splendor? = null</span>
+/**
+ * Main class of the service layer for the Splendor game. Provides access
+ * to all other service classes and holds the [currentGame] state for these
+ * services to access.
+ */
+<span class="fc" id="L11">class RootService {</span>
+<span class="fc" id="L12">    val gameService = GameService(this)</span>
+<span class="fc" id="L13">    val playerActionService = PlayerActionService(this)</span>
+<span class="pc" id="L14">    val ioService = IOService(this)</span>
 
+    /** The currently active game. Can be `null`, if no game has started yet. */
+<span class="fc" id="L17">    var currentGame : Splendor? = null</span>
+
+    /**
+     * Adds each of the provided [newRefreshables] to all services
+     * connected to this root service
+     */
     fun addRefreshables(vararg newRefreshables: Refreshable) {
-<span class="nc" id="L12">        newRefreshables.forEach { addRefreshable(it) }</span>
-<span class="nc" id="L13">    }</span>
+<span class="nc" id="L24">        newRefreshables.forEach { addRefreshable(it) }</span>
+<span class="nc" id="L25">    }</span>
 
+    /**
+     * Adds the provided [newRefreshable] to all services connected
+     * to this root service
+     */
     fun addRefreshable(newRefreshable: Refreshable) {
-<span class="nc" id="L16">	gameService.addRefreshable(newRefreshable)</span>
-<span class="nc" id="L17">	playerActionService.addRefreshable(newRefreshable)</span>
-<span class="nc" id="L18">    }</span>
+<span class="nc" id="L32">        gameService.addRefreshable(newRefreshable)</span>
+<span class="nc" id="L33">        playerActionService.addRefreshable(newRefreshable)</span>
+<span class="nc" id="L34">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

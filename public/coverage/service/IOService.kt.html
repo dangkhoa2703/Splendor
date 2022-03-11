@@ -1,38 +1,283 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IOService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">projekt2</a> &gt; <a href="index.source.html" class="el_package">service</a> &gt; <span class="el_source">IOService.kt</span></div><h1>IOService.kt</h1><pre class="source lang-java linenums">package service
 
 import entity.*
+import java.io.File
 
 /**
  *  Class for inputs and outputs
  * */
-<span class="nc" id="L8">class IOService(private val rootService: RootService): AbstractRefreshingService()</span>
+<span class="fc" id="L9">class IOService(private val rootService: RootService): AbstractRefreshingService()</span>
 {
     /** loads a game saved locally in a file */
-    fun loadGame(path : String) : Splendor?
-    {
-<span class="nc" id="L13">        return  null</span>
+    fun loadGame(path: String): Splendor? {
+<span class="nc" id="L13">        val gameSettingFile = File(path + &quot;gameSetting&quot;)</span>
+<span class="nc" id="L14">        val playerOneFile = File(path + &quot;player1&quot;)</span>
+<span class="nc" id="L15">        val playerTwoFile = File(path + &quot;player2&quot;)</span>
+<span class="nc" id="L16">        val playerThreeFile = File(path + &quot;player3&quot;)</span>
+<span class="nc" id="L17">        val playerFourFile = File(path + &quot;player4&quot;)</span>
+<span class="nc" id="L18">        val boardFile = File(path + &quot;board&quot;)</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        if (!gameSettingFile.exists()) {</span>
+<span class="nc" id="L20">            return null</span>
+        }
+<span class="nc" id="L22">        val playerCount = gameSettingFile.readLines()[1].toInt()</span>
+
+        //create board
+<span class="nc" id="L25">        val boardFileLines = boardFile.readLines()</span>
+<span class="nc" id="L26">        val nobleTileIDs = boardFileLines[0].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L27">        val nobleTilesOnBoard = readNobleTiles(nobleTileIDs)</span>
+<span class="nc" id="L28">        var devCardsIDs = boardFileLines[1].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L29">        val levelOneCards = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L30">        devCardsIDs = boardFileLines[2].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L31">        val levelOneOpen = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L32">        devCardsIDs = boardFileLines[3].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L33">        val levelTwoCards = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L34">        devCardsIDs = boardFileLines[4].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L35">        val levelTwoOpen = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L36">        devCardsIDs = boardFileLines[4].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L37">        val levelThreeCards = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L38">        devCardsIDs = boardFileLines[5].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L39">        val levelThreeOpen = readDevCards(devCardsIDs)</span>
+<span class="nc" id="L40">        val gemsFromFile = boardFileLines[6].removePrefix(&quot;{&quot;).removeSuffix(&quot;}&quot;)</span>
+<span class="nc" id="L41">        val gems = readMap(gemsFromFile)</span>
+<span class="nc" id="L42">        val board = Board(</span>
+<span class="nc" id="L43">            nobleTilesOnBoard,</span>
+<span class="nc" id="L44">            levelOneCards,</span>
+<span class="nc" id="L45">            levelOneOpen,</span>
+<span class="nc" id="L46">            levelTwoCards,</span>
+<span class="nc" id="L47">            levelTwoOpen,</span>
+<span class="nc" id="L48">            levelThreeCards,</span>
+<span class="nc" id="L49">            levelThreeOpen)</span>
+<span class="nc" id="L50">        board.gems = gems</span>
+
+        //create Players
+<span class="nc" id="L53">        val playerList = mutableListOf&lt;Player&gt;()</span>
+<span class="nc" id="L54">        val playerOne = createPlayerFromFile(playerOneFile)</span>
+<span class="nc" id="L55">        val playerTwo = createPlayerFromFile(playerTwoFile)</span>
+<span class="nc" id="L56">        playerList.add(playerOne)</span>
+<span class="nc" id="L57">        playerList.add(playerTwo)</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (playerCount &gt; 2) {</span>
+<span class="nc" id="L59">            val playerThree = createPlayerFromFile(playerThreeFile)</span>
+<span class="nc" id="L60">            playerList.add(playerThree)</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (playerCount == 4) {</span>
+<span class="nc" id="L62">                val playerFour = createPlayerFromFile(playerFourFile)</span>
+<span class="nc" id="L63">                playerList.add(playerFour)</span>
+            }
+        }
+
+        //create Splendor
+<span class="nc" id="L68">        val gameSettings = gameSettingFile.readLines()</span>
+<span class="nc" id="L69">        val simulationSpeed = gameSettings[0].trim().toInt()</span>
+<span class="nc" id="L70">        val currentPlayer = playerList[gameSettings[2].trim().toInt()]</span>
+<span class="nc" id="L71">        val validGame = when (gameSettings[3].trim()) {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            &quot;true&quot; -&gt; true</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            &quot;false&quot; -&gt; false</span>
+<span class="nc" id="L74">            else -&gt; { throw IllegalStateException(&quot;no valid game parameter&quot;) }</span>
+        }
+<span class="nc" id="L76">        val gameState = GameState(currentPlayer, playerList, board)</span>
+        ///hier noch Highscore Objekte laden
+
+<span class="nc" id="L79">        return Splendor(simulationSpeed, gameState, mutableListOf(), validGame)</span>
+    }
+
+    private fun createPlayerFromFile(file:File):Player{
+<span class="nc" id="L83">        val fileLines = file.readLines()</span>
+<span class="nc" id="L84">        val name = fileLines[0].trim()</span>
+<span class="nc bnc" id="L85" title="All 5 branches missed.">        val playerType = when (fileLines[1].trim()) {</span>
+<span class="nc" id="L86">            &quot;HUMAN&quot; -&gt; PlayerType.HUMAN</span>
+<span class="nc" id="L87">            &quot;MEDIUM&quot; -&gt; PlayerType.MEDIUM</span>
+<span class="nc" id="L88">            &quot;EASY&quot; -&gt; PlayerType.EASY</span>
+<span class="nc" id="L89">            &quot;HARD&quot; -&gt; PlayerType.HARD</span>
+<span class="nc" id="L90">            else -&gt; { throw java.lang.IllegalArgumentException(&quot;invalid player type&quot;) }</span>
+        }
+<span class="nc" id="L92">        val gems = readMap(fileLines[2].removePrefix(&quot;{&quot;).removeSuffix(&quot;{&quot;))</span>
+<span class="nc" id="L93">        val bonus = readMap(fileLines[3].removePrefix(&quot;{&quot;).removeSuffix(&quot;{&quot;))</span>
+<span class="nc" id="L94">        val reserved = readDevCards(fileLines[4].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;))</span>
+<span class="nc" id="L95">        val nobles = readNobleTiles(fileLines[5].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;))</span>
+<span class="nc" id="L96">        val score = fileLines[6].trim().toInt()</span>
+<span class="nc" id="L97">        val devCards = readDevCards(fileLines[7].removePrefix(&quot;[&quot;).removeSuffix(&quot;]&quot;).split(&quot;,&quot;))</span>
+<span class="nc" id="L98">        return Player(name,playerType,gems,bonus,reserved,nobles,score,devCards)</span>
+    }
+
+
+    private fun readDevCards(list :List&lt;String&gt;): MutableList&lt;DevCard&gt;{
+<span class="nc" id="L103">        val devCards = mutableListOf&lt;DevCard&gt;()</span>
+<span class="nc" id="L104">        val cardConfigFile = File(&quot;src/main/resources/splendor-entwicklungskarten.csv&quot;)</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (index in list) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            for (line in cardConfigFile.readLines()) {</span>
+<span class="nc" id="L108">                val data = line.split(&quot;,&quot;)</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                if (data[0].contains(index)) {</span>
+<span class="nc" id="L110">                    val tempMap = mapOf(</span>
+<span class="nc" id="L111">                        GemType.WHITE to data[1].trim().toInt(),</span>
+<span class="nc" id="L112">                        GemType.BLUE to data[2].trim().toInt(),</span>
+<span class="nc" id="L113">                        GemType.GREEN to data[3].trim().toInt(),</span>
+<span class="nc" id="L114">                        GemType.RED to data[4].trim().toInt(),</span>
+<span class="nc" id="L115">                        GemType.BLACK to data[5].trim().toInt()</span>
+                    )
+<span class="nc bnc" id="L117" title="All 6 branches missed.">                    val color = when (data[8].trim()) {</span>
+<span class="nc" id="L118">                        &quot;diamant&quot; -&gt; GemType.WHITE</span>
+<span class="nc" id="L119">                        &quot;saphir&quot; -&gt; GemType.BLUE</span>
+<span class="nc" id="L120">                        &quot;smaragd&quot; -&gt; GemType.GREEN</span>
+<span class="nc" id="L121">                        &quot;rubin&quot; -&gt; GemType.RED</span>
+<span class="nc" id="L122">                        &quot;onyx&quot; -&gt; GemType.BLACK</span>
+<span class="nc" id="L123">                        else -&gt; { throw java.lang.IllegalArgumentException(&quot;invalid gem type&quot;) }</span>
+                    }
+<span class="nc" id="L125">                    devCards.add(</span>
+<span class="nc" id="L126">                        DevCard(</span>
+<span class="nc" id="L127">                            data[0].trim().toInt(),</span>
+<span class="nc" id="L128">                            tempMap,</span>
+<span class="nc" id="L129">                            data[6].trim().toInt(),</span>
+<span class="nc" id="L130">                            data[7].trim().toInt(),</span>
+<span class="nc" id="L131">                            color))</span>
+                }
+            }
+        }
+<span class="nc" id="L135">        return devCards</span>
+    }
+
+    private fun readNobleTiles( list :List&lt;String&gt;):MutableList&lt;NobleTile&gt; {
+<span class="nc" id="L139">        val nobleTiles = mutableListOf&lt;NobleTile&gt;()</span>
+<span class="nc" id="L140">        val cardConfigFile = File(&quot;src/main/resources/splendor-adligenkarten.csv&quot;)</span>
+
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        for (index in list) {</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            for (line in cardConfigFile.readLines()) {</span>
+<span class="nc" id="L144">                val data = line.split(&quot;,&quot;)</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (data[0].contains(index)) {</span>
+<span class="nc" id="L146">                    val tempMap = mapOf(</span>
+<span class="nc" id="L147">                        GemType.WHITE to data[1].trim().toInt(),</span>
+<span class="nc" id="L148">                        GemType.BLUE to data[2].trim().toInt(),</span>
+<span class="nc" id="L149">                        GemType.GREEN to data[3].trim().toInt(),</span>
+<span class="nc" id="L150">                        GemType.RED to data[4].trim().toInt(),</span>
+<span class="nc" id="L151">                        GemType.BLACK to data[5].trim().toInt()</span>
+                    )
+<span class="nc" id="L153">                    nobleTiles.add(</span>
+<span class="nc" id="L154">                        NobleTile(</span>
+<span class="nc" id="L155">                            data[0].trim().toInt(),</span>
+<span class="nc" id="L156">                            tempMap,</span>
+<span class="nc" id="L157">                            data[6].trim().toInt()))</span>
+                }
+            }
+        }
+<span class="nc" id="L161">        return nobleTiles</span>
     }
 
     /** saves a file of the current game locally to the specified file path */
-    fun saveGame(path : String) : Splendor?
-    {
-<span class="nc" id="L19">        return  null</span>
-    }
+    fun saveGame(path : String) {
+<span class="nc" id="L166">        val game = rootService.currentGame</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        checkNotNull(game)</span>
+<span class="nc" id="L168">        val currentPlayerIndex = rootService.gameService.currentPlayerIndex</span>
+<span class="nc" id="L169">        val players = game.currentGameState.playerList</span>
+<span class="nc" id="L170">        val board = game.currentGameState.board</span>
+
+        //save each player infos to a file
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        for ((index, player) in players.withIndex()) {</span>
+<span class="nc" id="L174">            val playerFileName = path + &quot;/player${index+1}&quot;</span>
+<span class="nc" id="L175">            val playerFile = File(playerFileName)</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            playerFile.bufferedWriter().use { out -&gt;</span>
+<span class="nc" id="L177">                out.write(player.name + &quot;\n&quot;)</span>
+<span class="nc" id="L178">                out.write(player.playerType.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L179">                out.write(player.gems.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L180">                out.write(player.bonus.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L181">                out.write(cardToString(player.reservedCards, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L182">                out.write(cardToString(nobleTileList = player.nobleTiles, isDevCard = false) + &quot;\n&quot;)</span>
+<span class="nc" id="L183">                out.write(player.score.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L184">                out.write(player.devCards.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L185">            }</span>
+        }
+
+        //save current board infos
+<span class="nc" id="L189">        val boardFileName = &quot;$path/board&quot;</span>
+<span class="nc" id="L190">        val boardFile = File(boardFileName)</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        boardFile.bufferedWriter().use{ out -&gt;</span>
+<span class="nc" id="L192">            out.write(cardToString(nobleTileList = board.nobleTiles, isDevCard = false) + &quot;\n&quot;)</span>
+<span class="nc" id="L193">            out.write(cardToString(board.levelOneCards, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L194">            out.write(cardToString(board.levelOneOpen, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L195">            out.write(cardToString(board.levelTwoCards, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L196">            out.write(cardToString(board.levelTwoOpen, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L197">            out.write(cardToString(board.levelThreeCards, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L198">            out.write(cardToString(board.levelThreeOpen, isDevCard = true) + &quot;\n&quot;)</span>
+<span class="nc" id="L199">            out.write(board.gems.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L200">        }</span>
+
+<span class="nc" id="L202">        val gameSettingName = &quot;$path/gameSetting&quot;</span>
+<span class="nc" id="L203">        val gameFile = File(gameSettingName)</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        gameFile.bufferedWriter().use{ out -&gt;</span>
+<span class="nc" id="L205">            out.write(game.simulationSpeed.toString() + &quot;\n&quot; )</span>
+<span class="nc" id="L206">            out.write(game.currentGameState.playerList.size.toString() + &quot;\n&quot;)</span>
+<span class="nc" id="L207">            out.write(rootService.gameService.currentPlayerIndex.toString())</span>
+<span class="nc" id="L208">            out.write(rootService.currentGame!!.validGame.toString())</span>
+<span class="nc" id="L209">        }</span>
+
+<span class="nc" id="L211">    }</span>
 
     /** deletes the file in the specified file path */
     fun deleteGame(path : String)
     {
-<span class="nc" id="L25">    }</span>
+<span class="nc" id="L216">    }</span>
 
     /** saves a highscore to a file including highscores of different games */
     fun saveHighscore(score : Highscore)
     {
-<span class="nc" id="L30">    }</span>
+<span class="nc" id="L221">    }</span>
 
     /** loads a file including highscores */
     fun loadHighscore(path : String) : List&lt;Highscore&gt;?
     {
-<span class="nc" id="L35">        return  null</span>
+<span class="nc" id="L226">        return  null</span>
+    }
+
+    /*-HELP FUNCTION-*/
+
+    private fun readMap(mapString: String): MutableMap&lt;GemType,Int&gt; {
+
+<span class="nc" id="L233">        val mapList = mapString.split(&quot;,&quot;)</span>
+        /** for(pair in mapList){
+            pair.trim()
+        } */
+<span class="nc" id="L237">        mapList.forEach { it.trim() }</span>
+
+<span class="nc" id="L239">        val map = mapList.associate {</span>
+<span class="nc" id="L240">            val (left, right) = it.split(&quot;=&quot;)</span>
+<span class="nc bnc" id="L241" title="All 6 branches missed.">            val gemType =  when(left){</span>
+<span class="nc" id="L242">                &quot;WHITE&quot; -&gt; GemType.WHITE</span>
+<span class="nc" id="L243">                &quot;BLUE&quot; -&gt; GemType.BLUE</span>
+<span class="nc" id="L244">                &quot;GREEN&quot; -&gt; GemType.GREEN</span>
+<span class="nc" id="L245">                &quot;RED&quot; -&gt; GemType.RED</span>
+<span class="nc" id="L246">                &quot;BLACK&quot; -&gt; GemType.BLACK</span>
+                else -&gt; {
+<span class="nc" id="L248">                    throw java.lang.IllegalArgumentException(</span>
+<span class="nc" id="L249">                        &quot;invalid gem type&quot;</span>
+                    )
+                }
+            }
+<span class="nc" id="L253">            gemType to right.toInt()</span>
+        }
+<span class="nc" id="L255">        return map.toMutableMap()</span>
+    }
+
+    /**
+     * convert a mutableList of card in to string list of card's id
+     *
+     * @param devCardList to convert development card list
+     * @param nobleTileList to convert noble card list
+     * @param isDevCard to tell whether the converted card list is a stack of development cards or nobleTile cards
+     * @return string of card's id
+     */
+<span class="nc" id="L266">    private fun cardToString(</span>
+<span class="nc" id="L267">        devCardList: MutableList&lt;DevCard&gt; = mutableListOf(),</span>
+<span class="nc" id="L268">        nobleTileList: MutableList&lt;NobleTile&gt; = mutableListOf(),</span>
+        isDevCard: Boolean): String {
+<span class="nc" id="L270">        val cardIdList = mutableListOf&lt;String&gt;()</span>
+
+<span class="nc bnc" id="L272" title="All 2 branches missed.">        if(isDevCard) {</span>
+<span class="nc" id="L273">            devCardList.forEach { card -&gt;</span>
+<span class="nc" id="L274">                cardIdList.add(card.id.toString())</span>
+<span class="nc" id="L275">            }</span>
+        }else{
+<span class="nc" id="L277">            nobleTileList.forEach{ card -&gt;</span>
+<span class="nc" id="L278">                cardIdList.add(card.id.toString())}</span>
+        }
+<span class="nc" id="L280">        return cardIdList.toString()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

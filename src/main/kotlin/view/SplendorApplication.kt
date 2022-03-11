@@ -8,12 +8,12 @@ import tools.aqua.bgw.core.MenuScene
 
 class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 
-    private val rootService= RootService()
+    private val rootService = RootService()
 
-	private val gameScene :GameScene = GameScene(rootService).apply{
-		quitButton.onMouseClicked = {
-		}
+    private val gameScene :GameScene = GameScene(rootService).apply{
+	quitButton.onMouseClicked = {
 	}
+    }
 
 
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
@@ -60,7 +60,7 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
     init{
 	rootService.addRefreshables(
 	    this as Refreshable,
-	    gameScene,
+	    gameScene as Refreshable,
 	    loadGameScene as Refreshable , startScene as Refreshable,
 	    highscoreScene as Refreshable, configScene as Refreshable
 	)

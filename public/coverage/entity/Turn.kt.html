@@ -2,11 +2,12 @@
 
 /**
  *  class for a turn object
- *  @property gems: tbd
- *  @property card: tbd
+ *  @property gems: gems required for the turn
+ *  @property card: card required for the turn
+ *  @property turnType: see enum class TurnType
  *  */
-<span class="nc" id="L8">class Turn(</span>
-<span class="nc" id="L9">    var gems: Map&lt;GemType,Int&gt;,</span>
-<span class="nc" id="L10">    val card: List&lt;DevCard&gt;</span>
-)
+<span class="fc" id="L9">class Turn (</span>
+<span class="fc" id="L10">    val gems: Map&lt;GemType, Int&gt;,</span>
+<span class="fc" id="L11">    val card: List&lt;DevCard&gt;,</span>
+<span class="fc" id="L12">    val turnType: TurnType)</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

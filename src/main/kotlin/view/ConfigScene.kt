@@ -202,7 +202,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	)
     }
 
-    val startButton = Button(
+    private val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size = 28),
