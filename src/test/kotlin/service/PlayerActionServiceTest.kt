@@ -121,7 +121,8 @@ class PlayerActionServiceTest {
         val devCard1 = DevCard(0,gemMap,1,0,GemType.BLUE)
         val devCard2 = DevCard(0,gemMap,2,0,GemType.RED)
         val devCard3 = DevCard(0,gemMap,3,0,GemType.RED)
-        val devCard03 = DevCard (0,gemMap,3,0,GemType.RED)
+        val devCard4 = DevCard (0,gemMap,3,1,GemType.RED)
+        val devCard5 = DevCard (0,gemMap,3,1,GemType.RED)
         val board = root.currentGame!!.currentGameState.board
         val player = root.currentGame!!.currentGameState.currentPlayer
         board.levelOneOpen.clear()
@@ -130,7 +131,7 @@ class PlayerActionServiceTest {
         board.levelTwoOpen.add(devCard2)
         board.levelThreeOpen.clear()
         board.levelThreeOpen.add(devCard3)
-        board.levelThreeOpen.add(devCard03)
+        board.levelThreeOpen.add(devCard4)
         board.gems[GemType.YELLOW] = 2
         player.gems[GemType.YELLOW] = 0
         //reserveCard:
@@ -152,7 +153,13 @@ class PlayerActionServiceTest {
         assertNotNull(board.gems)
         assertTrue { player.gems[GemType.YELLOW] == 2 }
 
-        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
+        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard4,0) }
+
+        root.gameService.startNewGame(playerList,false,1)
+        val currentPlayer = root.currentGame!!.currentGameState.currentPlayer
+        root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
+        root.playerActionService.reserveCard(devCard5, index = 0)
+        assertEquals(0, currentPlayer.gems[GemType.YELLOW])
     }
 
     /**

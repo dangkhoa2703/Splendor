@@ -3,7 +3,7 @@ package entity
 import kotlin.test.*
 
 /**
- *  test class for objects of (not enum) classes
+ *  test class for objects of entity classes
  * */
 class EntityTests
 {
@@ -44,6 +44,9 @@ class EntityTests
         assertEquals(1, playerOne.gems[GemType.YELLOW])
         assertEquals(1, playerOne.gems[GemType.BLUE])
         assertEquals(1, playerOne.bonus[GemType.RED])
+
+        playerOne.devCards = mutableListOf(DevCard(1, mapOf(GemType.RED to 4), 2, 1, GemType.WHITE))
+        assertEquals(2, playerOne.devCards[0].level)
     }
 
     /** tests if Board objects can be created correctly */
@@ -110,7 +113,6 @@ class EntityTests
         assertEquals(3, splendor.simulationSpeed)
         assertEquals(gameStateTwo, splendor.currentGameState)
         assertEquals(false, splendor.validGame)
-
     }
 
     /** tests if Gem objects can be created correctly */
@@ -146,5 +148,32 @@ class EntityTests
         assertEquals(0, nobleTile0.id)
         assertEquals(1,nobleTile0.prestigePoints)
         assertEquals(map,nobleTile0.condition)
+    }
+
+    /** tests if Turn objects can be created correctly */
+    @Test
+    fun testTurn()
+    {
+        /** test if turn got initialized correctly */
+        val turnCard = listOf( DevCard(2, mapOf( GemType.RED to 3), 1,2,GemType.RED ))
+        val turnOne = Turn(mapOf(GemType.RED to 3), turnCard, TurnType.BUYCARD)
+        assertEquals(mapOf(GemType.RED to 3), turnOne.gems)
+        assertEquals(turnCard, turnOne.card)
+        assertEquals(TurnType.BUYCARD, turnOne.turnType)
+
+        val turnTwo = Turn(mapOf(GemType.RED to 2), listOf(), TurnType.TAKETWOGEMS)
+        assertEquals(mapOf(GemType.RED to 2), turnTwo.gems)
+        assertEquals(listOf(), turnTwo.card)
+        assertEquals(TurnType.TAKETWOGEMS, turnTwo.turnType)
+
+        val turnThree = Turn(mapOf(GemType.RED to 1), listOf(), TurnType.TAKETHREEGEMS)
+        assertEquals(mapOf(GemType.RED to 1), turnThree.gems)
+        assertEquals(listOf(), turnThree.card)
+        assertEquals(TurnType.TAKETHREEGEMS, turnThree.turnType)
+
+        val turnFour = Turn(mapOf(), turnCard, TurnType.RESERVECARD)
+        assertEquals(mapOf(), turnFour.gems)
+        assertEquals(turnCard, turnFour.card)
+        assertEquals(TurnType.RESERVECARD, turnFour.turnType)
     }
 }
