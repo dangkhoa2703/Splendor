@@ -104,13 +104,10 @@ class GameServiceTest {
             mutableListOf(
                 root.gameService.createCard(listOf( "0", "0", "0", "0", "2", "1", "0", "1", "diamant")),
                 root.gameService.createCard(listOf( "1", "1", "0", "0", "0", "2", "0", "1", "saphir")),
-                root.gameService.createCard(listOf( "2", "2", "1", "0", "0", "0", "0", "1", "smaragd"))
-            )
-        )
+                root.gameService.createCard(listOf( "2", "2", "1", "0", "0", "0", "0", "1", "smaragd"))))
         for (gem in game.currentGameState.board.gems) {
             gem.setValue(0)
         }
-
 
         root.gameService.nextPlayer()
         println(game.currentGameState.board.gems.toString())
@@ -138,18 +135,13 @@ class GameServiceTest {
         root.gameService.nextPlayer()
         assertEquals(tempSortedList, game.currentGameState.playerList)
 
-        assertThrows<IllegalStateException> {
-            root.currentGame = null
-            root.gameService.nextPlayer()
-        }
+        root.currentGame = null
+        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
     }
 
-    /**
-     * Test accquirable cards
-     *
-     */
+    /** tests if acquirableCards works correctly */
     @Test
-    fun testAccquirableCards(){
+    fun testAcquirableCards(){
 
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
@@ -158,8 +150,7 @@ class GameServiceTest {
         val player = game.currentGameState.currentPlayer
 
         for (gem in player.gems) {
-            gem.setValue(8)
-        }
+            gem.setValue(8) }
 
         val acquirableCards =  root.gameService.acquirableCards()
         assertEquals(1,acquirableCards[0].first)
@@ -172,10 +163,7 @@ class GameServiceTest {
         }
     }
 
-    /**
-     * Test check noble tiles
-     *
-     */
+
     /** tests if checkNobleTiles works correctly */
     @Test
     fun testCheckNobleTiles(){

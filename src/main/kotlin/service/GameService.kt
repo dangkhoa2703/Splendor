@@ -20,13 +20,11 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         // create players
         val playerList = mutableListOf<Player>()
-        for(player in players){
-            playerList.add(Player(player.first,player.second))
-        }
+        for(player in players) {
+            playerList.add(Player(player.first,player.second)) }
         // check if order should be randomized
         if (randomizedTurns) {
-            playerList.shuffle()
-        }
+            playerList.shuffle() }
 
         val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
@@ -54,27 +52,25 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             levelTwoStack,
             levelTwoOpen,
             levelThreeStack,
-            levelThreeOpen
-        )
+            levelThreeOpen)
+
         //create GameState
         val gameState = GameState(
             playerList[0],
             playerList,
-            board
-        )
+            board)
+
         //create Splendor(current game)
         val splendor = Splendor(
             simulationSpeed,
             gameState,
-            mutableListOf()
-        )
+            mutableListOf())
 
         consecutiveNoAction = 0
         currentPlayerIndex = 0
 
         rootService.currentGame = splendor
-
-//        onAllRefreshable { refreshAfterStartGame() }
+        // onAllRefreshable { refreshAfterStartGame() }
     }
 
     /**
@@ -84,8 +80,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun nextPlayer(){
         val game = rootService.currentGame
         checkNotNull(game)
-        var currentGameState = game.currentGameState
-        var board = game.currentGameState.board
+        val currentGameState = game.currentGameState
+        val board = game.currentGameState.board
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
 
@@ -366,7 +362,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      */
      fun acquirableCards(): MutableList<Pair<Int,Int>>{
 
-        val game = rootService.currentGame!!
+        val game = rootService.currentGame
+        checkNotNull(game)
         val board = game.currentGameState.board
         val playerBonus = game.currentGameState.currentPlayer.bonus
         val playerGems = game.currentGameState.currentPlayer.gems
@@ -379,7 +376,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             GemType.BLUE   to (playerBonus.getValue(GemType.BLUE)  + playerGems.getValue(GemType.BLUE)),
             GemType.YELLOW to   playerGems.getValue(GemType.YELLOW))
 
-        for(i in 0..3){
+        for(i in 0..3) {
             if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){
                 listOfAcquirableCards.add(Pair(1,i))
             }
@@ -390,7 +387,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
                 listOfAcquirableCards.add(Pair(3,i))
             }
         }
-
         return listOfAcquirableCards
     }
 

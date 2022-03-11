@@ -153,8 +153,6 @@ class PlayerActionServiceTest {
         assertTrue { player.gems[GemType.YELLOW] == 2 }
 
         assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
-        board.gems[GemType.YELLOW] = 0
-        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
     }
 
     /**

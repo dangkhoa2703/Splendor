@@ -167,7 +167,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             player.reservedCards.add(card)
 
             val numberGold = board.gems[GemType.YELLOW]
-            checkNotNull(numberGold)
             if(numberGold != 0) {
                 //move gold gem from game.board to player
                 player.gems[GemType.YELLOW] = player.gems.getValue(GemType.YELLOW) + 1

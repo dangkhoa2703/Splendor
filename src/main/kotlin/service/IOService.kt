@@ -46,8 +46,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             levelTwoCards,
             levelTwoOpen,
             levelThreeCards,
-            levelThreeOpen
-        )
+            levelThreeOpen)
         board.gems = gems
 
         //create Players
@@ -71,13 +70,11 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val currentPlayer = playerList[gameSettings[2].trim().toInt()]
         val validGame = when (gameSettings[3].trim()) {
             "true" -> true
-            "fales" -> false
-            else -> {
-                throw IllegalStateException("no valid game parameter")
-            }
+            "false" -> false
+            else -> { throw IllegalStateException("no valid game parameter") }
         }
         val gameState = GameState(currentPlayer, playerList, board)
-        ///hier noch highscore objekte laden
+        ///hier noch Highscore Objekte laden
 
         return Splendor(simulationSpeed, gameState, mutableListOf(), validGame)
     }
@@ -90,11 +87,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             "MEDIUM" -> PlayerType.MEDIUM
             "EASY" -> PlayerType.EASY
             "HARD" -> PlayerType.HARD
-            else -> {
-                throw java.lang.IllegalArgumentException(
-                    "invalid player type"
-                )
-            }
+            else -> { throw java.lang.IllegalArgumentException("invalid player type") }
         }
         val gems = readMap(fileLines[2].removePrefix("{").removeSuffix("{"))
         val bonus = readMap(fileLines[3].removePrefix("{").removeSuffix("{"))
@@ -127,11 +120,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
                         "smaragd" -> GemType.GREEN
                         "rubin" -> GemType.RED
                         "onyx" -> GemType.BLACK
-                        else -> {
-                            throw java.lang.IllegalArgumentException(
-                                "invalid gem type"
-                            )
-                        }
+                        else -> { throw java.lang.IllegalArgumentException("invalid gem type") }
                     }
                     devCards.add(
                         DevCard(
@@ -139,10 +128,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
                             tempMap,
                             data[6].trim().toInt(),
                             data[7].trim().toInt(),
-                            color
-                        )
-                    )
-
+                            color))
                 }
             }
         }
@@ -168,9 +154,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
                         NobleTile(
                             data[0].trim().toInt(),
                             tempMap,
-                            data[6].trim().toInt()
-                        )
-                    )
+                            data[6].trim().toInt()))
                 }
             }
         }
@@ -202,7 +186,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         }
 
         //save current board infos
-        val boardFileName = path + "/board"
+        val boardFileName = "$path/board"
         val boardFile = File(boardFileName)
         boardFile.bufferedWriter().use{ out ->
             out.write(cardToString(nobleTileList = board.nobleTiles, isDevCard = false) + "\n")
@@ -215,7 +199,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             out.write(board.gems.toString() + "\n")
         }
 
-        val gameSettingName = path + "/gameSetting"
+        val gameSettingName = "$path/gameSetting"
         val gameFile = File(gameSettingName)
         gameFile.bufferedWriter().use{ out ->
             out.write(game.simulationSpeed.toString() + "\n" )
@@ -244,12 +228,14 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
     /*-HELP FUNCTION-*/
 
-    private fun readMap(mapString: String): MutableMap<GemType,Int>{
+    private fun readMap(mapString: String): MutableMap<GemType,Int> {
 
         val mapList = mapString.split(",")
-        for(pair in mapList){
+        /** for(pair in mapList){
             pair.trim()
-        }
+        } */
+        mapList.forEach { it.trim() }
+
         val map = mapList.associate {
             val (left, right) = it.split("=")
             val gemType =  when(left){
@@ -269,22 +255,18 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         return map.toMutableMap()
     }
 
-
-
-
     /**
-     * convert a mutablist of card in to string list of card's id
+     * convert a mutableList of card in to string list of card's id
      *
      * @param devCardList to convert development card list
      * @param nobleTileList to convert noble card list
-     * @param isDevCard to tell whether the to converted card list is a stack of development cards or nobleTile cards
+     * @param isDevCard to tell whether the converted card list is a stack of development cards or nobleTile cards
      * @return string of card's id
      */
     private fun cardToString(
         devCardList: MutableList<DevCard> = mutableListOf(),
         nobleTileList: MutableList<NobleTile> = mutableListOf(),
-        isDevCard: Boolean
-    ): String{
+        isDevCard: Boolean): String {
         val cardIdList = mutableListOf<String>()
 
         if(isDevCard) {
