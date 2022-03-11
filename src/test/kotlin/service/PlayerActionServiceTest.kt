@@ -24,7 +24,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun takeGemsTest() {
-        assertNull(root.currentGame)
+        assertThrows<IllegalStateException> { root.playerActionService.takeGems(mutableListOf(GemType.RED)) }
         root.gameService.startNewGame(playerList,false,1)
         assertNotNull(root.currentGame)
         val types = mutableListOf(GemType.RED,GemType.BLUE,GemType.BLACK,GemType.GREEN)
@@ -153,6 +153,8 @@ class PlayerActionServiceTest {
         assertTrue { player.gems[GemType.YELLOW] == 2 }
 
         assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
+        board.gems[GemType.YELLOW] = 0
+        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard03,0) }
     }
 
     /**
@@ -160,7 +162,6 @@ class PlayerActionServiceTest {
      */
     @Test
     fun buyCardTest() {
-        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         assertNotNull(root.currentGame)
         gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
@@ -209,6 +210,9 @@ class PlayerActionServiceTest {
         player.reservedCards.add(devCard1)
         root.playerActionService.buyCard(devCard1,false,gemMap,0)
         assertFalse { player.reservedCards.contains(devCard1) }
+
+        root.currentGame = null
+        assertThrows<IllegalStateException> { root.playerActionService.buyCard(devCard1,true,map,0) }
     }
 
     /**
@@ -216,7 +220,6 @@ class PlayerActionServiceTest {
      */
     @Test
     fun selectNobleTileTest() {
-        assertNull(root.currentGame)
         root.gameService.startNewGame(playerList,false,1)
         assertNotNull(root.currentGame)
         val nobleTileOne = NobleTile(0,gemMap,1)
@@ -227,6 +230,9 @@ class PlayerActionServiceTest {
         assertTrue { root.currentGame!!.currentGameState.currentPlayer.nobleTiles.contains(nobleTileOne) }
         assertFalse { root.currentGame!!.currentGameState.board.nobleTiles.contains(nobleTileOne) }
         assertEquals(score+1,root.currentGame!!.currentGameState.currentPlayer.score)
+
+        root.currentGame = null
+        assertThrows<IllegalStateException> { root.playerActionService.selectNobleTile(nobleTileOne) }
     }
 
     /**
@@ -234,7 +240,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun returnGemTest() {
-        assertNull(root.currentGame)
+        assertThrows<IllegalStateException> { root.playerActionService.returnGems(mutableListOf(GemType.RED)) }
         root.gameService.startNewGame(playerList,false,1)
         assertNotNull(root.currentGame)
         val gemTypeList = listOf(GemType.RED,GemType.BLUE)

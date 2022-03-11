@@ -21,7 +21,6 @@ class GameServiceTest {
         assertEquals(1, root.gameService.currentPlayerIndex)
         root.gameService.currentPlayerIndex = 0
 
-        assertEquals(null, root.currentGame)
         val playerList1 = listOf(Pair("p1",PlayerType.HUMAN))
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         val playerList3 = listOf(
@@ -34,7 +33,6 @@ class GameServiceTest {
             Pair("p3",PlayerType.HUMAN),
             Pair("p4",PlayerType.HUMAN),
             Pair("p5",PlayerType.HUMAN))
-
         root.gameService.startNewGame(playerList2,true,1)
         val game = root.currentGame
         checkNotNull(game)
@@ -90,13 +88,12 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
-        assertNull(root.currentGame)
-        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
+        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
 
+        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
         checkNotNull(game)
-        assertNotNull(game)
         val currentGame = game.currentGameState
         val board = currentGame.board
 
@@ -140,13 +137,12 @@ class GameServiceTest {
     /** tests if checkNobleTiles works correctly */
     @Test
     fun testCheckNobleTiles(){
-        assertNull(root.currentGame)
+        assertThrows<IllegalStateException> { root.gameService.checkNobleTiles() }
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         val root = RootService()
         root.gameService.startNewGame(playerList2,false,1)
         val game =  root.currentGame
         checkNotNull(game)
-        assertNotNull(game)
         game.currentGameState.board.nobleTiles.clear()
 
         game.currentGameState.board.nobleTiles.add(
@@ -169,10 +165,8 @@ class GameServiceTest {
     /** tests if checkGems works correctly */
     @Test
     fun testCheckGems() {
-        assertNull(root.currentGame)
         val playerList = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
         root.gameService.startNewGame(playerList, false, 1)
-        assertNotNull(root.currentGame)
         val player1 = root.currentGame!!.currentGameState.currentPlayer
 
         /** currentPlayer has less or equal than ten gems */

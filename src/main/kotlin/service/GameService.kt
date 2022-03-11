@@ -86,7 +86,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val board = game.currentGameState.board
-        val currentPlayer = currentGameState.currentPlayer
 
         currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
         val totalGemsOnBoard = board.gems.values.sum() - board.gems.getValue(GemType.YELLOW)
@@ -170,8 +169,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      * @param index  index of the removed card
      */
     fun refill(level: Int,index: Int){
-        val game = rootService.currentGame
-        checkNotNull(game)
+        val game = rootService.currentGame!!
         val board = game.currentGameState.board
 
         when(level){
@@ -207,7 +205,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         board.nobleTiles.forEach { nobleTile ->
             // extract each card out of noble tiles
             val tempGemMap = nobleTile.condition.toMutableMap()
-            tempGemMap.forEach { (gemType, value) ->
+            tempGemMap.forEach { (gemType, _) ->
                 // check if the noble can visit the player
                 tempGemMap[gemType] = tempGemMap.getValue(gemType) - player.bonus.getValue(gemType)
                 if (tempGemMap.filterValues { it >= 0 }.values.sum() == 0) {
@@ -357,8 +355,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      */
     private fun acquirableCards(): MutableList<Pair<Int,Int>>{
 
-        val game = rootService.currentGame
-        checkNotNull(game)
+        val game = rootService.currentGame!!
         val board = game.currentGameState.board
         val playerBonus = game.currentGameState.currentPlayer.bonus
         val playerGems = game.currentGameState.currentPlayer.gems
