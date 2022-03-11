@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import tools.aqua.bgw.visual.ImageVisual
 
-private const val HUMAN_ICON = "/human_green.jpg"
+private const val HUMAN_ICON = "/human.png"
 private const val DRAG_N_DROP_ICON = "/dragAndDrop.png"
 private const val START_BACKGROUND = "/Splendor-background.jpg"
 private const val BUTTON_IMAGE = "/button.jpg"
