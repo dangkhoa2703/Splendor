@@ -364,7 +364,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      *
      * @return a list of Pair( level, cardIndex ) of acquirable card
      */
-    private fun acquirableCards(): MutableList<Pair<Int,Int>>{
+     fun acquirableCards(): MutableList<Pair<Int,Int>>{
 
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
