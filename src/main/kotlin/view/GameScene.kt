@@ -26,7 +26,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920, 1080
     private val tableImage = imageLoader.table()
     private val cardBack = imageLoader.cardBack()
 
-    private val quitButton = Button(
+    val quitButton = Button(
 	width = 25, height = 25,
 	posX = 0, posY = 0,
 	text = "X",
