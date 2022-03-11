@@ -1,5 +1,6 @@
 package view
 
+import service.GameService
 import tools.aqua.bgw.core.BoardGameApplication
 import service.RootService
 import tools.aqua.bgw.core.MenuScene
@@ -8,6 +9,10 @@ class SplendorApplication: BoardGameApplication("Splendor") {
 
     private val rootService= RootService()
 
+	private val gameScene :GameScene = GameScene(rootService).apply{
+		quitButton.onMouseClicked = {
+		}
+	}
 
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
 	backButton.onMouseClicked = {

@@ -21,6 +21,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
     private val imageLoader = SplendorImageLoader()
     private val image = imageLoader.button()
+	private val backgroundImage = imageLoader.configBackground()
 
     private val speeds: Array<String> = arrayOf(
 	" SLOW ", "NORMAL", " FAST "
@@ -252,7 +253,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	    if(i<3) {
 		val speedButton = Button(
-		    posX = 150, posY = 650, width = 100, height = 100,
+		    posX = 500, posY = 450, width = 100, height = 100,
 		    text="", visual = imageLoader.velocity(i)
 		).apply {
 		    onMouseClicked = {
@@ -265,7 +266,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	    if(i<2) {
 		val shuffleButton = Button(
-		    posX = 300, posY = 650, width = 100, height = 100,
+		    posX = 500, posY = 300, width = 100, height = 100,
 		    text="", visual = imageLoader.shuffleImage(i)
 		).apply{
 		    onMouseClicked = {
@@ -291,7 +292,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	startButton.isDisabled = true
 
 	// 81,126,44 why ?
-	background = ColorVisual(108, 168, 59)
+	background = backgroundImage
 	
 	refresh()
 

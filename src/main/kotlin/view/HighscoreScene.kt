@@ -14,6 +14,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 
 	val imageLoader = SplendorImageLoader()
 	val image = imageLoader.button()
+	val backgroundImage = imageLoader.highscoreBackground()
     private val headLineLabel = Label(
 	width = 300, height = 200,
 	posX = width/2 - 150, posY = 50,
@@ -89,7 +90,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 
 	loadHighscores(exampleHighscoreList)
 	
-	background = ColorVisual(108, 168, 59)
+	background = backgroundImage
 
 	addComponents(
 	    headLineLabel,

@@ -13,7 +13,9 @@ private const val UNDO_IMAGE = "/Undo.png"
 private const val HINT_IMAGE = "/hint.png"
 private const val TABLE_IMAGE = "/Table.jpg"
 private const val CARD_BACK = "/card_back.jpg"
-
+private const val BACK_IMAGE = "/Back.png"
+private const val CONFIG_BACKGROUND = "/configScene.jpg"
+private const val HIGHSCORE_BACKGROUND = "/highscorebackground.jpg"
 /**
  * Class to load Images from ressources
  */
@@ -130,5 +132,29 @@ class SplendorImageLoader {
 		    SplendorImageLoader::class.java.getResource("/shuffle/shuffle_"+index.toString()+".png")
 		)
 	    )
+	}
+
+	fun backButton(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(BACK_IMAGE)
+			)
+		)
+	}
+
+	fun configBackground(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(CONFIG_BACKGROUND)
+			)
+		)
+	}
+
+	fun highscoreBackground(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(HIGHSCORE_BACKGROUND)
+			)
+		)
 	}
 }

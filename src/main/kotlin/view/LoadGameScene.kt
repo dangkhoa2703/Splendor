@@ -15,6 +15,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 
 	val imageLoader = SplendorImageLoader()
 	val image = imageLoader.button()
+	val backgroundImage = imageLoader.highscoreBackground()
     private val fileChooser = FileChooser()
     private var openedFileChooser: Boolean = false
 
@@ -71,7 +72,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     )
     
     init{
-	background = ColorVisual(108, 168, 59)
+	background = backgroundImage
 
 	val imageLoader = SplendorImageLoader()
 	val image: ImageVisual = imageLoader.dragAndDrop()
