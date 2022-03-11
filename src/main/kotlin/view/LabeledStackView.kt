@@ -18,7 +18,7 @@ import java.awt.Color
  * @param rotate if true, the label will be rotated 180 degrees
  */
 class LabeledStackView(posX: Number, posY: Number, label: String = "", rotate: Boolean = false) :
-    CardStack<CardView>(height = 200, width = 130, posX = posX, posY = posY) {
+    CardStack<CardView>(height = 150, width = 95, posX = posX, posY = posY) {
 
     init {
         visual = CompoundVisual(

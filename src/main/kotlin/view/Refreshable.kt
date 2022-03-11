@@ -9,9 +9,7 @@ interface Refreshable {
 
     fun refreshAfterEndTurn() : Unit {}
 
-    fun refreshAfterTakeTwoGems() : Unit {}
-
-    fun refreshAfterTakeThreeGems() : Unit {}
+    fun refreshAfterTakeGems() : Unit {}
 
     fun refreshAfterBuyCard() : Unit {}
 

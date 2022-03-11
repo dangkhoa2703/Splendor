@@ -75,7 +75,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }
         rootService.gameService.consecutiveNoAction = 0
         // update GUI
-        // refreshAfterTakeThreeGems()
+        onAllRefreshables{ refreshAfterTakeGems()}
         // visit by nobleTiles, check gems
         // rootService.gameService.endTurn()
     }

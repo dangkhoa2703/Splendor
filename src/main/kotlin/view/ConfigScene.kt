@@ -16,6 +16,7 @@ import java.awt.event.MouseListener
 import javax.swing.SwingUtilities
 import entity.PlayerType
 import tools.aqua.bgw.components.uicomponents.CheckBox
+import java.awt.Color
 
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
@@ -241,8 +242,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	    val difficultyText = Button(
 		posX = width/2 + 400 , posY = (300+i*150),
-		visual = ColorVisual(81,126,44),
-		font = Font(size = 36),
+			visual = ColorVisual.TRANSPARENT,
+		font = Font(size = 36, color = Color.WHITE),
 		width = 200, height = 100
 	    ).apply{
 		onMouseClicked = {
@@ -289,7 +290,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	speedButtons.forEach{ addComponents(it) }
 	shuffleButtons.forEach{ addComponents(it) }
 
-	startButton.isDisabled = true
+	textFields[0].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
+		textFields[1].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
 
 	// 81,126,44 why ?
 	background = backgroundImage

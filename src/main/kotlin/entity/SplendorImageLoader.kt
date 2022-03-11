@@ -38,6 +38,18 @@ class SplendorImageLoader {
 		)
 		return ImageVisual(image)
 	}
+
+
+	fun tokenImage(type: GemType): ImageVisual {
+		var path = type.toInt().toString()
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(
+					"/tokens/token"+path+".jpg"
+				)
+			)
+		)
+	}
 	/**
 	 * function that returns Card Image
 	 */
