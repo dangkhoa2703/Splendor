@@ -17,9 +17,7 @@ interface Refreshable {
 
     fun refreshAfterLoadGame() : Unit {}
 
-    fun refreshAfterUndo() : Unit {}
-
-    fun refreshAfterRedo() : Unit {}
+    fun refreshAfterUndoRedo() : Unit {}
 
     fun refreshScore() : Unit {}
 

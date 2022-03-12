@@ -115,6 +115,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
             try {
                 playerActionService.takeGems(gemList)
+		for(i in 0..5) gemSelection[i]=0
+		renderGameGems()
             }
             catch(e: Exception) {
                 println(e)
@@ -132,7 +134,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
 
     //TODO add name of current Player into the currentPlayer label in refreshable Method
-    private val currentPlayer = Label(
+    private val currentPlayerLabel = Label(
         posX = width / 2 - 150,
         posY = 50,
         width = 300,
@@ -141,6 +143,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         font = Font(size = 30),
         visual = buttonImage
     )
+
+    private var currentPlayer: Player? = null
 
     private val devCardMap: BidirectionalMap<DevCard, CardView> = BidirectionalMap()
     private val nobleTileMap: BidirectionalMap<NobleTile, CardView> = BidirectionalMap()
@@ -158,10 +162,31 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     private val playerGems: MutableList<Label> = mutableListOf()
     private val playerGemsLabel: MutableList<Label> = mutableListOf()
 
+    private val playerGemSelection: IntArray = intArrayOf(
+        0, 0, 0, 0, 0, 0
+    )
+
 
     private val gemSelection: IntArray = intArrayOf(
         0, 0, 0, 0, 0, 0
     )
+
+    private fun renderGameGems() {
+	for(i in 0..5) {
+	    if(gemSelection[i]==0) {
+		gameGems[i].opacity = 0.2
+	    }
+	    else {
+		gameGems[i].opacity = 1.0
+	    }
+	    if(gemSelection[i]==2) {
+		gameGems[i].text = "+"
+	    }
+	    else {
+		gameGems[i].text = ""
+	    }
+	}
+    }
 
     override fun refreshAfterTakeGems() {
         val game = rootService.currentGame
@@ -188,21 +213,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         if(gemSelection.sum()>3) {
             gemSelection[index] = old
         }
-
-        when(gemSelection[index]) {
-            0 -> {
-                label.opacity = 0.2
-                label.text=""
-            }
-            1 -> {
-                label.opacity = 1.0
-                label.text=""
-            }
-            2 -> {
-                label.opacity = 1.0
-                label.text ="+"
-            }
-        }
     }
 
     override fun refreshAfterStartNewGame() {
@@ -227,7 +237,29 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         initializeDevCardList(game.currentGameState.board.levelTwoOpen, 2)
         initializeDevCardList(game.currentGameState.board.levelThreeOpen, 3)
 
-        for(i in 0..game.currentGameState.playerList.size-1) {
+	initializePlayerHands()
+        initializeGameGems()
+
+        gameLists.forEach { addComponents(it) }
+        gameStacks.forEach { addComponents(it) }
+
+	currentPlayer = game.currentGameState.currentPlayer
+    }
+
+    override fun refreshAfterEndTurn() {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found."}
+
+	val currentPlayer: Player = game.currentGameState.currentPlayer
+
+	println(currentPlayer)
+    }
+
+    private fun initializePlayerHands() {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found."}
+	
+	for(i in 0..game.currentGameState.playerList.size-1) {
             val layout: LinearLayout<CardView> = LinearLayout(
                 posX = 1380, posY = 100, width = 200, height = 800,
                 orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
@@ -251,10 +283,18 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 println("yo")
             }
 
+	    layout.isVisible = false
             playerHands.add(layout)
         }
 
-        val gemsEntry = game.currentGameState.board.gems.entries
+	playerHands.forEach{ addComponents(it) }
+    }
+
+    private fun initializeGameGems() {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found."}
+	
+	val gemsEntry = game.currentGameState.board.gems.entries
         val gems: MutableList<Pair<GemType, Int>> = mutableListOf()
         for(gem in gemsEntry) gems.add(Pair(gem.key, gem.value))
         gems.sortBy{ it.first.toInt() }
@@ -268,9 +308,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 onMouseClicked = {
                     val index = gem.first.toInt()-1
                     selectGem(this, index, it)
+		    renderGameGems()
                 }
             }
-            token.opacity = 0.2
 
             val textLabel = Label(
                 posX = 1700 - 50, posY = 100+i*75 - 25, width=100, height=50,
@@ -282,12 +322,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             i++
         }
 
-        gameLists.forEach { addComponents(it) }
-        gameStacks.forEach { addComponents(it) }
-        playerHands.forEach{ addComponents(it) }
-        gameGems.forEach{ addComponents(it) }
+	gameGems.forEach{ addComponents(it) }
         gameGemsLabel.forEach{ addComponents(it)}
-
+	renderGameGems()
     }
 
     private fun initializeNobleCardsView(nobleTiles: MutableList<NobleTile>) {
@@ -371,7 +408,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             loadHighscoreButton,
             hintButton,
             saveGameButton,
-            currentPlayer,
+            currentPlayerLabel,
         )
     }
 

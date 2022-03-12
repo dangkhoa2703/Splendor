@@ -20,153 +20,167 @@ private const val HIGHSCORE_BACKGROUND = "/highscorebackground.jpg"
  * Class to load Images from ressources
  */
 class SplendorImageLoader {
-	/**
-	 * function that returns Human Icon
-	 */
-	fun humanIcon(): ImageVisual {
-		val image: BufferedImage = ImageIO.read(
-			SplendorImageLoader::class.java.getResource(HUMAN_ICON)
-		)
-		return ImageVisual(image)
-	}
-	/**
-	 * function that returns drag and drop image
-	 */
-	fun dragAndDrop(): ImageVisual {
-		val image: BufferedImage = ImageIO.read(
-			SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
-		)
-		return ImageVisual(image)
-	}
+
+    private var tokenImages: List<ImageVisual> = listOf()
+    
+    /**
+     * function that returns Human Icon
+     */
+    fun humanIcon(): ImageVisual {
+	val image: BufferedImage = ImageIO.read(
+	    SplendorImageLoader::class.java.getResource(HUMAN_ICON)
+	)
+	return ImageVisual(image)
+    }
+    /**
+     * function that returns drag and drop image
+     */
+    fun dragAndDrop(): ImageVisual {
+	val image: BufferedImage = ImageIO.read(
+	    SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
+	)
+	return ImageVisual(image)
+    }
 
 
-	fun tokenImage(type: GemType): ImageVisual {
-		var path = type.toInt().toString()
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(
-					"/tokens/token"+path+".jpg"
-				)
-			)
-		)
-	}
-	/**
-	 * function that returns Card Image
-	 */
-	fun frontImageFor(id: Int): ImageVisual {
-		val idString = (id+1).toString()
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
-			)
-		)
-	}
-	/**
-	 * function that returns Start Background
-	 */
-	fun startBackground(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(START_BACKGROUND)
-			)
-		)
-	}
-	/**
-	 * function that returns Button Design
-	 */
-	fun button(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
-			)
-		)
-	}
-	/**
-	 * function that returns Redo Button Image
-	 */
-	fun redoButton(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(REDO_IMAGE)
-			)
-		)
-	}
-	/**
-	 * function that returns Hint Button Image
-	 */
-	fun hintButton(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(HINT_IMAGE)
-			)
-		)
-	}
-	/**
-	 * function that returns Undo Button Image
-	 */
-	fun undoButton(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(UNDO_IMAGE)
-			)
-		)
-	}
-	/**
-	 * function that returns Table Background Image
-	 */
-	fun table(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(TABLE_IMAGE)
-			)
-		)
-	}
+    
+    /**
+     * function that returns Card Image
+     */
+    fun frontImageFor(id: Int): ImageVisual {
+	val idString = (id+1).toString()
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
+	    )
+	)
+    }
+    /**
+     * function that returns Start Background
+     */
+    fun startBackground(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(START_BACKGROUND)
+	    )
+	)
+    }
+    /**
+     * function that returns Button Design
+     */
+    fun button(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(BUTTON_IMAGE)
+	    )
+	)
+    }
+    /**
+     * function that returns Redo Button Image
+     */
+    fun redoButton(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(REDO_IMAGE)
+	    )
+	)
+    }
+    /**
+     * function that returns Hint Button Image
+     */
+    fun hintButton(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(HINT_IMAGE)
+	    )
+	)
+    }
+    /**
+     * function that returns Undo Button Image
+     */
+    fun undoButton(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(UNDO_IMAGE)
+	    )
+	)
+    }
+    /**
+     * function that returns Table Background Image
+     */
+    fun table(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(TABLE_IMAGE)
+	    )
+	)
+    }
 
-	fun cardBack(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(CARD_BACK)
-			)
-		)
-	}
+    fun cardBack(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(CARD_BACK)
+	    )
+	)
+    }
 
-	fun velocity(index: Int): ImageVisual {
-	    return ImageVisual(
-		ImageIO.read(
-		    SplendorImageLoader::class.java.getResource("/velocity/velocity_"+index.toString()+".png")
+    fun velocity(index: Int): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource("/velocity/velocity_"+index.toString()+".png")
+	    )
+	)
+    }
+
+    fun shuffleImage(index: Int): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource("/shuffle/shuffle_"+index.toString()+".png")
+	    )
+	)
+    }
+
+    fun backButton(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(BACK_IMAGE)
+	    )
+	)
+    }
+
+    fun configBackground(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(CONFIG_BACKGROUND)
+	    )
+	)
+    }
+
+    fun highscoreBackground(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(HIGHSCORE_BACKGROUND)
+	    )
+	)
+    }
+
+    private fun tokenImage(int: Int): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(
+		    "/tokens/token"+int+".jpg"
 		)
 	    )
-	}
+	)
+    }
 
-	fun shuffleImage(index: Int): ImageVisual {
-	    return ImageVisual(
-		ImageIO.read(
-		    SplendorImageLoader::class.java.getResource("/shuffle/shuffle_"+index.toString()+".png")
-		)
-	    )
-	}
+    fun tokenImage(type: GemType): ImageVisual {
+	return tokenImages[type.toInt()-1]
+    }
 
-	fun backButton(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(BACK_IMAGE)
-			)
-		)
+    init {
+	for(i in 1..6) {
+	    tokenImages+=tokenImage(i)
 	}
-
-	fun configBackground(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(CONFIG_BACKGROUND)
-			)
-		)
-	}
-
-	fun highscoreBackground(): ImageVisual {
-		return ImageVisual(
-			ImageIO.read(
-				SplendorImageLoader::class.java.getResource(HIGHSCORE_BACKGROUND)
-			)
-		)
-	}
+    }
 }
