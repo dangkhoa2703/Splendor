@@ -179,7 +179,7 @@ class SplendorImageLoader {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
-		    "/tokens/token"+int+".jpg"
+		    "/tokens/token"+int+".png"
 		)
 	    )
 	)

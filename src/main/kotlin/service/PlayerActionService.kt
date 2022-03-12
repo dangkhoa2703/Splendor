@@ -53,6 +53,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val currentGameState = game.currentGameState
         val player = currentGameState.currentPlayer
         val board = currentGameState.board
+	val gameService = rootService.gameService
         if(player.equals(user)){
         val numDiffTypes =
             currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
@@ -83,6 +84,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }else{
             return
         }
+	gameService.nextPlayer()
     }
 
     /**
@@ -99,6 +101,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
+	val gameService = rootService.gameService
         if(user.equals(player)) {
             if (rootService.gameService.isCardAcquirable(card, payment)) {
                 if (boardGameCard) {
@@ -139,6 +142,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }else{
             return
         }
+	gameService.nextPlayer()
     }
 
     /**
@@ -151,6 +155,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun reserveCard(card: DevCard, index:Int, user : Player){
         val board = rootService.currentGame!!.currentGameState.board
         val player = rootService.currentGame!!.currentGameState.currentPlayer
+	val gameService = rootService.gameService
         if(user.equals(player)){
         if(player.reservedCards.size < 3) {
             //move card from board to player.reservedCards
@@ -194,6 +199,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }else{
             return
         }
+	gameService.nextPlayer()
     }
 
     /**
@@ -206,6 +212,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
+	val gameService = rootService.gameService
         if(user.equals(player)) {
             board.nobleTiles.remove(card)
             player.nobleTiles.add(card)
@@ -213,6 +220,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }else{
             return
         }
+	gameService.nextPlayer()
     }
 
     /**

@@ -116,7 +116,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         visual = buttonImage
     ).apply{
 	onMouseClicked = {
-	    println("odrer")
 	    refreshAfterEndTurn()
 	}
     }
@@ -154,7 +153,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         0, 0, 0, 0, 0, 0
     )
 
-
     private val gemSelection: IntArray = intArrayOf(
         0, 0, 0, 0, 0, 0
     )
@@ -188,6 +186,47 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	}
     }
 
+    private fun renderPlayerGems() {
+
+	checkNotNull(currentPlayer) { "No player found. "}
+	val gemsEntry = (currentPlayer as Player).gems.entries
+	
+        val gems: MutableList<Pair<GemType, Int>> = mutableListOf()
+	for(gem in gemsEntry) gems.add(Pair(gem.key, gem.value))
+	
+	for(gem in gemsEntry) {
+	    playerGemsLabel[gem.key.toInt()-1].text = gem.value.toString()
+	}
+
+	
+	var j = 0
+	for(i in 0..5) {
+	    if(playerGemsLabel[i].text.equals("0")) {
+		playerGems[i].isVisible = false
+		playerGemsLabel[i].isVisible = false
+		continue
+	    }
+	    
+	    playerGemsLabel[i].isVisible = true
+	    playerGems[i].isVisible = true
+	    playerGems[i].posY = 1050.0-j*50.0 - 25.0
+	    playerGemsLabel[i].posY = 1050.0-j*50.0 - 25.0
+	    if(playerGemSelection[i]==0) {
+		playerGems[i].opacity = 0.2
+	    }
+	    else {
+		playerGems[i].opacity = 1.0
+	    }
+	    if(playerGemSelection[i]==2) {
+		playerGems[i].text = "+"
+	    }
+	    else {
+		playerGems[i].text = ""
+	    }
+	    j++
+	}
+    }
+
     override fun refreshAfterTakeGems() {
         val game = rootService.currentGame
         checkNotNull(game) { "No game found." }
@@ -199,25 +238,33 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             gameGemsLabel[index-1].text = gem.value.toString()
             i++
         }
+
+	renderPlayerGems()
     }
 
-    private fun selectGem(label: Label, index: Int, event: MouseEvent) {
+    private fun selectGem(label: Label, index: Int, event: MouseEvent, gameGem: Boolean) {
 
-        val old = gemSelection[index]
+        var old = gemSelection[index]
+	if(!gameGem) old = playerGemSelection[index]
         if(event.button==MouseButtonType.RIGHT_BUTTON) {
-            gemSelection[index]=0
+            if(gameGem) gemSelection[index]=0
+	    else playerGemSelection[index]=0
         }
         else {
-            gemSelection[index] = (gemSelection[index] + 1) % 3
+            if(gameGem) gemSelection[index] = (gemSelection[index] + 1) % 3
+	    else playerGemSelection[index] = (playerGemSelection[index] + 1) % 3
         }
-        if(gemSelection.sum()>3) {
-            gemSelection[index] = old
+        if((gameGem && gemSelection.sum()>3) || (!gameGem && playerGemSelection.sum()>3)) {
+            if(gameGem) gemSelection[index] = old
+	    else playerGemSelection[index] = old
         }
     }
 
     override fun refreshAfterStartNewGame() {
         val game = rootService.currentGame
         checkNotNull(game) { "No game found." }
+
+	currentPlayer = game.currentGameState.currentPlayer
 
         devCardMap.clear()
         nobleTileMap.clear()
@@ -238,13 +285,19 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         initializeDevCardList(game.currentGameState.board.levelThreeOpen, 3)
 
 	initializePlayerHands()
-        initializeGameGems()
+	
+        initializeGems(1800.0, 50.0, true)
+	gameGems.forEach{ addComponents(it) }
+        gameGemsLabel.forEach{ addComponents(it)}
+	
+	initializeGems(50.0, 25.0, false)
+	playerGems.forEach{ addComponents(it) }
+        playerGemsLabel.forEach{ addComponents(it)}
 
         gameLists.forEach { addComponents(it) }
         gameStacks.forEach { addComponents(it) }
-
-	gameGemsLabel[0].text = "0"
     }
+
 
     override fun refreshAfterEndTurn() {
 	val game = rootService.currentGame
@@ -254,6 +307,25 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 	checkNotNull(currentPlayer) { "No player found"}
 	currentPlayerLabel.text = (currentPlayer as Player).name
+
+	renderPlayerGems()
+
+	val index = game.currentGameState.playerList.indexOf(currentPlayer as Player)
+
+	playerHands.forEach{ it.isVisible = false}
+	playerHands[index].isVisible = true
+    }
+
+    private fun gemMap(selection: IntArray): Map<GemType, Int> {
+	var map: Map<GemType, Int> = mapOf()
+	val prop: GemType = GemType.GREEN
+	for(i in 0..5) {
+	    val type: GemType? = prop.gemType(i+1)
+	    checkNotNull(type) { "No gem found. "}
+	    map+=(type to selection[i])
+	}
+	
+	return map
     }
 
     private fun initializePlayerHands() {
@@ -268,20 +340,44 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             )
 
             layout.dropAcceptor = { dragEvent ->
-                    when(dragEvent.draggedComponent) {
-                        is CardView -> {
-                            val gameService = rootService.gameService
-                            true
-                        }
-                        else -> false
-                    }
+					when(dragEvent.draggedComponent) {
+					    is CardView -> {
+						false
+						val playerActionService = rootService.playerActionService
+						val gameService = rootService.gameService
+
+						val draggedCard: CardView = dragEvent.draggedComponent as CardView 
+
+						checkNotNull(currentPlayer) { "No player found." }
+						val map = gemMap(playerGemSelection)
+
+						try {
+						    playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
+						}
+						catch(e: Exception) {
+						    println(e)
+						    false
+						}
+						true
+					    }
+					    else -> false
+					}
             }
             layout.onDragDropped = { dragEvent ->
                 val playerActionService = rootService.playerActionService
                 val gameService = rootService.gameService
 
-                val draggedDevCard: CardView = dragEvent.draggedComponent as CardView
-                println("yo")
+		val draggedCard: CardView = dragEvent.draggedComponent as CardView 
+
+		checkNotNull(currentPlayer) { "No player found." }
+		val map = gemMap(playerGemSelection)
+
+		try {
+		    playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
+		}
+		catch(e: Exception) {
+		    println(e)
+		}
             }
 
 	    layout.isVisible = false
@@ -291,41 +387,54 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	playerHands.forEach{ addComponents(it) }
     }
 
-    private fun initializeGameGems() {
+    private fun initializeGems(x: Double, size: Double, gameGem: Boolean) {
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found."}
 	
 	val gemsEntry = game.currentGameState.board.gems.entries
+	
         val gems: MutableList<Pair<GemType, Int>> = mutableListOf()
-        for(gem in gemsEntry) gems.add(Pair(gem.key, gem.value))
+	for(gem in gemsEntry) gems.add(Pair(gem.key, gem.value))
+        
         gems.sortBy{ it.first.toInt() }
         var i: Int = 0
         for(gem in gems) {
-            println(gem)
             var token = Label(
-                posX = 1800 - 25, width=50, height=50,
-                visual = imageLoader.tokenImage(gem.first), font = Font(size = 44)
+                posX = x - size/2, width=size, height=size,
+                visual = imageLoader.tokenImage(gem.first)
             ).apply {
                 onMouseClicked = {
                     val index = gem.first.toInt()-1
-                    selectGem(this, index, it)
-		    renderGameGems()
+                    selectGem(this, index, it, gameGem)
+		    if(gameGem) renderGameGems()
+		    else renderPlayerGems()
                 }
             }
 
             val textLabel = Label(
-                posX = 1700 - 50, width=100, height=50,
-                text = gem.second.toString(), font = Font(size=40, color = Color.WHITE)
+                posX = x - size/2, width=size, height=size,
+                text = gem.second.toString()
             )
 
-            gameGems.add(token)
-            gameGemsLabel.add(textLabel)
+	    if(gameGem) {
+		token.font = Font(size = 44)
+		textLabel.font = Font(size=40, color = Color.WHITE)
+		textLabel.posX -= 100.0
+		gameGems.add(token)
+		gameGemsLabel.add(textLabel)
+	    }
+            else {
+		token.font = Font(size = 22)
+		textLabel.font = Font(size=20, color = Color.WHITE)
+		textLabel.posX += 50.0
+		playerGems.add(token)
+		playerGemsLabel.add(textLabel)
+	    }
             i++
         }
 
-	gameGems.forEach{ addComponents(it) }
-        gameGemsLabel.forEach{ addComponents(it)}
-	renderGameGems()
+	if(gameGem) renderGameGems()
+	else renderPlayerGems()
     }
 
     private fun initializeNobleCardsView(nobleTiles: MutableList<NobleTile>) {
@@ -335,7 +444,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         )
 
         for (i in 0..nobleTiles.size - 1) {
-            println(nobleTiles[i].id)
             val cardView = CardView(
                 height = 150, width = 95,
                 front = imageLoader.frontImageFor(nobleTiles[i].id),
@@ -381,12 +489,14 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 back = cardBack,
             )
             cardView.isDraggable = true
+	    /*
             cardView.onDragGestureEnded =
                 { _, succes ->
                     if (succes) {
                         cardView.isDraggable = false
                     }
                 }
+*/
             cardView.showFront()
             devCardMap.add(devCards[i] to cardView)
             layout.add(cardView)
