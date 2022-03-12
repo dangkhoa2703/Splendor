@@ -185,6 +185,16 @@ class SplendorImageLoader {
 	)
     }
 
+	fun carbon(): ImageVisual {
+		return ImageVisual(
+			ImageIO.read(
+				SplendorImageLoader::class.java.getResource(
+					"/carbon.jpg"
+				)
+			)
+		)
+	}
+
     fun tokenImage(type: GemType): ImageVisual {
 	return tokenImages[type.toInt()-1]
     }
