@@ -30,6 +30,13 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	}
     }
 
+	private val gameFinishScene: MenuScene = GameFinishScene(rootService).apply {
+		backButton.onMouseClicked = {
+			this@SplendorApplication.hideMenuScene()
+			this@SplendorApplication.showMenuScene(startScene)
+		}
+	}
+
     private val highscoreScene: MenuScene = HighscoreScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()
@@ -62,7 +69,8 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	    this as Refreshable,
 	    gameScene as Refreshable,
 	    loadGameScene as Refreshable , startScene as Refreshable,
-	    highscoreScene as Refreshable, configScene as Refreshable
+	    highscoreScene as Refreshable, configScene as Refreshable,
+		gameFinishScene as Refreshable
 	)
 	
 	this.showMenuScene(startScene)
