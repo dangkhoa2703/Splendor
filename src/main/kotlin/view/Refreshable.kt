@@ -1,5 +1,7 @@
 package view
 
+import entity.DevCard
+
 interface Refreshable {
     fun refreshAfterStartNewGame() : Unit {}
 
@@ -11,7 +13,7 @@ interface Refreshable {
 
     fun refreshAfterTakeGems() : Unit {}
 
-    fun refreshAfterBuyCard() : Unit {}
+    fun refreshAfterBuyCard(devCard: DevCard) : Unit {}
 
     fun refreshAfterReserveCard() : Unit {}
 

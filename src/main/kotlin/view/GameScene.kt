@@ -23,6 +23,7 @@ import tools.aqua.bgw.event.MouseButtonType
 import tools.aqua.bgw.event.MouseEvent
 import tools.aqua.bgw.visual.CompoundVisual
 import java.awt.Color
+import tools.aqua.bgw.event.DragEvent
 
 class GameScene(private val rootService: RootService) : BoardGameScene(1920, 1080), Refreshable {
 
@@ -132,6 +133,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
 
     private var currentPlayer: Player? = null
+    private var currentPlayerIndex: Int = -1
 
     private val devCardMap: BidirectionalMap<DevCard, CardView> = BidirectionalMap()
     private val nobleTileMap: BidirectionalMap<NobleTile, CardView> = BidirectionalMap()
@@ -244,8 +246,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     private fun selectGem(label: Label, index: Int, event: MouseEvent, gameGem: Boolean) {
 
-        var old = gemSelection[index]
-	if(!gameGem) old = playerGemSelection[index]
         if(event.button==MouseButtonType.RIGHT_BUTTON) {
             if(gameGem) gemSelection[index]=0
 	    else playerGemSelection[index]=0
@@ -254,10 +254,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             if(gameGem) gemSelection[index] = (gemSelection[index] + 1) % 3
 	    else playerGemSelection[index] = (playerGemSelection[index] + 1) % 3
         }
-        if((gameGem && gemSelection.sum()>3) || (!gameGem && playerGemSelection.sum()>3)) {
-            if(gameGem) gemSelection[index] = old
-	    else playerGemSelection[index] = old
-        }
     }
 
     override fun refreshAfterStartNewGame() {
@@ -265,6 +261,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         checkNotNull(game) { "No game found." }
 
 	currentPlayer = game.currentGameState.currentPlayer
+	currentPlayerIndex = 0
 
         devCardMap.clear()
         nobleTileMap.clear()
@@ -308,9 +305,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	checkNotNull(currentPlayer) { "No player found"}
 	currentPlayerLabel.text = (currentPlayer as Player).name
 
+	for(i in 0..5) playerGemSelection[i]=0
+
 	renderPlayerGems()
 
 	val index = game.currentGameState.playerList.indexOf(currentPlayer as Player)
+	currentPlayerIndex = index
 
 	playerHands.forEach{ it.isVisible = false}
 	playerHands[index].isVisible = true
@@ -328,6 +328,43 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	return map
     }
 
+    private fun tryToBuy(dragEvent: DragEvent): Boolean {
+	if(!(dragEvent.draggedComponent is CardView)) return false
+	val playerActionService = rootService.playerActionService
+	val gameService = rootService.gameService
+
+	val draggedCard: CardView = dragEvent.draggedComponent as CardView 
+
+	checkNotNull(currentPlayer) { "No player found." }
+	val map = gemMap(playerGemSelection)
+
+	playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
+	return false
+	/*
+	try {
+	    playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
+	}
+	catch(e: Exception) {
+	    println(e)
+	    return false
+	}
+	return false
+	 */
+    }
+
+    override fun refreshAfterBuyCard(devCard: DevCard) {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found."}
+	checkNotNull(currentPlayer) { "No player found. "}
+	
+	val cardView: CardView = devCardMap.forward(devCard)
+	
+	val list = gameLists.filter{ it.contains(cardView) }[0]
+	list.remove(cardView)
+	cardView.isDraggable = false
+	playerHands[currentPlayerIndex].add(cardView)
+    }
+
     private fun initializePlayerHands() {
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found."}
@@ -339,6 +376,10 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 visual = ColorVisual(221, 136, 136)
             )
 
+	    layout.dropAcceptor = { dragEvent ->
+		tryToBuy(dragEvent)
+	    }
+	    /*
             layout.dropAcceptor = { dragEvent ->
 					when(dragEvent.draggedComponent) {
 					    is CardView -> {
@@ -379,6 +420,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 		    println(e)
 		}
             }
+	     */
 
 	    layout.isVisible = false
             playerHands.add(layout)

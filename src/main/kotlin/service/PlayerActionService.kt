@@ -143,6 +143,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             return
         }
 	gameService.nextPlayer()
+	onAllRefreshables {refreshAfterBuyCard(card)}
     }
 
     /**
