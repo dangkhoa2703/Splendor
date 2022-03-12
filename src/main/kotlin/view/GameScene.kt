@@ -44,7 +44,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     private val undoButton = Button(
         width = 50, height = 50,
-        posX = 50, posY = 150,
+        posX = 50, posY = 25,
         text = "",
         font = Font(size = 28),
         visual = undoImage
@@ -52,46 +52,31 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
     private val redoButton = Button(
         width = 50, height = 50,
-        posX = 200, posY = 150,
+        posX = 200, posY = 25,
         text = "",
         font = Font(size = 28),
         visual = redoImage
     )
 
     private val hintButton = Button(
-        width = 100, height = 50,
-        posX = 50, posY = 500,
+        width = 50, height = 50,
+        posX = 50, posY = 125,
         text = "",
         font = Font(size = 28),
         visual = hintImage
     )
 
     private val saveGameButton = Button(
-        width = 200, height = 100,
-        posX = 50, posY = 950,
+        width = 50, height = 50,
+        posX = 200, posY = 125,
         text = "Save Game",
         font = Font(size = 17),
-        visual = buttonImage
+        visual = imageLoader.saveGameImage()
     )
-
-    private val loadHighscoreButton = Button(
-        width = 200, height = 100,
-        posX = 50, posY = 800,
-        text = "Highscores",
-        font = Font(size = 17),
-        visual = buttonImage
-    ).apply{
-        onMouseClicked = {
-            val game = rootService.currentGame
-            checkNotNull(game) { "No game found."}
-
-            println(game.currentGameState.currentPlayer.gems)
-        }
-    }
 
     private val takeGemsButton = Button(
         width = 200, height = 100,
-        posX = 50, posY = 650,
+        posX = 1680, posY = 650,
         text = "Take Gems",
         font = Font(size = 17),
         visual = buttonImage
@@ -111,10 +96,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
                 }
             }
 
-            println(gemList)
-
             try {
-                playerActionService.takeGems(gemList)
+		checkNotNull(currentPlayer) { "No player found. "}
+                playerActionService.takeGems(gemList, currentPlayer as Player)
 		for(i in 0..5) gemSelection[i]=0
 		renderGameGems()
             }
@@ -130,8 +114,12 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         text = "Next Player",
         font = Font(size = 28),
         visual = buttonImage
-
-    )
+    ).apply{
+	onMouseClicked = {
+	    println("odrer")
+	    refreshAfterEndTurn()
+	}
+    }
 
     //TODO add name of current Player into the currentPlayer label in refreshable Method
     private val currentPlayerLabel = Label(
@@ -172,7 +160,18 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     )
 
     private fun renderGameGems() {
+	var j = 0
 	for(i in 0..5) {
+	    if(gameGemsLabel[i].text.equals("0")) {
+		gameGems[i].isVisible = false
+		gameGemsLabel[i].isVisible = false
+		continue
+	    }
+	    
+	    gameGemsLabel[i].isVisible = true
+	    gameGems[i].isVisible = true
+	    gameGems[i].posY = 100.0+j*75.0 - 25.0
+	    gameGemsLabel[i].posY = 100.0+j*75.0 - 25.0
 	    if(gemSelection[i]==0) {
 		gameGems[i].opacity = 0.2
 	    }
@@ -185,6 +184,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	    else {
 		gameGems[i].text = ""
 	    }
+	    j++
 	}
     }
 
@@ -243,16 +243,17 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         gameLists.forEach { addComponents(it) }
         gameStacks.forEach { addComponents(it) }
 
-	currentPlayer = game.currentGameState.currentPlayer
+	gameGemsLabel[0].text = "0"
     }
 
     override fun refreshAfterEndTurn() {
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found."}
 
-	val currentPlayer: Player = game.currentGameState.currentPlayer
+	currentPlayer = game.currentGameState.currentPlayer
 
-	println(currentPlayer)
+	checkNotNull(currentPlayer) { "No player found"}
+	currentPlayerLabel.text = (currentPlayer as Player).name
     }
 
     private fun initializePlayerHands() {
@@ -302,7 +303,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
         for(gem in gems) {
             println(gem)
             var token = Label(
-                posX = 1800 - 25, posY = 100+i*75 - 25, width=50, height=50,
+                posX = 1800 - 25, width=50, height=50,
                 visual = imageLoader.tokenImage(gem.first), font = Font(size = 44)
             ).apply {
                 onMouseClicked = {
@@ -313,7 +314,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             }
 
             val textLabel = Label(
-                posX = 1700 - 50, posY = 100+i*75 - 25, width=100, height=50,
+                posX = 1700 - 50, width=100, height=50,
                 text = gem.second.toString(), font = Font(size=40, color = Color.WHITE)
             )
 
@@ -405,7 +406,6 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             redoButton,
             nextPlayerButton,
             takeGemsButton,
-            loadHighscoreButton,
             hintButton,
             saveGameButton,
             currentPlayerLabel,

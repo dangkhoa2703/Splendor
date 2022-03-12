@@ -16,12 +16,23 @@ private const val CARD_BACK = "/card_back.jpg"
 private const val BACK_IMAGE = "/Back.png"
 private const val CONFIG_BACKGROUND = "/configScene.jpg"
 private const val HIGHSCORE_BACKGROUND = "/highscorebackground.jpg"
+private const val SAVEGAME_IMAGE = "/savegame.png"
 /**
  * Class to load Images from ressources
  */
 class SplendorImageLoader {
 
     private var tokenImages: List<ImageVisual> = listOf()
+
+    fun saveGameImage(): ImageVisual {
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource(
+		    SAVEGAME_IMAGE
+		)
+	    )
+	)
+    }
     
     /**
      * function that returns Human Icon
