@@ -3,6 +3,7 @@ package service
 import entity.DevCard
 import entity.GemType
 import entity.NobleTile
+import entity.Player
 
 /**
  * class to provide the logic for possible actions a player can take
@@ -44,14 +45,15 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     /**
      * Move gems from to board to player's hand
      * @param types mutable list of gem types, which player chosen
+     * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
-    fun takeGems(types : MutableList<GemType>){
+    fun takeGems(types : MutableList<GemType>, user : Player){
         val game = rootService.currentGame
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val player = currentGameState.currentPlayer
         val board = currentGameState.board
-
+        if(player.equals(user)){
         val numDiffTypes =
             currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
         val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
@@ -78,6 +80,9 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         onAllRefreshables{ refreshAfterTakeGems()}
         // visit by nobleTiles, check gems
         // rootService.gameService.endTurn()
+        }else{
+            return
+        }
     }
 
     /**
@@ -86,62 +91,67 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param boardGameCard true if the card was not reserved first
      * @param payment represents the gems the player chooses to pay with
      * @param index the position of the card in her line on the bord (index is 1 to 4)
+     * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
-    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int){
+    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int, user : Player){
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-
-        if( rootService.gameService.isCardAcquirable(card, payment)) {
-            if (boardGameCard) {
-                //move card from board to player.devCards
-                when (card.level) {
-                    1 -> {
-                        board.levelOneOpen.remove(card)
+        if(user.equals(player)) {
+            if (rootService.gameService.isCardAcquirable(card, payment)) {
+                if (boardGameCard) {
+                    //move card from board to player.devCards
+                    when (card.level) {
+                        1 -> {
+                            board.levelOneOpen.remove(card)
+                        }
+                        2 -> {
+                            board.levelTwoOpen.remove(card)
+                        }
+                        else -> {
+                            board.levelThreeOpen.remove(card)
+                        }
                     }
-                    2 -> {
-                        board.levelTwoOpen.remove(card)
-                    }
-                    else -> {
-                        board.levelThreeOpen.remove(card)
-                    }
+                    rootService.gameService.refill(card.level, index)
+                } else {
+                    //move card from player.reservedCards to player.devCards
+                    player.reservedCards.remove(card)
                 }
-                rootService.gameService.refill(card.level,index)
-            } else {
-                //move card from player.reservedCards to player.devCards
-                player.reservedCards.remove(card)
-            }
-            //move the gems in payment from player's hand back to board
-            card.price.forEach{ (gemType, value) ->
-                player.gems[gemType] = player.gems.getValue(gemType) - value
-                board.gems[gemType] = board.gems.getValue(gemType) + value
-            }
+                //move the gems in payment from player's hand back to board
+                card.price.forEach { (gemType, value) ->
+                    player.gems[gemType] = player.gems.getValue(gemType) - value
+                    board.gems[gemType] = board.gems.getValue(gemType) + value
+                }
 
-            player.score += card.prestigePoints
-            player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1
-            player.devCards.add(card)
-        } else
-            throw IllegalArgumentException("card is not acquirable")
+                player.score += card.prestigePoints
+                player.bonus[card.bonus] = player.bonus.getValue(card.bonus) + 1
+                player.devCards.add(card)
+            } else
+                throw IllegalArgumentException("card is not acquirable")
 
-        rootService.gameService.consecutiveNoAction = 0
-        // update GUI
-        //refreshAfterBuyCard()
-        // visit by nobleTiles, check gems
+            rootService.gameService.consecutiveNoAction = 0
+            // update GUI
+            //refreshAfterBuyCard()
+            // visit by nobleTiles, check gems
 //        rootService.gameService.endTurn()
+        }else{
+            return
+        }
     }
 
     /**
      * player reserves a card
      * @param card the player wants to reserve
      * @param index the position of the card in her line on the bord (index is 1 to 4)
+     * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the player already has three reserved cards
      */
-    fun reserveCard(card: DevCard, index:Int){
+    fun reserveCard(card: DevCard, index:Int, user : Player){
         val board = rootService.currentGame!!.currentGameState.board
         val player = rootService.currentGame!!.currentGameState.currentPlayer
-
+        if(user.equals(player)){
         if(player.reservedCards.size < 3) {
             //move card from board to player.reservedCards
             val level = card.level
@@ -181,36 +191,47 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         //refreshAfterReserveCard()
         // visit by nobleTiles, check gems
 //        rootService.gameService.endTurn()
+        }else{
+            return
+        }
     }
 
     /**
      * gives the player a selected nobleTile
      * @param card the selected nobleTile
+     * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
-    fun selectNobleTile(card: NobleTile){
+    fun selectNobleTile(card: NobleTile, user : Player){
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-
-        board.nobleTiles.remove(card)
-        player.nobleTiles.add(card)
-        player.score += card.prestigePoints
+        if(user.equals(player)) {
+            board.nobleTiles.remove(card)
+            player.nobleTiles.add(card)
+            player.score += card.prestigePoints
+        }else{
+            return
+        }
     }
 
     /**
      * return selected gems from the player to the board
      * @param gems the selected gems
+     * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
-    fun returnGems(gems: List<GemType>){
+    fun returnGems(gems: List<GemType>, user : Player){
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-
-        gems.forEach{ gemType ->
-            player.gems[gemType] = player.gems.getValue(gemType) - 1
-            board.gems[gemType] = board.gems.getValue(gemType) + 1
+        if(user.equals(player)) {
+            gems.forEach { gemType ->
+                player.gems[gemType] = player.gems.getValue(gemType) - 1
+                board.gems[gemType] = board.gems.getValue(gemType) + 1
+            }
+        }else{
+            return
         }
     }
 }
