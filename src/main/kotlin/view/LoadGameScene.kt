@@ -16,6 +16,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	val imageLoader = SplendorImageLoader()
 	val image = imageLoader.button()
 	val backgroundImage = imageLoader.highscoreBackground()
+	val load = imageLoader.loadGame()
     private val fileChooser = FileChooser()
     private var openedFileChooser: Boolean = false
 
@@ -26,23 +27,19 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     )
 
     private val headLineLabel = Label(
-	width = 300, height = 200,
-	posX = width/2 - 150, posY = 50,
-	text = "Load Game",
-	font = Font(size = 44)
+	width = 600, height = 200,
+	posX = width/2 - 300, posY = 50,
+	text = "Press below to Load",
+	font = Font(size = 40),
+
     )
 
-    private val areaLabel = Label(
-	width = 800, height = 450,
-	posX = width/2 - 400, posY = height/2 - 225,
-	text = ""
-    )
 
     private val chooseFileButton = Button(
-	width = 100, height = 50,
-	posX = 1260, posY = 815,
-	text = "Load File", font = Font(size=16),
-	visual = image
+	width = 800, height = 450,
+	posX = width/2 - 400, posY = height/2 - 225,
+	text = "", font = Font(size=16),
+	visual = load
     ).apply{
 	onMouseClicked = {
 	    if(!openedFileChooser) {
@@ -74,10 +71,6 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     init{
 	background = backgroundImage
 
-	val imageLoader = SplendorImageLoader()
-	val image: ImageVisual = imageLoader.dragAndDrop()
-
-	areaLabel.visual = image
 
 	startButton.isDisabled = true
 
@@ -86,7 +79,6 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	    backButton,
 	    startButton,
 	    chooseFileButton,
-	    areaLabel,
 	    fileName,
 	)
     }

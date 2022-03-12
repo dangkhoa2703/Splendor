@@ -90,7 +90,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if(currentGameState.currentPlayer.score >= 15){
             currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
             println(currentGameState.playerList.toString())
-//            onAllRefreshables { refreshAfterEndGame(false) }
+           onAllRefreshables { refreshAfterEndGame() }
             return
         }
 

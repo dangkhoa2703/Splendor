@@ -59,6 +59,10 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	}
     }
 
+	override fun refreshAfterEndGame() {
+		this@SplendorApplication.showMenuScene(gameFinishScene)
+	}
+
     override fun refreshAfterStartNewGame() {
 	this@SplendorApplication.hideMenuScene()
 	this@SplendorApplication.showGameScene(gameScene)
