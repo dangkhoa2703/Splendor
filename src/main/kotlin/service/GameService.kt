@@ -180,6 +180,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
 
+	
+
         when(level){
             1 -> {
                 board.levelOneOpen.add(index,board.levelOneCards[0])
