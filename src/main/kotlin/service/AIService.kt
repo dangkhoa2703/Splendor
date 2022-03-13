@@ -8,11 +8,29 @@ import entity.*
 class AIService(private val rootService: RootService): AbstractRefreshingService()
 {
 
-    /** calculates the best possible Turn for the current player and returns an object of type Turn which includes
+    /** Calculates the best possible Turn for the current player and returns an object of type Turn which includes
      *  a map of gems and a list of at most one card whose contents depend on the TurnType */
     fun calculateBestTurn(player : Player, gameState: GameState) : Turn?
     {
         return null
+    }
+
+    /**
+     *  Calculates the best possible card to buy based on predefined heuristics
+     *  (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     */
+    fun calculateGeneralDevCardScore(board: Board, player: Player, enemyPlayer: List<Player>): Map<DevCard, Double> {
+        var weights: Array<Double> = arrayOf(0.4, 0.2, 0.2, 0.2)
+        val costScores = calculateDevCardCostScores(board)
+        val playerPurchasingPowerScore = calculateDevCardPurchasingPowerScores(board, player)
+        val enemyPurchasingPowerScore = calculateDevCardPurchasingPowerScoresForEnemies(board, enemyPlayer)
+        val importanceScore = calculateDevCardImportanceScore(board, player)
+        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        costScores.forEach {
+            result[it.key] = weights[0] * it.value + weights[1] * playerPurchasingPowerScore[it.key]!!
+            + weights[2] * enemyPurchasingPowerScore[it.key]!! + weights[3] * importanceScore[it.key]!!
+        }
+        return result
     }
 
     /**
