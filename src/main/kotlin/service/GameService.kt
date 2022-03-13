@@ -102,7 +102,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             board.levelOneCards.toMutableList(),
             board.levelOneOpen.toMutableList(),
             board.levelTwoCards.toMutableList(),
-            board.levelTwoCards.toMutableList(),
+            board.levelTwoOpen.toMutableList(),
             board.levelThreeCards.toMutableList(),
             board.levelThreeOpen.toMutableList(),
             board.gems.toMutableMap()

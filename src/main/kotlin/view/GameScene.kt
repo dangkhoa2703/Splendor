@@ -123,7 +123,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     
     private val levelOneCards: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 220, posY = 650, width = 440, height = 180, spacing = 30,
-        alignment = Alignment.CENTER, visual = ColorVisual(221, 136, 136)
+        alignment = Alignment.CENTER, visual = ColorVisual(221, 136, 136),
     )
     private val levelTwoCards: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 220, posY = 470, width = 440, height = 180, spacing = 30,
@@ -134,8 +134,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         alignment = Alignment.CENTER, visual = ColorVisual(221, 136, 136)	
     )
 
-    private val playerDevCards: MutableList<LinearLayout<CardView>> = mutableListOf()
-    private val playerSaveCards: MutableList<LinearLayout<CardView>> = mutableListOf()
+    private var playerDevCards: MutableList<LinearLayout<CardView>> = mutableListOf()
+    private var playerSaveCards: MutableList<LinearLayout<CardView>> = mutableListOf()
 
     private fun toCardView(id: Int, draggable: Boolean = false): CardView {
 	val cardView: CardView = CardView(
@@ -151,6 +151,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     }
 
     private fun tryToBuy(dragEvent: DragEvent): Boolean {
+	/*
 	val playerActionService = rootService.playerActionService
 	val cardView: CardView = dragEvent.draggedComponent as CardView
 	val devCard: DevCard? = devCardMap.backward(cardView)
@@ -161,14 +162,15 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	try{
 	    playerActionService.buyCard(devCard, true, playerGemSelection, 0, player)
-	    return true
+	    return false
 	}
 	catch(e: Exception) {
 	    return false
 	}
-	
+	 */
+	return false
     }
-
+    
     private fun tryToSave(dragEvent: DragEvent): Boolean {
 	return false
     }
@@ -177,15 +179,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     private var currentPlayerIndex: Int = -1
     
     private fun fillLayouts() {
-	//nobleTiles.forEach{ if(it.parent!=null) it.removeFromParent() }
 	nobleTiles.clear()
-	//levelOneCards.forEach{ if(it.parent!=null) it.removeFromParent() }
+	nobleTiles.removeAll{card -> true}
+	
 	levelOneCards.clear()
-	//levelTwoCards.forEach{ if(it.parent!=null) it.removeFromParent() }
+	levelOneCards.removeAll{card -> true}
+	
 	levelTwoCards.clear()
-	//levelThreeCards.forEach{ if(it.parent!=null) it.removeFromParent() }
+	levelTwoCards.removeAll{card -> true}
+	
 	levelThreeCards.clear()
-	devCardMap.clear()
+	levelThreeCards.removeAll{card -> true}
 
 	playerDevCards.forEach{
 	    it.forEach{ card -> if(card.parent!=null) card.removeFromParent()}
@@ -208,20 +212,27 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	val playerList = game.currentGameState.playerList
 	for(player in playerList) {
+	    println("PLAYER: "+player.name)
 	    val devCards: LinearLayout<CardView> = LinearLayout(
 		posX = 1380, posY = 100, width = 200, height = 800,
                 orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
                 visual = ColorVisual(221, 136, 136), spacing = -110
 	    )
 	    val devCardsOrigin = player.devCards
+	    print("\t:")
+	    println(devCardsOrigin)
 	    devCardsOrigin.forEach{
 		card -> run {
 		    val cardView = toCardView(card.id)
-		    cardView.isDraggable = false
 		    devCards.add(cardView)
-		    devCardMap.add(card to cardView)
 		}
 	    }
+	    print("LINEARLAYOUT: ")
+	    for(cardView in devCards) {
+		print(cardView)
+		print(", ")
+	    }
+	    println()
 	    
 	    devCards.isVisible = false
 	    devCards.dropAcceptor = {
@@ -237,9 +248,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    saveCardsOrigin.forEach{
 		card -> run {
 		    val cardView = toCardView(card.id)
-		    cardView.isDraggable = false
 		    saveCards.add(cardView)
-		    devCardMap.add(card to cardView)
 		}
 	    }
 	    saveCards.isVisible = false
@@ -276,9 +285,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	println(levelOneCardsOrigin)
 	levelOneCardsOrigin.forEach{
 	    card -> run {
-		val cardView = toCardView(card.id, true)
+		val cardView = toCardView(card.id)
 		levelOneCards.add(cardView)
-		devCardMap.add(card to cardView)
 	    }
 	}
 
@@ -287,9 +295,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	println(levelTwoCardsOrigin)
 	levelTwoCardsOrigin.forEach{
 	    card -> run {
-		val cardView = toCardView(card.id, true)
+		val cardView = toCardView(card.id)
 		levelTwoCards.add(cardView)
-		devCardMap.add(card to cardView)
 	    }
 	}
 
@@ -298,9 +305,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	println(levelThreeCardsOrigin)
 	levelThreeCardsOrigin.forEach{
 	    card -> run {
-		val cardView = toCardView(card.id, true)
+		val cardView = toCardView(card.id)
 		levelThreeCards.add(cardView)
-		devCardMap.add(card to cardView)
 	    }
 	}
     }
@@ -486,8 +492,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         val game = rootService.currentGame
         checkNotNull(game) { "No game found." }
 
-	currentPlayer = game.currentGameState.currentPlayer
-	currentPlayerIndex = game.currentGameState.playerList.indexOf(currentPlayer)
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
 
@@ -543,15 +547,19 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     }
 
     override fun refreshAfterBuyCard(devCard: DevCard) {
+	/*
+	val cardView: CardView? = devCardMap.forward(devCard)
+	checkNotNull(cardView) { "No card found."}
+	cardView.isDraggable = false
+	
 	fillLayouts()
 
 	refreshAfterTakeGems()
+	 */
     }
 
 
     init {
-	
-	
 	imageLoader.preload()
 	
 	background = imageLoader.table()
