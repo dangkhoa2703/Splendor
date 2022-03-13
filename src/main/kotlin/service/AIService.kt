@@ -115,13 +115,53 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
+     * Help-function that calculates the score of the cards based on the usefulness of the card
+     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard for the enemies
+     * @return Map of all cards with respective scores
+     */
+    fun calculateDevCardImportanceScore(board: Board, player: Player) : Map<DevCard, Double> {
+        val cardsOnBoard: MutableList<DevCard> = mutableListOf()
+        cardsOnBoard.addAll(board.levelOneOpen)
+        cardsOnBoard.addAll(board.levelTwoOpen)
+        cardsOnBoard.addAll(board.levelThreeOpen)
+        var mapOfBuyableDevCards: MutableMap<GemType, Int> = mutableMapOf()
+        var mapOfNoblesWithRespectiveBonus: MutableMap<GemType, Int> = mutableMapOf()
+        for(gemType in GemType.values()) {
+            var amountOfBuyableCards: Int = 0
+            for(cardOnBoard in cardsOnBoard) {
+                if(cardOnBoard.price.containsKey(gemType) && cardOnBoard.price[gemType]!! > 0) {
+                    amountOfBuyableCards++
+                }
+            }
+            mapOfBuyableDevCards[gemType] = amountOfBuyableCards
+            var amountOfNoblesWithRespectiveBonus: Int = 0
+            for(noble in board.nobleTiles) {
+                if(noble.condition.containsKey(gemType) && noble.condition[gemType]!! > 0) {
+                    amountOfNoblesWithRespectiveBonus++
+                }
+            }
+            mapOfNoblesWithRespectiveBonus[gemType] = amountOfNoblesWithRespectiveBonus
+        }
+        cardsOnBoard.sortWith(compareByDescending<DevCard> { it.prestigePoints }.thenByDescending { mapOfNoblesWithRespectiveBonus[it.bonus] ?: 0 }.thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
+        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        result[cardsOnBoard[0]] = 1.0
+        cardsOnBoard.forEachIndexed { index, devCard ->
+            if(index >= 1) {
+                result[cardsOnBoard[index]] = 1.0 - (index/(cardsOnBoard.size - 1))
+            }
+        }
+        return result
+    }
+
+    /**
      * Help-function that calculates the amount of missing gems from the gems of the player and the given map of gems
      */
     fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
         val result = mutableMapOf<GemType, Int>()
         player.gems.forEach {
             val costsForIndividualGemType: Int = costs[it.key] ?: 0
-            val difference = it.value - costsForIndividualGemType
+            val gemsOwnedByPlayer: Int = it.value + (player.bonus[it.key] ?: 0);
+            val difference = gemsOwnedByPlayer - costsForIndividualGemType
             if(difference < 0)
                 result[it.key] = -1 * difference
         }
