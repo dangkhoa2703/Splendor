@@ -102,7 +102,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             board.levelOneCards.toMutableList(),
             board.levelOneOpen.toMutableList(),
             board.levelTwoCards.toMutableList(),
-            board.levelTwoCards.toMutableList(),
+            board.levelTwoOpen.toMutableList(),
             board.levelThreeCards.toMutableList(),
             board.levelThreeOpen.toMutableList(),
             board.gems.toMutableMap()
@@ -179,6 +179,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun refill(level: Int,index: Int){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
+
+	
 
         when(level){
             1 -> {

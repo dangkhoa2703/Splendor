@@ -13,4 +13,10 @@ class DevCard(
     val price: Map<GemType,Int>,
     val level: Int,
     val prestigePoints: Int,
-    val bonus: GemType )
+    val bonus: GemType ) {
+
+    override fun toString(): String {
+	val idString: String = id.toString()
+	return idString
+    }
+}
