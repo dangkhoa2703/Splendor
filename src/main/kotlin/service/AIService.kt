@@ -115,14 +115,17 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates amount of gems needed to buy the card
+     * Help-function that calculates the amount of missing gems from the gems of the player and the given map of gems
      */
-    fun DevCard.calculateGemPrice(): Int {
-        var amount: Int = 0
-        price.forEach {
-            amount += it.value
+    fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
+        val result = mutableMapOf<GemType, Int>()
+        player.gems.forEach {
+            val costsForIndividualGemType: Int = costs[it.key] ?: 0
+            val difference = it.value - costsForIndividualGemType
+            if(difference < 0)
+                result[it.key] = -1 * difference
         }
-        return amount
+        return result
     }
 
     /**
