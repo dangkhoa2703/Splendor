@@ -128,7 +128,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * Help-function that calculates amount of rounds needed to buy the card and therefore additional gems
      */
-    private fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
+    fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
         var result = 0
         var leftOverGems = 0
         var missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
@@ -153,20 +153,6 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             }
         }
         return Pair(result, leftOverGems)
-    }
-
-    /**
-     * Help-function that calculates the amount of missing gems from the gems of the player and the given map of gems
-     */
-    private fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
-        val result = mutableMapOf<GemType, Int>()
-        player.gems.forEach {
-            val costsForIndividualGemType: Int = costs[it.key] ?: 0
-            val difference = it.value - costsForIndividualGemType
-            if(difference < 0)
-                result[it.key] = -1 * difference
-        }
-        return result
     }
 
 }
