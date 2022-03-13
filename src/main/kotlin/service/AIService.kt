@@ -16,10 +16,11 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates cost-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     * Help-function that calculates cost-scores
+     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
      * @return Map of all cards with respective scores
      */
-    fun calculateDevCardCostScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List<Player>) : Map<DevCard, Double> {
+    fun calculateDevCardCostScores(board: Board) : Map<DevCard, Double> {
         val cardsOnBoard: MutableList<DevCard> = mutableListOf()
         cardsOnBoard.addAll(board.levelOneOpen)
         cardsOnBoard.addAll(board.levelTwoOpen)
@@ -43,10 +44,11 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates purchasing-power-scores (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     * Help-function that calculates purchasing-power-scores
+     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
      * @return Map of all cards with respective scores
      */
-    fun calculateDevCardPurchasingPowerScores(devCard: DevCard, board: Board, player: Player, enemyPlayer: List<Player>) : Map<DevCard, Double> {
+    fun calculateDevCardPurchasingPowerScores(board: Board, player: Player) : Map<DevCard, Double> {
         val cardsOnBoard: MutableList<DevCard> = mutableListOf()
         cardsOnBoard.addAll(board.levelOneOpen)
         cardsOnBoard.addAll(board.levelTwoOpen)
@@ -73,24 +75,64 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates amount of gems needed to buy the card
+     * Help-function that calculates the score of the cards based on the purchasing-power-scores of
+     * the enemies
+     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard for the enemies
+     * @return Map of all cards with respective scores
      */
-    fun DevCard.calculateGemPrice(): Int {
-        var result: Int = 0
-        price.forEach {
-            result += it.value
+    fun calculateDevCardPurchasingPowerScoresForEnemies(board: Board, enemyPlayer: List<Player>) : Map<DevCard, Double> {
+        //Map with each player and the card-scores of that player
+        var scoresOfEnemies: MutableMap<Player, MutableMap<DevCard, Double>> = mutableMapOf()
+        enemyPlayer.forEach {
+            scoresOfEnemies[it] = calculateDevCardPurchasingPowerScores(board,it) as MutableMap<DevCard, Double>
+        }
+        //Map to save the different scores of the enemies for each devCard
+        var allScores: MutableMap<DevCard,MutableList<Double>> = mutableMapOf()
+        //Map to save the current card with the score of the current player temporary
+        var tmp: MutableMap<DevCard, Double>
+        scoresOfEnemies.keys.forEach {
+            tmp = scoresOfEnemies[it]!!
+            tmp.keys.forEach {
+                //if the map allScores does not contain the devCard yet
+                if (!allScores.containsKey(it)) {
+                    //add a new list for the scores of this card
+                    allScores[it] = mutableListOf()
+                }
+                //add the score of the devCard to the list of scores
+                tmp[it]?.let { it1 -> allScores[it]!!.add(it1) }
+            }
+        }
+        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        //Calculate the average score of the scores in the list and safe it in our final map
+        allScores.keys.forEach {
+            result[it] = allScores[it]!!.average()
+        }
+        //Reverse the rank to determine the scores of the cards for our current player and not for the enemies
+        result.keys.forEach {
+            result[it] = 1 - result[it]!!
         }
         return result
     }
 
     /**
+     * Help-function that calculates amount of gems needed to buy the card
+     */
+    fun DevCard.calculateGemPrice(): Int {
+        var amount: Int = 0
+        price.forEach {
+            amount += it.value
+        }
+        return amount
+    }
+
+    /**
      * Help-function that calculates amount of rounds needed to buy the card and therefore additional gems
      */
-    fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
-        var result: Int = 0
-        var leftOverGems: Int = 0
+    private fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
+        var result = 0
+        var leftOverGems = 0
         var missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
-        if(missingGems.size <= 0)
+        if(missingGems.isEmpty())
             return Pair(0, 0)
         card.price.keys.forEach {
             val value: Int = card.price[it]!!
@@ -99,7 +141,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 missingGems[it] = 0
             } else {
                 result += (value / 2) + 1
-                var remainingGems: Int = 2
+                var remainingGems = 2
                 missingGems.forEach {
                     if(remainingGems <= 0) {
                         if(it.value > 0)
@@ -116,7 +158,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * Help-function that calculates the amount of missing gems from the gems of the player and the given map of gems
      */
-    fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
+    private fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
         val result = mutableMapOf<GemType, Int>()
         player.gems.forEach {
             val costsForIndividualGemType: Int = costs[it.key] ?: 0
