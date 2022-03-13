@@ -24,6 +24,8 @@ class SplendorImageLoader {
 
     private var tokenImages: List<ImageVisual> = listOf()
 
+    private var images: List<ImageVisual> = listOf()
+
     fun saveGameImage(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -59,13 +61,18 @@ class SplendorImageLoader {
      * function that returns Card Image
      */
     fun frontImageFor(id: Int): ImageVisual {
-	val idString = (id+1).toString()
+	return images[id]
+    }
+
+    private fun imageFor(id: Int): ImageVisual {
+	val idString = (id).toString()
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
 	    )
 	)
     }
+    
     /**
      * function that returns Start Background
      */
@@ -197,6 +204,12 @@ class SplendorImageLoader {
 
     fun tokenImage(type: GemType): ImageVisual {
 	return tokenImages[type.toInt()-1]
+    }
+
+    fun preload() {
+	for(i in 1..100){
+	    images+=imageFor(i)
+	}
     }
 
     init {

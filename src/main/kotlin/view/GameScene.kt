@@ -142,6 +142,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     private val gameStacks: MutableList<LabeledStackView> = mutableListOf()
 
     private val playerHands: MutableList<LinearLayout<CardView>> = mutableListOf()
+    private val playerHandsSave: MutableList<LinearLayout<CardView>> = mutableListOf()
 
     private val tokemImages: List<ImageVisual> = listOf()
 
@@ -218,12 +219,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	    }
 	    else {
 		playerGems[i].opacity = 1.0
-	    }
-	    if(playerGemSelection[i]==2) {
-		playerGems[i].text = "+"
-	    }
-	    else {
-		playerGems[i].text = ""
+		playerGemsLabel[i].text+=" "+playerGemSelection[i].toString()
 	    }
 	    j++
 	}
@@ -248,11 +244,11 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
         if(event.button==MouseButtonType.RIGHT_BUTTON) {
             if(gameGem) gemSelection[index]=0
-	    else playerGemSelection[index]=0
+	    else playerGemSelection[index] = Math.max(playerGemSelection[index]-1, 0)
         }
         else {
             if(gameGem) gemSelection[index] = (gemSelection[index] + 1) % 3
-	    else playerGemSelection[index] = (playerGemSelection[index] + 1) % 3
+	    else playerGemSelection[index] = (playerGemSelection[index] + 1)
         }
     }
 
@@ -270,12 +266,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
         initializeNobleCardsView(game.currentGameState.board.nobleTiles)
 
-        /*
         initializeDevCardStack(game.currentGameState.board.levelOneCards, 1)
         initializeDevCardStack(game.currentGameState.board.levelTwoCards, 2)
-        initializeDevCardStack(game.currentGameState.board.levelThreeCards, 3)
-
-         */
+        initializeDevCardStack(game.currentGameState.board.levelThreeCards, 3);
 
         initializeDevCardList(game.currentGameState.board.levelOneOpen, 1)
         initializeDevCardList(game.currentGameState.board.levelTwoOpen, 2)
@@ -314,6 +307,9 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 	playerHands.forEach{ it.isVisible = false}
 	playerHands[index].isVisible = true
+
+	playerHandsSave.forEach{ it.isVisible = false}
+	playerHandsSave[index].isVisible = true
     }
 
     private fun gemMap(selection: IntArray): Map<GemType, Int> {
@@ -328,6 +324,22 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	return map
     }
 
+    private fun tryToSave(dragEvent: DragEvent): Boolean {
+	if(!(dragEvent.draggedComponent is CardView)) return false
+	val playerActionService = rootService.playerActionService
+	val gameService = rootService.gameService
+
+	val draggedCard: CardView = dragEvent.draggedComponent as CardView 
+
+	checkNotNull(currentPlayer) { "No player found." }
+	val map = gemMap(playerGemSelection)
+
+	playerActionService.reserveCard(
+	    devCardMap.backward(draggedCard), 0, currentPlayer as Player
+	)
+	return true
+    }
+
     private fun tryToBuy(dragEvent: DragEvent): Boolean {
 	if(!(dragEvent.draggedComponent is CardView)) return false
 	val playerActionService = rootService.playerActionService
@@ -339,17 +351,20 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	val map = gemMap(playerGemSelection)
 
 	playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
-	return false
-	/*
-	try {
-	    playerActionService.buyCard(devCardMap.backward(draggedCard), true, map, 0, currentPlayer as Player)
-	}
-	catch(e: Exception) {
-	    println(e)
-	    return false
-	}
-	return false
-	 */
+	return true
+    }
+
+    override fun refreshAfterReserveCard(devCard: DevCard) {
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found."}
+	checkNotNull(currentPlayer) { "No player found. "}
+	
+	val cardView: CardView = devCardMap.forward(devCard)
+	
+	cardView.isDraggable = false
+	playerHandsSave[currentPlayerIndex].add(cardView)
+
+	renderPlayerGems()
     }
 
     override fun refreshAfterBuyCard(devCard: DevCard) {
@@ -359,10 +374,10 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 	
 	val cardView: CardView = devCardMap.forward(devCard)
 	
-	val list = gameLists.filter{ it.contains(cardView) }[0]
-	list.remove(cardView)
 	cardView.isDraggable = false
 	playerHands[currentPlayerIndex].add(cardView)
+
+	renderPlayerGems()
     }
 
     private fun initializePlayerHands() {
@@ -373,11 +388,21 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
             val layout: LinearLayout<CardView> = LinearLayout(
                 posX = 1380, posY = 100, width = 200, height = 800,
                 orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
-                visual = ColorVisual(221, 136, 136)
+                visual = ColorVisual(221, 136, 136), spacing = -110
             )
+
+	    val saveLayout: LinearLayout<CardView> = LinearLayout(
+		posX = 280, posY = 100, width = 200, height = 800,
+                orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
+                visual = ColorVisual(221, 136, 221), spacing = 10
+	    )
 
 	    layout.dropAcceptor = { dragEvent ->
 		tryToBuy(dragEvent)
+	    }
+
+	    saveLayout.dropAcceptor = { dragEvent -> 
+		tryToSave(dragEvent)
 	    }
 	    /*
             layout.dropAcceptor = { dragEvent ->
@@ -424,9 +449,11 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 
 	    layout.isVisible = false
             playerHands.add(layout)
+	    playerHandsSave.add(saveLayout)
         }
 
 	playerHands.forEach{ addComponents(it) }
+	playerHandsSave.forEach{ addComponents(it) }
     }
 
     private fun initializeGems(x: Double, size: Double, gameGem: Boolean) {
@@ -469,6 +496,7 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
 		token.font = Font(size = 22)
 		textLabel.font = Font(size=20, color = Color.WHITE)
 		textLabel.posX += 50.0
+		textLabel.width += size*2
 		playerGems.add(token)
 		playerGemsLabel.add(textLabel)
 	    }
@@ -548,6 +576,8 @@ class GameScene(private val rootService: RootService) : BoardGameScene(1920, 108
     }
 
     init {
+
+	imageLoader.preload()
 
         background = tableImage
 

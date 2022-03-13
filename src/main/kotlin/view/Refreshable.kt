@@ -15,7 +15,7 @@ interface Refreshable {
 
     fun refreshAfterBuyCard(devCard: DevCard) : Unit {}
 
-    fun refreshAfterReserveCard() : Unit {}
+    fun refreshAfterReserveCard(devCard: DevCard) : Unit {}
 
     fun refreshAfterLoadGame() : Unit {}
 

@@ -200,6 +200,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }else{
             return
         }
+	onAllRefreshables{ refreshAfterReserveCard(card)}
 	gameService.nextPlayer()
     }
 
