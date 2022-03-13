@@ -18,16 +18,27 @@ import entity.PlayerType
 import tools.aqua.bgw.components.uicomponents.CheckBox
 import java.awt.Color
 
+/**
+ *  Graphical User Interface Scene, used to configure Players and AI for [SplendorApplication]
+ *  It is of type MenuScene with dimensions 1920x1080 px
+ */
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
+	/**
+	 * [imageLoader] : used to load various images from the SplendorImageLoader() class, needed for configScene
+	 * [image] : provides facility for buttons needed for the configScene
+	 * [backgroundImage] : background image of config scene
+	 */
     private val imageLoader = SplendorImageLoader()
     private val image = imageLoader.button()
 	private val backgroundImage = imageLoader.configBackground()
 
+	/** [speeds] : values to configure the speed simulation of the AI Players */
     private val speeds: Array<String> = arrayOf(
 	" SLOW ", "NORMAL", " FAST "
     )
 
+	/**[difficulties] : values to configure play difficulty / intensity of an AI player*/
     private val difficulties: Array<String> = arrayOf(
 	"NEVER USED", "EASY", "MEDIUM", "HARD"
     )
@@ -35,7 +46,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     private val selection: IntArray = intArrayOf(
 	1, -2, 1, -2, 1, -2, 1, -2, 1, 0
     )
-    
+
+	/**[headLineLabel] : text to indicate configuration of [SplendorApplication]*/
     private val headLineLabel = Label(
 	width = 400, height = 200,
 	posX = width/2 - 200, posY = 50,
@@ -43,19 +55,25 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	font = Font(size=44)
     )
 
+	/**[textFields] : input fields for 2 to 4 unique players/AIs*/
     private var textFields: List<TextField> = listOf()
 
+	/**[icons] : icons indicating a player or an AI*/
     private var icons: List<Button> = listOf()
 
+	/**[difficultyTexts] : Texts indicating the three different difficulties*/
     private var difficultyTexts: List<Button> = listOf()
 
+	/**[speedButtons] : Buttons for indicating the three different speeds*/
     private var speedButtons: List<Button> = listOf()
 
-    private var shuffleButtons: List<Button> = listOf()
+	/**[shuffleButtons] : Buttons for creating random AIs for gameplay*/
+	private var shuffleButtons: List<Button> = listOf()
 
     private var size = 1
 
-    private val delButton = Button(
+	/**[delButton] : Buttons for deleting Player/AI input field in configScene*/
+	private val delButton = Button(
 	width = 50, height = 50,
 	text = "-", visual = image
     ).apply {
@@ -70,7 +88,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    refreshStartButton()
 	}
     }
-
+	/**[addButton] : Buttons for adding Player/AI input field in configScene*/
     private val addButton = Button(
 	width = 50, height = 50,
 	text = "+", visual = image
@@ -82,7 +100,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    refreshStartButton()
 	}
     }
-
+	/**[backButton] : Button for closing application*/
     val backButton = Button(
 	width = 200, height = 100,
 	posX = 50, posY = 930,
@@ -90,6 +108,9 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	font = Font(size = 28), visual = image
     )
 
+	/**[refreshStartButton] : Function for refreshing/enabling/disabling the start button
+	 * the startbutton is disable when a given [textFields] is left blank
+	 * */
     private fun refreshStartButton() {
 	var startDisabled = false
 
@@ -122,7 +143,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    }
 	}
     }
-
+	/**[refresh] :*/
     private fun refresh() {
 	speedButtons.forEach{ it.isVisible= false}
 	shuffleButtons.forEach{ it.isVisible = false}
@@ -202,7 +223,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    players, selection[9]==0, selection[8]
 	)
     }
-
+	/**[startButton] : Button to start game after successful configuration*/
     private val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,

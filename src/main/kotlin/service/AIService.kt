@@ -177,8 +177,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         var missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
         if(missingGems.isEmpty())
             return Pair(0, 0)
-        card.price.keys.forEach {
-            val value: Int = card.price[it]!!
+        missingGems.keys.forEach {
+            val value: Int = missingGems[it]!!
             if(value % 2 == 0) {
                 result += value /2
                 missingGems[it] = 0

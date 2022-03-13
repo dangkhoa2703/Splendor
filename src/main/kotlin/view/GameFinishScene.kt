@@ -9,6 +9,13 @@ import entity.Player
 import entity.SplendorImageLoader
 import java.awt.Color
 
+/** [GameFinishScene] : [MenuScene] that is displayed after the game ends depending on condition
+ *  [imageLoader] : Facilitates loading of various images needed for the [GameFinishScene] using SplendorImageLoader
+ *  [image] : Facilitates loading of various buttons needed for the [GameFinishScene] using SplendorImageLoader
+ *  [backgroundImage] : Facilitates loading of background needed for the [GameFinishScene] using SplendorImageLoader
+ *  [headLineLabel] :   Label indicating endscene
+ */
+
 class GameFinishScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
     val imageLoader = SplendorImageLoader()
     val image = imageLoader.button()
@@ -20,7 +27,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         text = "EndScene",
         font = Font(size = 44)
     )
-
+    /**[backButton] : Buttons for returning to previous scene*/
     val backButton = Button(
         width = 200, height = 100,
         posX = 50, posY = 930,
@@ -28,21 +35,24 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         font = Font(size = 28), visual = image
     )
 
+    /**[rank0] : Label to display winner */
     val rank0 = Label(
         900,300,1000,500,"",
         font= Font(size = 20, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
     )
-
+    /**[rank2] : Label to display runner up */
     val rank1 = Label(
         900,400,1000,500,"",
         font= Font(size = 17,  color = Color.BLUE, fontStyle = Font.FontStyle.ITALIC)
     )
 
+    /**[rank2] : Label to display third player */
     val rank2 = Label(
         900,500,1000,500,"",
         font= Font(size = 15, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
     )
 
+    /**[rank2] : Label to display loser */
     val rank3 = Label(
         900,600,1000,500,"",
         font= Font(size = 12, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
@@ -50,6 +60,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
 
     val labelList : MutableList<Label> = mutableListOf()
 
+    /**[showScore] : Button that when pressed shows the scores of the players */
     private val showScore = Button(
         100,500,400,400,"SHOW HIGHSCORE", visual = image
     ).apply {
@@ -58,7 +69,11 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         }
     }
 
-
+    /**[ranking] : Method used to display the scores in descending order.
+     *  Initially , the function checks if we have an existing game.
+     *  In the case of an existing game , we sort the scores in descending order using sortBy and
+     *  these are then displayed.
+     * */
     fun ranking (){
         val rankings : MutableList<Player> = mutableListOf()
         val game = rootService.currentGame
