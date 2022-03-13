@@ -36,7 +36,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 if(devCard.calculateGemPrice() == previousCard.calculateGemPrice()) {
                     result[devCard] = previousCardScore
                 } else {
-                    result[devCard] = previousCardScore - (devCard.calculateGemPrice() - previousCard.calculateGemPrice()) * 1 / deltaCost
+                    result[devCard] = previousCardScore - (devCard.calculateGemPrice() - previousCard.calculateGemPrice()).toDouble() * (1.0 / deltaCost.toDouble())
                 }
             }
         }
@@ -67,7 +67,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 if(mapOfRoundsNeeded[devCard] == mapOfRoundsNeeded[previousCard]) {
                     result[devCard] = previousCardScore
                 } else {
-                    result[devCard] = previousCardScore - (1 / (cardsOnBoard.size - 1))
+                    result[devCard] = previousCardScore - (1.0 / (cardsOnBoard.size - 1).toDouble())
                 }
             }
         }
@@ -109,7 +109,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         //Reverse the rank to determine the scores of the cards for our current player and not for the enemies
         result.keys.forEach {
-            result[it] = 1 - result[it]!!
+            result[it] = 1.0 - result[it]!!
         }
         return result
     }
@@ -142,12 +142,14 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             }
             mapOfNoblesWithRespectiveBonus[gemType] = amountOfNoblesWithRespectiveBonus
         }
-        cardsOnBoard.sortWith(compareByDescending<DevCard> { it.prestigePoints }.thenByDescending { mapOfNoblesWithRespectiveBonus[it.bonus] ?: 0 }.thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
+        cardsOnBoard.sortWith(compareByDescending<DevCard> { it.prestigePoints }
+            .thenByDescending { mapOfNoblesWithRespectiveBonus[it.bonus] ?: 0 }
+            .thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
         var result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, devCard ->
             if(index >= 1) {
-                result[cardsOnBoard[index]] = 1.0 - (index/(cardsOnBoard.size - 1))
+                result[cardsOnBoard[index]] = 1.0 - (index.toDouble()/(cardsOnBoard.size - 1).toDouble())
             }
         }
         return result
