@@ -217,13 +217,13 @@ class SplendorImageLoader {
 
     fun preload() {
 	for(i in 1..100){
-	    images+=imageFor(i)
+		images = images + imageFor(i)
 	}
     }
 
     init {
 	for(i in 1..6) {
-	    tokenImages+=tokenImage(i)
+		tokenImages = tokenImages + tokenImage(i)
 	}
     }
 }

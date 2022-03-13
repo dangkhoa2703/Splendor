@@ -111,16 +111,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // create a new players list with the properties of the current list
         currentGameState.playerList.forEach { player ->
             newPlayerList.add(
-                Player(
-                    player.name,
-                    player.playerType,
-                    player.gems,
-                    player.bonus,
-                    player.reservedCards,
-                    player.nobleTiles,
-                    player.score,
-                    player.devCards
-                )
+                Player(player.name, player.playerType, player.gems, player.bonus, player.reservedCards,
+                    player.nobleTiles, player.score, player.devCards)
             )
         }
         val newGameState = GameState(
@@ -179,8 +171,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun refill(level: Int,index: Int){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
-
-	
 
         when(level){
             1 -> {

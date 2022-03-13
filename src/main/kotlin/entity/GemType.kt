@@ -30,12 +30,12 @@ enum class GemType {
     }
 
     fun gemType (index: Int): GemType? = when(index) {
-        1 -> GemType.WHITE
-        2 -> GemType.BLUE
-        3 -> GemType.GREEN
-        4 -> GemType.RED
-        5 -> GemType.BLACK
-        6 -> GemType.YELLOW
+        1 -> WHITE
+        2 -> BLUE
+        3 -> GREEN
+        4 -> RED
+        5 -> BLACK
+        6 -> YELLOW
         else -> null
     }
 }

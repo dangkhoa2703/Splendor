@@ -19,7 +19,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
 
     /**
      * Calculates the best possible card to buy based on predefined heuristics (specified here:
-     * https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus)
+     * https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-
+     *  f%C3%BCr-minimax-algorithmus)
      * for each DevCard
      */
     fun calculateGeneralDevCardScore(board: Board, player: Player, enemyPlayer: List<Player>): Map<DevCard, Double> {
@@ -46,7 +47,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.addAll(board.levelTwoOpen)
         cardsOnBoard.addAll(board.levelThreeOpen)
         cardsOnBoard.sortBy { it.calculateGemPrice() }
-        val deltaCost: Int = cardsOnBoard[cardsOnBoard.size - 1].calculateGemPrice() - cardsOnBoard[0].calculateGemPrice()
+        val deltaCost: Int = cardsOnBoard[cardsOnBoard.size - 1].calculateGemPrice() -
+                cardsOnBoard[0].calculateGemPrice()
         val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, devCard ->
@@ -100,7 +102,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
      * the enemies
      * @return Map of all cards with respective scores
      */
-    fun calculateDevCardPurchasingPowerScoresForEnemies(board: Board, enemyPlayer: List<Player>) : Map<DevCard, Double> {
+    fun calculateDevCardPurchasingPowerScoresForEnemies(board: Board, enemyPlayer: List<Player>) :
+            Map<DevCard, Double> {
         //Map with each player and the card-scores of that player
         val scoresOfEnemies: MutableMap<Player, MutableMap<DevCard, Double>> = mutableMapOf()
         enemyPlayer.forEach {
@@ -110,7 +113,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val allScores: MutableMap<DevCard,MutableList<Double>> = mutableMapOf()
         //Map to save the current card with the score of the current player temporary
         var tmp: MutableMap<DevCard, Double>
-        scoresOfEnemies.keys.forEach {
+        scoresOfEnemies.keys.forEach { it ->
             tmp = scoresOfEnemies[it]!!
             tmp.keys.forEach {
                 //if the map allScores does not contain the devCard yet
@@ -146,14 +149,14 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val mapOfBuyableDevCards: MutableMap<GemType, Int> = mutableMapOf()
         val mapOfNoblesWithRespectiveBonus: MutableMap<GemType, Int> = mutableMapOf()
         for(gemType in GemType.values()) {
-            var amountOfBuyableCards: Int = 0
+            var amountOfBuyableCards = 0
             for(cardOnBoard in cardsOnBoard) {
                 if(cardOnBoard.price.containsKey(gemType) && cardOnBoard.price[gemType]!! > 0) {
                     amountOfBuyableCards++
                 }
             }
             mapOfBuyableDevCards[gemType] = amountOfBuyableCards
-            var amountOfNoblesWithRespectiveBonus: Int = 0
+            var amountOfNoblesWithRespectiveBonus = 0
             for(noble in board.nobleTiles) {
                 if(noble.condition.containsKey(gemType) && noble.condition[gemType]!! > 0) {
                     amountOfNoblesWithRespectiveBonus++
@@ -166,7 +169,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             .thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
         val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
-        cardsOnBoard.forEachIndexed { index, devCard ->
+        cardsOnBoard.forEachIndexed { index, _ ->
             if(index >= 1) {
                 result[cardsOnBoard[index]] = 1.0 - (index.toDouble()/(cardsOnBoard.size - 1).toDouble())
             }
@@ -182,7 +185,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val result = mutableMapOf<GemType, Int>()
         player.gems.forEach {
             val costsForIndividualGemType: Int = costs[it.key] ?: 0
-            val gemsOwnedByPlayer: Int = it.value + (player.bonus[it.key] ?: 0);
+            val gemsOwnedByPlayer: Int = it.value + (player.bonus[it.key] ?: 0)
             val difference = gemsOwnedByPlayer - costsForIndividualGemType
             if(difference < 0)
                 result[it.key] = -1 * difference
@@ -200,7 +203,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
         if(missingGems.isEmpty())
             return Pair(0, 0)
-        missingGems.keys.forEach {
+        missingGems.keys.forEach { it ->
             val value: Int = missingGems[it]!!
             if(value % 2 == 0) {
                 result += value /2
@@ -220,5 +223,4 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         return Pair(result, leftOverGems)
     }
-
 }

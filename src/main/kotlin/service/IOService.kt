@@ -16,9 +16,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val playerThreeFile = File(path + "player3")
         val playerFourFile = File(path + "player4")
         val boardFile = File(path + "board")
-        if (!gameSettingFile.exists()) {
-            return null
-        }
+        if (!gameSettingFile.exists()) { return null }
         val playerCount = gameSettingFile.readLines()[1].toInt()
 
         //create board
@@ -39,14 +37,8 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val levelThreeOpen = readDevCards(devCardsIDs)
         val gemsFromFile = boardFileLines[6].removePrefix("{").removeSuffix("}")
         val gems = readMap(gemsFromFile)
-        val board = Board(
-            nobleTilesOnBoard,
-            levelOneCards,
-            levelOneOpen,
-            levelTwoCards,
-            levelTwoOpen,
-            levelThreeCards,
-            levelThreeOpen)
+        val board = Board(nobleTilesOnBoard, levelOneCards, levelOneOpen, levelTwoCards, levelTwoOpen,
+            levelThreeCards, levelThreeOpen)
         board.gems = gems
 
         //create Players
@@ -60,9 +52,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             playerList.add(playerThree)
             if (playerCount == 4) {
                 val playerFour = createPlayerFromFile(playerFourFile)
-                playerList.add(playerFour)
-            }
-        }
+                playerList.add(playerFour) } }
 
         //create Splendor
         val gameSettings = gameSettingFile.readLines()

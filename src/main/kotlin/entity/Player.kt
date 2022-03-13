@@ -34,6 +34,3 @@ class Player (
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf()
     )
-{
-
-}

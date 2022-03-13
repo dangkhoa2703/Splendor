@@ -16,7 +16,6 @@ class DevCard(
     val bonus: GemType ) {
 
     override fun toString(): String {
-	val idString: String = id.toString()
-	return idString
+	return id.toString()
     }
 }

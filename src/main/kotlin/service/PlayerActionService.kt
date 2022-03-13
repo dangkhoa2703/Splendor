@@ -39,7 +39,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     /**
      * @return a hint for the best next move for the current player and current situation
      */
-    fun showHint():String{return ""}
+    fun showHint(): String{return ""}
 
     //player-game-action
     /**
@@ -53,8 +53,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val currentGameState = game.currentGameState
         val player = currentGameState.currentPlayer
         val board = currentGameState.board
-	val gameService = rootService.gameService
-        if(player.equals(user)){
+	    val gameService = rootService.gameService
+        if(player == user){
         val numDiffTypes =
             currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
         val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
@@ -101,8 +101,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-	val gameService = rootService.gameService
-        if(user.equals(player)) {
+	    val gameService = rootService.gameService
+        if(user == player) {
             if (rootService.gameService.isCardAcquirable(card, payment)) {
                 if (boardGameCard) {
                     //move card from board to player.devCards
@@ -156,8 +156,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun reserveCard(card: DevCard, index:Int, user : Player){
         val board = rootService.currentGame!!.currentGameState.board
         val player = rootService.currentGame!!.currentGameState.currentPlayer
-	val gameService = rootService.gameService
-        if(user.equals(player)){
+	    val gameService = rootService.gameService
+        if(user == player){
         if(player.reservedCards.size < 3) {
             //move card from board to player.reservedCards
             val level = card.level
@@ -214,8 +214,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-	val gameService = rootService.gameService
-        if(user.equals(player)) {
+	    val gameService = rootService.gameService
+        if(user == player) {
             board.nobleTiles.remove(card)
             player.nobleTiles.add(card)
             player.score += card.prestigePoints
@@ -235,7 +235,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-        if(user.equals(player)) {
+        if(user == player) {
             gems.forEach { gemType ->
                 player.gems[gemType] = player.gems.getValue(gemType) - 1
                 board.gems[gemType] = board.gems.getValue(gemType) + 1

@@ -2,6 +2,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ *  test class for AIService
+ * */
 class AIServiceTest {
 
     /** RootService reference */
@@ -18,24 +21,30 @@ class AIServiceTest {
         bonus = GemType.BLACK, prestigePoints = 0)
 
     //Example players
-    private val testPlayer = Player("Anna", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 3, GemType.RED to 3),
-        bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
-    private val testPlayerWithOneBoni = Player("Bob", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 3, GemType.RED to 3),
-        bonus = mutableMapOf(GemType.GREEN to 1), mutableListOf(), mutableListOf(), 0, mutableListOf())
+    private val testPlayer = Player("Anna", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 3,
+        GemType.RED to 3), bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
+    private val testPlayerWithOneBoni = Player("Bob", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 3,
+        GemType.RED to 3), bonus = mutableMapOf(GemType.GREEN to 1), mutableListOf(), mutableListOf(), 0,
+        mutableListOf())
     private val testPlayerWithBoni = Player("Carl", PlayerType.HUMAN, gems = mutableMapOf(),
-        bonus = mutableMapOf(GemType.GREEN to 3, GemType.RED to 3), mutableListOf(), mutableListOf(), 0, mutableListOf())
-    private val testPlayerFour = Player("David", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 5, GemType.RED to 3),
-        bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
+        bonus = mutableMapOf(GemType.GREEN to 3, GemType.RED to 3), mutableListOf(), mutableListOf(),
+        0, mutableListOf())
+    /** private val testPlayerFour = Player("David", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 5,
+        GemType.RED to 3), bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf()) */
 
     //create example boards with three open devCards to test help functions
     private val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
-        mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardOne), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+        mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardOne), mutableMapOf(GemType.GREEN to 3,
+            GemType.RED to 3))
     private val exampleBoard2 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
-        mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardOne), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+        mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardOne), mutableMapOf(GemType.GREEN to 3,
+            GemType.RED to 3))
     private val exampleBoard3 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
-        mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+        mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3,
+            GemType.RED to 3))
     private val exampleBoard4 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
-        mutableListOf(devCardFour), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+        mutableListOf(devCardFour), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3,
+            GemType.RED to 3))
 
     /**
      * test for calculateDevCardCostScores in AIService
@@ -66,8 +75,8 @@ class AIServiceTest {
         //two rounds to uy devCardFour (with 1 leftover)
         val expected2: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardThree to 0.5, devCardFour to 0.0)
         assertEquals(expected2, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard4, testPlayer))
-        //testPlayerFour need zero rounds to buy devCardOne, zero rounds to buyDevCardTwo and one round to buy devCardThree,
-        //but the player needs to pay less for devCardOne, so the score is higher
+        //testPlayerFour need zero rounds to buy devCardOne, zero rounds to buyDevCardTwo and one round to buy
+        //devCardThree, but the player needs to pay less for devCardOne, so the score is higher
         /** Fehler: devCardThree 0.5 anstatt 0.0
          * val expected3: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardTwo to 1.0, devCardThree to 0.0)
          * assertEquals(expected3, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard3, testPlayerFour))
@@ -83,7 +92,8 @@ class AIServiceTest {
         //The best cards to buy for our enemies on our exampleBoard3 are 1.devCardOne, 2.devCard2 and 3.devCardThree
         //So our score for devCardOne need to be the lowest, the score for devCardThree has to be the highest
         val expected1: Map<DevCard, Double> = mutableMapOf(devCardThree to 1.0, devCardTwo to 0.5, devCardOne to 0.0)
-        assertEquals(expected1, root.aiService.calculateDevCardPurchasingPowerScoresForEnemies(exampleBoard3, enemyPlayers))
+        assertEquals(expected1, root.aiService.calculateDevCardPurchasingPowerScoresForEnemies(exampleBoard3,
+    enemyPlayers))
     }*/
 
     /**
