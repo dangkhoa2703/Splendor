@@ -12,6 +12,7 @@ class RootService {
     val gameService = GameService(this)
     val playerActionService = PlayerActionService(this)
     val ioService = IOService(this)
+    val aiService = AIService(this)
 
     /** The currently active game. Can be `null`, if no game has started yet. */
     var currentGame : Splendor? = null
