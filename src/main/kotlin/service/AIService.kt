@@ -8,24 +8,27 @@ import entity.*
 class AIService(private val rootService: RootService): AbstractRefreshingService()
 {
 
-    /** Calculates the best possible Turn for the current player and returns an object of type Turn which includes
-     *  a map of gems and a list of at most one card whose contents depend on the TurnType */
+    /**
+     * Calculates the best possible Turn for the current player and returns an object of type Turn which includes
+     * a map of gems and a list of at most one card whose contents depend on the TurnType
+     */
     fun calculateBestTurn(player : Player, gameState: GameState) : Turn?
     {
         return null
     }
 
     /**
-     *  Calculates the best possible card to buy based on predefined heuristics
-     *  (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     * Calculates the best possible card to buy based on predefined heuristics (specified here:
+     * https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus)
+     * for each DevCard
      */
     fun calculateGeneralDevCardScore(board: Board, player: Player, enemyPlayer: List<Player>): Map<DevCard, Double> {
-        var weights: Array<Double> = arrayOf(0.4, 0.2, 0.2, 0.2)
+        val weights : DoubleArray = doubleArrayOf(0.4, 0.2, 0.2, 0.2)
         val costScores = calculateDevCardCostScores(board)
         val playerPurchasingPowerScore = calculateDevCardPurchasingPowerScores(board, player)
         val enemyPurchasingPowerScore = calculateDevCardPurchasingPowerScoresForEnemies(board, enemyPlayer)
-        val importanceScore = calculateDevCardImportanceScore(board, player)
-        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        val importanceScore = calculateDevCardImportanceScore(board)
+        val result: MutableMap<DevCard, Double> = mutableMapOf()
         costScores.forEach {
             result[it.key] = weights[0] * it.value + weights[1] * playerPurchasingPowerScore[it.key]!!
             + weights[2] * enemyPurchasingPowerScore[it.key]!! + weights[3] * importanceScore[it.key]!!
@@ -34,8 +37,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates cost-scores
-     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     * Help-function that calculates cost-scores for each DevCard
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardCostScores(board: Board) : Map<DevCard, Double> {
@@ -45,7 +47,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.addAll(board.levelThreeOpen)
         cardsOnBoard.sortBy { it.calculateGemPrice() }
         val deltaCost: Int = cardsOnBoard[cardsOnBoard.size - 1].calculateGemPrice() - cardsOnBoard[0].calculateGemPrice()
-        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, devCard ->
             if(index >= 1) {
@@ -54,7 +56,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 if(devCard.calculateGemPrice() == previousCard.calculateGemPrice()) {
                     result[devCard] = previousCardScore
                 } else {
-                    result[devCard] = previousCardScore - (devCard.calculateGemPrice() - previousCard.calculateGemPrice()).toDouble() * (1.0 / deltaCost.toDouble())
+                    result[devCard] = previousCardScore - (devCard.calculateGemPrice() -
+                            previousCard.calculateGemPrice()).toDouble() * (1.0 / deltaCost.toDouble())
                 }
             }
         }
@@ -62,8 +65,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates purchasing-power-scores
-     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard
+     * Help-function that calculates purchasing-power-scores for each DevCard
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardPurchasingPowerScores(board: Board, player: Player) : Map<DevCard, Double> {
@@ -71,12 +73,13 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.addAll(board.levelOneOpen)
         cardsOnBoard.addAll(board.levelTwoOpen)
         cardsOnBoard.addAll(board.levelThreeOpen)
-        var mapOfRoundsNeeded: MutableMap<DevCard, Pair<Int, Int>> = mutableMapOf()
+        val mapOfRoundsNeeded: MutableMap<DevCard, Pair<Int, Int>> = mutableMapOf()
         cardsOnBoard.forEach {
             mapOfRoundsNeeded[it] = calculateAmountOfRoundsNeededToBuy(player, it)
         }
-        cardsOnBoard.sortWith(compareBy<DevCard> { mapOfRoundsNeeded[it]!!.first }.thenByDescending { mapOfRoundsNeeded[it]!!.second })
-        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        cardsOnBoard.sortWith(compareBy<DevCard> { mapOfRoundsNeeded[it]!!.first }.
+            thenByDescending { mapOfRoundsNeeded[it]!!.second })
+        val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, devCard ->
             if(index >= 1) {
@@ -95,17 +98,16 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * Help-function that calculates the score of the cards based on the purchasing-power-scores of
      * the enemies
-     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard for the enemies
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardPurchasingPowerScoresForEnemies(board: Board, enemyPlayer: List<Player>) : Map<DevCard, Double> {
         //Map with each player and the card-scores of that player
-        var scoresOfEnemies: MutableMap<Player, MutableMap<DevCard, Double>> = mutableMapOf()
+        val scoresOfEnemies: MutableMap<Player, MutableMap<DevCard, Double>> = mutableMapOf()
         enemyPlayer.forEach {
             scoresOfEnemies[it] = calculateDevCardPurchasingPowerScores(board,it) as MutableMap<DevCard, Double>
         }
         //Map to save the different scores of the enemies for each devCard
-        var allScores: MutableMap<DevCard,MutableList<Double>> = mutableMapOf()
+        val allScores: MutableMap<DevCard,MutableList<Double>> = mutableMapOf()
         //Map to save the current card with the score of the current player temporary
         var tmp: MutableMap<DevCard, Double>
         scoresOfEnemies.keys.forEach {
@@ -120,7 +122,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 tmp[it]?.let { it1 -> allScores[it]!!.add(it1) }
             }
         }
-        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        val result: MutableMap<DevCard, Double> = mutableMapOf()
         //Calculate the average score of the scores in the list and safe it in our final map
         allScores.keys.forEach {
             result[it] = allScores[it]!!.average()
@@ -134,16 +136,15 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
 
     /**
      * Help-function that calculates the score of the cards based on the usefulness of the card
-     * (specified here: https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-f%C3%BCr-minimax-algorithmus) for each DevCard for the enemies
      * @return Map of all cards with respective scores
      */
-    fun calculateDevCardImportanceScore(board: Board, player: Player) : Map<DevCard, Double> {
+    fun calculateDevCardImportanceScore(board: Board) : Map<DevCard, Double> {
         val cardsOnBoard: MutableList<DevCard> = mutableListOf()
         cardsOnBoard.addAll(board.levelOneOpen)
         cardsOnBoard.addAll(board.levelTwoOpen)
         cardsOnBoard.addAll(board.levelThreeOpen)
-        var mapOfBuyableDevCards: MutableMap<GemType, Int> = mutableMapOf()
-        var mapOfNoblesWithRespectiveBonus: MutableMap<GemType, Int> = mutableMapOf()
+        val mapOfBuyableDevCards: MutableMap<GemType, Int> = mutableMapOf()
+        val mapOfNoblesWithRespectiveBonus: MutableMap<GemType, Int> = mutableMapOf()
         for(gemType in GemType.values()) {
             var amountOfBuyableCards: Int = 0
             for(cardOnBoard in cardsOnBoard) {
@@ -163,7 +164,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.sortWith(compareByDescending<DevCard> { it.prestigePoints }
             .thenByDescending { mapOfNoblesWithRespectiveBonus[it.bonus] ?: 0 }
             .thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
-        var result: MutableMap<DevCard, Double> = mutableMapOf()
+        val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, devCard ->
             if(index >= 1) {
@@ -174,7 +175,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates the amount of missing gems from the gems of the player and the given map of gems
+     * Help-function that calculates the amount of missing gems from the gems of the player
+     * and the given map of gems
      */
     fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
         val result = mutableMapOf<GemType, Int>()
@@ -189,12 +191,13 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates amount of rounds needed to buy the card and therefore additional gems
+     * Help-function that calculates amount of rounds needed to buy the card
+     * and therefore additional gems
      */
     fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
         var result = 0
         var leftOverGems = 0
-        var missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
+        val missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
         if(missingGems.isEmpty())
             return Pair(0, 0)
         missingGems.keys.forEach {
