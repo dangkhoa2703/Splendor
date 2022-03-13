@@ -28,32 +28,35 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         font = Font(size = 28), visual = image
     )
 
-    val rankingLabel = Label(
-           960,270,700,700,"",
-        font= Font(size = 44), visual = carbon
-    )
-
     val rank0 = Label(
-        900,300,500,500,"",
-        font= Font(size = 44, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
+        900,300,1000,500,"",
+        font= Font(size = 20, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
     )
 
     val rank1 = Label(
-        900,400,500,500,"",
-        font= Font(size = 44,  color = Color.BLUE, fontStyle = Font.FontStyle.ITALIC)
+        900,400,1000,500,"",
+        font= Font(size = 17,  color = Color.BLUE, fontStyle = Font.FontStyle.ITALIC)
     )
 
     val rank2 = Label(
-        900,500,500,500,"",
-        font= Font(size = 44, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
+        900,500,1000,500,"",
+        font= Font(size = 15, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
     )
 
     val rank3 = Label(
-        900,600,500,500,"",
-        font= Font(size = 44, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
+        900,600,1000,500,"",
+        font= Font(size = 12, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
     )
 
     val labelList : MutableList<Label> = mutableListOf()
+
+    private val showScore = Button(
+        100,500,400,400,"SHOW HIGHSCORE", visual = image
+    ).apply {
+        onMouseClicked={
+            ranking()
+        }
+    }
 
 
     fun ranking (){
@@ -82,11 +85,12 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         addComponents(
             headLineLabel,
             backButton,
-            rankingLabel,
             rank0,
             rank1,
             rank2,
-            rank3
+            rank3,
+            showScore
         )
+
     }
 }

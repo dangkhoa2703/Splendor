@@ -17,6 +17,7 @@ private const val BACK_IMAGE = "/Back.png"
 private const val CONFIG_BACKGROUND = "/configScene.jpg"
 private const val HIGHSCORE_BACKGROUND = "/highscorebackground.jpg"
 private const val SAVEGAME_IMAGE = "/savegame.png"
+private const val LOAD_IMAGE = "savegame.png"
 /**
  * Class to load Images from ressources
  */
@@ -35,7 +36,6 @@ class SplendorImageLoader {
 	    )
 	)
     }
-    
     /**
      * function that returns Human Icon
      */
@@ -200,6 +200,15 @@ class SplendorImageLoader {
 				)
 			)
 		)
+	}
+
+	fun loadGame(): ImageVisual {
+		val image: BufferedImage = ImageIO.read(
+			SplendorImageLoader::class.java.getResource(
+				"/load.png"
+			)
+		)
+		return ImageVisual(image)
 	}
 
     fun tokenImage(type: GemType): ImageVisual {
