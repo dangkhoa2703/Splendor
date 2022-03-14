@@ -224,6 +224,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		moveCardView(it, stack)
 	    }
 	}
+	
 	playerDevCards.clear()
 	playerSaveCards.clear()
 	
@@ -284,7 +285,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    gameGemSelection.put(gem, 0)
 	}
 
-	//Board ?
+	//Board
 
 	val nobleTilesOrigin = game.currentGameState.board.nobleTiles
 	nobleTilesOrigin.forEach{
