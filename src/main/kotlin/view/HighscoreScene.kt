@@ -9,6 +9,7 @@ import tools.aqua.bgw.components.uicomponents.Button
 import entity.Highscore
 import entity.SplendorImageLoader
 import tools.aqua.bgw.util.Font.FontStyle
+import java.awt.Color
 
 class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
 
@@ -46,7 +47,8 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	    width = 400, height = 180,
 	    posX = width/2 - 200, posY = 200,
 	    text = player.playerName+": "+player.score,
-	    font = Font(size=42, fontStyle = FontStyle.ITALIC)
+	    font = Font(size=42, fontStyle = FontStyle.ITALIC, color = Color.WHITE )
+
 	)
 
 	highscoreLabels.add(label)
@@ -56,7 +58,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	    label = Label(
 		width = 300, height = 80,
 		text = player.playerName+": "+player.score, 
-		font = Font(size=38, fontStyle = FontStyle.ITALIC)
+		font = Font(size=38, fontStyle = FontStyle.ITALIC, color = Color.WHITE)
 	    )
 
 	    if(size <= 6) {

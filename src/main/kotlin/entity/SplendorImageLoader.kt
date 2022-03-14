@@ -15,9 +15,11 @@ private const val TABLE_IMAGE = "/Table2.jpg"
 private const val CARD_BACK = "/card_back.jpg"
 private const val BACK_IMAGE = "/Back.png"
 private const val CONFIG_BACKGROUND = "/configScene.jpg"
-private const val HIGHSCORE_BACKGROUND = "/highscorebackground.jpg"
+private const val HIGHSCORE_BACKGROUND = "/BackgroundHighScore.png"
 private const val SAVEGAME_IMAGE = "/savegame.png"
 private const val LOAD_IMAGE = "savegame.png"
+private const val HIGHSCORES_IMAGE = "highscores.png"
+
 /**
  * Class to load Images from ressources
  */
@@ -55,8 +57,15 @@ class SplendorImageLoader {
 	return ImageVisual(image)
     }
 
+	fun highscores(): ImageVisual {
+		val image: BufferedImage = ImageIO.read(
+			SplendorImageLoader::class.java.getResource(
+				"/highscores.png"
+		)
+		)
+		return ImageVisual(image)
+	}
 
-    
     /**
      * function that returns Card Image
      */

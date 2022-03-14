@@ -7,6 +7,7 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.Player
 import entity.SplendorImageLoader
+import tools.aqua.bgw.visual.ImageVisual
 import java.awt.Color
 
 /** [GameFinishScene] : [MenuScene] that is displayed after the game ends depending on condition
@@ -20,12 +21,13 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
     val imageLoader = SplendorImageLoader()
     val image = imageLoader.button()
     val backgroundImage = imageLoader.highscoreBackground()
-    val carbon = imageLoader.carbon()
+    val highscores = imageLoader.highscores()
     private val headLineLabel = Label(
         width = 300, height = 200,
-        posX = width/2 - 150, posY = 50,
-        text = "EndScene",
-        font = Font(size = 44)
+        posX = 760 , posY = 135,
+        text = "",
+        font = Font(size = 44),
+        visual = highscores
     )
     /**[backButton] : Buttons for returning to previous scene*/
     val backButton = Button(
@@ -37,25 +39,25 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
 
     /**[rank0] : Label to display winner */
     val rank0 = Label(
-        900,300,1000,500,"",
-        font= Font(size = 20, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
+        420,100,1000,500,"",
+        font= Font(size = 28, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
     )
     /**[rank2] : Label to display runner up */
     val rank1 = Label(
-        900,400,1000,500,"",
-        font= Font(size = 17,  color = Color.BLUE, fontStyle = Font.FontStyle.ITALIC)
+        420,200,1000,500,"",
+        font= Font(size = 25,  color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
     )
 
     /**[rank2] : Label to display third player */
     val rank2 = Label(
-        900,500,1000,500,"",
-        font= Font(size = 15, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
+        420,300,1000,500,"",
+        font= Font(size = 23, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
     )
 
     /**[rank2] : Label to display loser */
     val rank3 = Label(
-        900,600,1000,500,"",
-        font= Font(size = 12, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
+        420,400,1000,500,"",
+        font= Font(size = 19, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
     )
 
     val labelList : MutableList<Label> = mutableListOf()
@@ -88,7 +90,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
             labelList.add(rank2)
             labelList.add(rank3)
             for(i in 0..rankings.size-1) {
-                labelList.get(i).text = "Rank "+i+": Player "+rankings.get(i).name+" has reached "+rankings.get(i).score.toString()+ " Points"
+                labelList.get(i).text = rankings.get(i).name+" has reached "+rankings.get(i).score.toString()+ " Points"
             }
         }
     }
