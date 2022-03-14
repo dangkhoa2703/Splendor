@@ -15,7 +15,6 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	}
     }
 
-
     private val loadGameScene: MenuScene = LoadGameScene(rootService).apply {
 	backButton.onMouseClicked = {
 	    this@SplendorApplication.hideMenuScene()

@@ -36,6 +36,46 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     private var saved: List<DevCard> = listOf()
 
     //BUTTONs
+
+    val nextPlayersButton = Button(
+	width = 50, height = 50,
+        posX = 1250, posY = 25,
+        text = "",
+        font = Font(size = 28),
+        visual = ColorVisual(221, 136, 136),
+    )
+
+    private val undoButton = Button(
+        width = 50, height = 50,
+        posX = 50, posY = 25,
+        text = "",
+        font = Font(size = 28),
+        visual = imageLoader.undoButton()
+    )
+
+    private val redoButton = Button(
+        width = 50, height = 50,
+        posX = 200, posY = 25,
+        text = "",
+        font = Font(size = 28),
+        visual = imageLoader.redoButton()
+    )
+
+    private val hintButton = Button(
+        width = 50, height = 50,
+        posX = 50, posY = 125,
+        text = "",
+        font = Font(size = 28),
+        visual = imageLoader.hintButton()
+    )
+
+    private val saveGameButton = Button(
+        width = 50, height = 50,
+        posX = 200, posY = 125,
+        text = "Save Game",
+        font = Font(size = 17),
+        visual = imageLoader.saveGameImage()
+    )
     
     val quitButton = Button(
         width = 25, height = 25,
@@ -102,6 +142,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
             }
         }
     }
+
+    private val discardGems = Button(
+	width = 100, height = 50,
+        posX = 50, posY = 450,
+        text = "Discard Gems",
+        font = Font(size = 12),
+        visual = buttonImage
+    )
 
     private val stack: LabeledStackView = LabeledStackView(
 	posX = 0, posY = 0,  "stack"
@@ -247,174 +295,102 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	        CardView.CardSide.BACK -> cardView.showFront()
 	       	CardView.CardSide.FRONT -> cardView.showBack()
 	    }
-	}	
+	}
 	if(cardView.parent!=null) cardView.removeFromParent()
-	targetContainer.add(cardView)
+	if(!targetContainer.contains(cardView))targetContainer.add(cardView)
     }
 
     private var currentPlayer: Player? = null
     private var currentPlayerIndex: Int = -1
+
+    private fun toIdListDevCard(list: MutableList<DevCard>): MutableList<Int> {
+	val result: MutableList<Int> = mutableListOf()
+	for(card in list) {
+	    result.add(card.id)
+	}
+	return result
+    }
+    
+    private fun toIdListNobleTile(list: MutableList<NobleTile>): MutableList<Int> {
+	val result: MutableList<Int> = mutableListOf()
+	for(card in list) {
+	    result.add(card.id)
+	}
+	return result
+    }
+
+    private fun fillDevCardLayout(
+	layout: LinearLayout<CardView>,
+	source: MutableList<DevCard>,
+	draggable: Boolean = true
+    ) {
+	val sourceIndexed = toIdListDevCard(source)
+	val temp: MutableList<Int> = mutableListOf()
+
+	layout.filter{ !sourceIndexed.contains(devCardMap.backward(it))}.forEachIndexed{
+	    index, element -> run {
+		moveCardView(element, stack)
+		temp.add(index)
+	    }
+	}
+
+	for(card in source) {
+	    if(temp.contains(card.id)) continue
+	    val cardView: CardView? = devCardMap.forward(card.id)
+	    checkNotNull(cardView) { "No cardView found. "}
+	    cardView.isDraggable = draggable
+	    devCardsMap.add(card to cardView)
+	    moveCardView(cardView, layout)
+	}
+    }
     
     private fun fillLayouts() {
-	//clear
-
-	val cardViews: MutableList<CardView> = mutableListOf()
-	while(!nobleTiles.isEmpty()) {
-	    for(card in nobleTiles){
-		moveCardView(card, stack)
-		break
-	    }
-	}
-
-	while(!levelOneCards.isEmpty()) {
-	    for(card in levelOneCards) {
-		moveCardView(card, stack)
-		break
-	    }
-	}
-
-	while(!levelTwoCards.isEmpty()) {
-	    for(card in levelTwoCards) {
-		moveCardView(card, stack)
-		break
-	    }
-	}
-
-	while(!levelThreeCards.isEmpty()) {
-	    for(card in levelThreeCards) {
-		moveCardView(card, stack)
-		break
-	    }
-	}
-
-	
-	playerDevCards.forEach{
-	    while(!it.isEmpty()) {
-		for(cardView in it){
-		    moveCardView(cardView, stack)
-		    break
-		}
-	    }
-	}
-
-	playerSaveCards.forEach{
-	    while(!it.isEmpty()) {
-		for(cardView in it) {
-		    moveCardView(cardView, stack)
-		    break
-		}
-	    }
-	}
-
 	devCardsMap.clear()
 
+	val temp: MutableList<Int> = mutableListOf()
+	
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found."}
 
 	val nobleTilesOrigin = game.currentGameState.board.nobleTiles
-	println("nobleTiles: ")
-	print("\t")
-	println(nobleTilesOrigin)
+	val nobleTilesOriginId = toIdListNobleTile(nobleTilesOrigin)
+	
 	val levelOneCardsOrigin = game.currentGameState.board.levelOneOpen
-	println("levelOneCards: ")
-	print("\t")
-	println(levelOneCardsOrigin)
 	val levelTwoCardsOrigin = game.currentGameState.board.levelTwoOpen
-	println("levelTwoCards: ")
-	print("\t")
-	println(levelTwoCardsOrigin)
 	val levelThreeCardsOrigin = game.currentGameState.board.levelThreeOpen
-	println("levelThreeCards: ")
-	print("\t")
-	println(levelThreeCardsOrigin)
 
-	//Player
+	//REMOVE ONLY WHEN NEEDED
+	nobleTiles.filter{ !nobleTilesOriginId.contains(devCardMap.backward(it))}.forEachIndexed{
+	    index, element -> run {
+		moveCardView(element, stack)
+		temp.add(index)
+	    }
+	}
+
+	//ADD
+	for(card in nobleTilesOrigin) {
+	    //ONLY IF NEEDED
+	    if(temp.contains(card.id)) continue
+	    val cardView: CardView? = devCardMap.forward(card.id)
+	    checkNotNull(cardView) { "No cardView found."}
+	    moveCardView(cardView, nobleTiles)
+	}
+
+	fillDevCardLayout(levelOneCards, levelOneCardsOrigin)
+	fillDevCardLayout(levelTwoCards, levelTwoCardsOrigin)
+	fillDevCardLayout(levelThreeCards, levelThreeCardsOrigin)
 
 	val playerList = game.currentGameState.playerList
-
 	for(i in 0..playerList.size-1) {
 	    val player = playerList[i]
-	    val devCardsOrigin = player.devCards
-	    println(player.name+": ")
-	    print("\t")
-	    println(devCardsOrigin)
-	    devCardsOrigin.forEach{
-		card -> run {
-		    val cardView = devCardMap.forward(card.id)
-		    checkNotNull(cardView) { card.id }
-		    moveCardView(cardView, playerDevCards[i])
-		    devCardsMap.add(card to cardView)
-		}
-	    }
-	    print("\t")
-	    println(playerDevCards[i].components.size)
-
-	    val saveCardsOrigin = player.reservedCards
-	    saveCardsOrigin.forEach{
-		card -> run {
-		    val cardView = devCardMap.forward(card.id)
-		    checkNotNull(cardView) { card.id }
-		    moveCardView(cardView, playerSaveCards[i])
-		    devCardsMap.add(card to cardView)
-		}
-	    }
+	    fillDevCardLayout(playerDevCards[i], player.devCards)
+	    fillDevCardLayout(playerSaveCards[i], player.reservedCards)
 	}
 
 	for(gem in allGems) {
 	    playerGemSelection.put(gem, 0)
 	    gameGemSelection.put(gem, 0)
 	}
-
-	//Board
-
-	
-	nobleTilesOrigin.forEach{
-	    card -> run {
-		val cardView = devCardMap.forward(card.id)
-		checkNotNull(cardView) { card.id }
-		moveCardView(cardView, nobleTiles)
-		//nobleTiles.add(cardView)
-	    }
-	}
-
-	
-	levelOneCardsOrigin.forEach{
-	    card -> run {
-		val cardView = devCardMap.forward(card.id)
-		checkNotNull(cardView) { card.id }
-		cardView.isDraggable = true
-		devCardsMap.add(card to cardView)
-		moveCardView(cardView, levelOneCards)
-	    }
-	}
-
-	
-	levelTwoCardsOrigin.forEach{
-	    card -> run {
-		val cardView = devCardMap.forward(card.id)
-		checkNotNull(cardView) { card.id }
-		cardView.isDraggable = true
-		devCardsMap.add(card to cardView)
-		moveCardView(cardView, levelTwoCards)
-	    }
-	}
-
-	
-	levelThreeCardsOrigin.forEach{
-	    card -> run {
-		val cardView = devCardMap.forward(card.id)
-		checkNotNull(cardView) { card.id }
-		cardView.isDraggable = true
-		devCardsMap.add(card to cardView)
-		moveCardView(cardView, levelThreeCards)
-	    }
-	}
-
-	println("===filllayout2")
-	for(list in playerDevCards) {
-	    println(list.components.size)
-	}
-	println("===")
     }
 
     private fun initializePlayerGems() {
@@ -640,21 +616,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	fillLayouts()
 
-	println(currentPlayerIndex)
 	for(i in 0..playerDevCards.size-1) {
 	    playerDevCards[i].isVisible = false
 	    playerSaveCards[i].isVisible = false
 	}
+	
 	playerDevCards[currentPlayerIndex].isVisible = true
 	playerSaveCards[currentPlayerIndex].isVisible = true
-	println("===endTUrn")
-	for(list in playerDevCards) {
-	    print(list.isVisible)
-	    print(" ")
-	    println(list.components.size)
-	}
-	println("===")
-	
 	
 
 	for(gem in game.currentGameState.board.gems.entries) {
@@ -747,6 +715,12 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    takeGemsButton,
 	    nextPlayerButton,
 	    stack,
+	    discardGems,
+	    saveGameButton,
+	    hintButton,
+	    redoButton,
+	    undoButton,
+	    nextPlayersButton,
 	)
     }
 }
