@@ -225,8 +225,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 //    }
 
     /** saves a highscore to a file including highscores of different games; maximum 10*/
-    fun saveHighscore(score : Highscore)
-    {
+    fun saveHighscore(score : Highscore) {
         val currentHighscores = loadHighscore()
         currentHighscores.add(score)
         currentHighscores.sortByDescending { highscore -> highscore.score }

@@ -1,5 +1,6 @@
 package service
 
+import entity.Highscore
 import entity.PlayerType
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -51,6 +52,23 @@ class IOServiceTest {
 
     @Test
     fun testSaveAndLoadHighScore(){
+        val highscore1 = Highscore("Dumbledore",100)
+        val highscore2 = Highscore("Spider-man",99)
+        val highscore3 = Highscore("BATMAN",10)
+        val highscore4 = Highscore("N00bMaster69",69)
+        val highscore5 = Highscore("Tifa Lockhart", 20)
+        val highscore6 = Highscore(":3",30)
+
+        root.ioService.saveHighscore(highscore1)
+        root.ioService.saveHighscore(highscore2)
+        root.ioService.saveHighscore(highscore3)
+        root.ioService.saveHighscore(highscore4)
+        root.ioService.saveHighscore(highscore5)
+        root.ioService.saveHighscore(highscore6)
+
+        val highscoreList = root.ioService.loadHighscore()
+        assertEquals("Dumbledore",highscoreList[0].playerName)
+        assertEquals(10,highscoreList[5].score)
 
     }
 }
