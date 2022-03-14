@@ -7,6 +7,7 @@ import kotlin.test.*
  * */
 class EntityTests
 {
+
     /** initialize objects */
     private val playerOne = Player(name = "Olaf", playerType = PlayerType.HUMAN)
     private val playerTwo = Player(name = "Mirco", playerType = PlayerType.EASY)
@@ -156,24 +157,25 @@ class EntityTests
     {
         /** test if turn got initialized correctly */
         val turnCard = listOf( DevCard(2, mapOf( GemType.RED to 3), 1,2,GemType.RED ))
-        val turnOne = Turn(mapOf(GemType.RED to 3), turnCard, TurnType.BUYCARD)
+        val turnOne = Turn(mapOf(GemType.RED to 3), turnCard, TurnType.BUY_CARD)
         assertEquals(mapOf(GemType.RED to 3), turnOne.gems)
         assertEquals(turnCard, turnOne.card)
-        assertEquals(TurnType.BUYCARD, turnOne.turnType)
+        assertEquals(TurnType.BUY_CARD, turnOne.turnType)
 
-        val turnTwo = Turn(mapOf(GemType.RED to 2), listOf(), TurnType.TAKETWOGEMS)
+        val turnTwo = Turn(mapOf(GemType.RED to 2), listOf(), TurnType.TAKE_GEMS)
         assertEquals(mapOf(GemType.RED to 2), turnTwo.gems)
         assertEquals(listOf(), turnTwo.card)
-        assertEquals(TurnType.TAKETWOGEMS, turnTwo.turnType)
+        assertEquals(TurnType.TAKE_GEMS, turnTwo.turnType)
 
-        val turnThree = Turn(mapOf(GemType.RED to 1), listOf(), TurnType.TAKETHREEGEMS)
+        val turnThree = Turn(mapOf(GemType.RED to 1), listOf(), TurnType.TAKE_GEMS)
         assertEquals(mapOf(GemType.RED to 1), turnThree.gems)
         assertEquals(listOf(), turnThree.card)
-        assertEquals(TurnType.TAKETHREEGEMS, turnThree.turnType)
+        assertEquals(TurnType.TAKE_GEMS, turnThree.turnType)
 
-        val turnFour = Turn(mapOf(), turnCard, TurnType.RESERVECARD)
+        val turnFour = Turn(mapOf(), turnCard, TurnType.RESERVE_CARD)
         assertEquals(mapOf(), turnFour.gems)
         assertEquals(turnCard, turnFour.card)
-        assertEquals(TurnType.RESERVECARD, turnFour.turnType)
+        assertEquals(TurnType.RESERVE_CARD, turnFour.turnType)
     }
+
 }

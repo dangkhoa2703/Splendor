@@ -1,9 +1,6 @@
 package service
 
-import entity.GameState
-import entity.TreeNode
-import entity.Turn
-import entity.TurnType
+import entity.*
 
 class DecisionTree {
 
@@ -16,6 +13,10 @@ class DecisionTree {
 
         // Rückverfolgung
         return Turn(mutableMapOf(), mutableListOf(), TurnType.EMPTY)
+    }
+
+    private fun miniMax(node: TreeNode<Turn>, alpha: Double, beta: Double, playerIndex: Int, board: Board, player: List<Player>) {
+
     }
 
 }
