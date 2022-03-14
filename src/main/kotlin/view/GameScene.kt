@@ -155,11 +155,40 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	return cardView
     }
 
+	private fun getCard(cardView: CardView): DevCard?{
+		val number=devCardMap.backward(cardView)
+		var returnCard : DevCard? = null
+		if(1<=number&&number<=40){
+			for(card in rootService.currentGame!!.currentGameState.board.levelOneOpen){
+				if(card.id==number){
+					returnCard=card
+				}
+			}
+		}
+		if(41<=number&&number<=70){
+			for(card in rootService.currentGame!!.currentGameState.board.levelTwoOpen){
+				if(card.id==number){
+					returnCard=card
+				}
+			}
+		}
+
+		if(71<=number&&number<=90){
+			for(card in rootService.currentGame!!.currentGameState.board.levelThreeOpen){
+				if(card.id==number){
+					returnCard=card
+				}
+			}
+		}
+
+		return returnCard
+	}
+
     private fun tryToBuy(dragEvent: DragEvent): Boolean {
-	/*
+
 	val playerActionService = rootService.playerActionService
 	val cardView: CardView = dragEvent.draggedComponent as CardView
-	val devCard: DevCard? = devCardMap.backward(cardView)
+	val devCard: DevCard? = getCard(cardView)
 	checkNotNull(devCard) { "No dec Card found."}
 
 	checkNotNull(currentPlayer) { "No player found."}
@@ -167,12 +196,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	try{
 	    playerActionService.buyCard(devCard, true, playerGemSelection, 0, player)
+		println("something happens")
 	    return true
 	}
 	catch(e: Exception) {
 	    return false
 	}
-	 */
+
 	return false
     }
     
@@ -575,15 +605,15 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     }
 
     override fun refreshAfterBuyCard(devCard: DevCard) {
-	/*
-	val cardView: CardView? = devCardMap.forward(devCard)
+
+	val cardView: CardView? = devCardMap.forward(devCard.id)
 	checkNotNull(cardView) { "No card found."}
 	cardView.isDraggable = false
 	
 	fillLayouts()
 
 	refreshAfterTakeGems()
-	 */
+
     }
 
 
