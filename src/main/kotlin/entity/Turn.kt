@@ -9,7 +9,8 @@ package entity
 class Turn (
     val gems: Map<GemType, Int>,
     val card: List<DevCard>,
-    val turnType: TurnType) {
+    val turnType: TurnType,
+    val takeThreeDifferentGems: Boolean = false) {
 
     /** Variable to temporarily save calculated score for turn */
     var evaluation: Double = -1.0

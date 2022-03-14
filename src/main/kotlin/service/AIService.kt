@@ -226,4 +226,46 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         return Pair(result, leftOverGems)
     }
+
+    /**
+     * help-function to calculate which gems a player should choose
+     */
+    fun chooseGems(bestDevCards: Map<DevCard, Double>, availableGems: MutableMap<GemType,Int>) : Map<GemType, Int> {
+        val gems: Map<GemType, Int> = mutableMapOf()
+        //solange ich mir die aktuelle Karte leisten kann, weitergehen
+        return gems
+    }
+
+    fun computeTurnEvaluationScore(board: Board, player: Player, enemies: List<Player>): Double {
+        //1. Heuristic
+        val playersPrestigePoints = player.score.toDouble()
+        //2. Heuristic
+        val amountOfBoni = player.devCards.size.toDouble()
+        //3. Heuristic
+        val winningProbability : Double
+        //Calculate the probability to win the game
+        var playerAmountOfGems = 0.0
+        //Calculate number of gems of the current player
+        player.gems.forEach {
+            playerAmountOfGems += it.value.toDouble()
+        }
+        val playerMinusEnemyPrestige: ArrayList<Double> = arrayListOf()
+        val playerMinusEnemyAmountOfGems: ArrayList<Double> = arrayListOf()
+        val playerMinusEnemyAmountOfBoni: ArrayList<Double> = arrayListOf()
+        enemies.forEach {
+            playerMinusEnemyPrestige.add(playersPrestigePoints - it.score.toDouble())
+            var enemyAmountOfGems = 0.0
+            //Calculate number of gems of the current enemy
+            it.gems.forEach { gemColour ->
+                enemyAmountOfGems += gemColour.value.toDouble()
+            }
+            playerMinusEnemyAmountOfGems.add(playerAmountOfGems - enemyAmountOfGems)
+            playerMinusEnemyAmountOfBoni.add(amountOfBoni - it.devCards.size.toDouble())
+        }
+        winningProbability = 0.5 * playerMinusEnemyPrestige.average()
+        +0.2 * playerMinusEnemyAmountOfGems.average()
+        +0.3 * playerMinusEnemyAmountOfBoni.average()
+        //Calculate and return heuristic
+        return 0.3 * playersPrestigePoints + 0.2 * amountOfBoni + 0.5 * winningProbability
+    }
 }
