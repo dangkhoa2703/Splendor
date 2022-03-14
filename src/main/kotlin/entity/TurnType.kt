@@ -2,14 +2,14 @@ package entity
 
 /**
  *  enum class for the different actions a player could do in a turn
- *  @property TAKETWOGEMS: take two gems of the same type
- *  @property TAKETHREEGEMS: take maximum three gems of different types
+ *  @property TAKE_GEMS: take two gems of the same type or take maximum three gems of different types
  *  @property RESERVECARD: reserve one devCard and receive one yellow gem
  *  @property BUYCARD: buy one devCard and receive its bonus and prestige points
- * */
+ *  @property EMPTY: empty turn, for structural purposes
+ */
 enum class TurnType {
-    TAKETWOGEMS,
-    TAKETHREEGEMS,
-    RESERVECARD,
-    BUYCARD
+    TAKE_GEMS,
+    RESERVE_CARD,
+    BUY_CARD,
+    EMPTY
 }

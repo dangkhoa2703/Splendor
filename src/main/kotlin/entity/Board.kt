@@ -34,9 +34,11 @@ class Board (
         GemType.YELLOW to 5)
 ) {
 
-    /** Clones the Board */
-    fun clone(): Board = Board(this.nobleTiles.toMutableList(), levelOneCards.toMutableList(),
-        levelOneOpen.toMutableList(), levelTwoCards.toMutableList(), levelTwoOpen.toMutableList(),
-        levelThreeCards.toMutableList(), levelThreeOpen.toMutableList(), gems.toMutableMap())
+    /** Clones the Board for simulating turns */
+    fun cloneForSimulation(): Board = Board(this.nobleTiles.toMutableList(),
+        levelOneOpen = levelOneOpen.toMutableList(),
+        levelTwoOpen = levelTwoOpen.toMutableList(),
+        levelThreeOpen = levelThreeOpen.toMutableList(),
+        gems = gems.toMutableMap())
 
 }
