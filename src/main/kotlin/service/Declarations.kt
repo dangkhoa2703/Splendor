@@ -12,3 +12,14 @@ fun DevCard.calculateGemPrice(): Int {
     }
     return amount
 }
+
+/**
+ * Clones a list of players
+ */
+fun List<Player>.clone(): List<Player> {
+    var playerList: MutableList<Player> = mutableListOf()
+    this.forEach {
+        playerList.add(it.clone())
+    }
+    return playerList
+}

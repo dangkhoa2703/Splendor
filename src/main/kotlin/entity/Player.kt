@@ -33,4 +33,11 @@ class Player (
     val nobleTiles : MutableList<NobleTile> = mutableListOf(),
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf()
-    )
+    ) {
+
+    /** Clones a player */
+    fun clone() : Player = Player(name, playerType, gems.toMutableMap(),
+        bonus.toMutableMap(), reservedCards.toMutableList(), nobleTiles.toMutableList(),
+        score, devCards.toMutableList())
+
+}

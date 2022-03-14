@@ -206,4 +206,29 @@ class GameServiceTest {
         player1.gems[GemType.BLUE] = player1.gems.getValue(GemType.BLUE) + 11
         assertEquals(true, root.gameService.checkGems())
     }
+
+    /**  tests if refill works correctly */
+    @Test
+    fun refillTest()
+    {
+        val playerList = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
+        root.gameService.startNewGame(playerList,false,1)
+        val game = root.currentGame!!.currentGameState
+        val tempCardLevelOne = game.board.levelOneCards[0]
+        val tempCardLevelTwo = game.board.levelTwoCards[0]
+        val tempCardLevelThree = game.board.levelThreeCards[0]
+
+        root.gameService.refill(1, 2)
+        assertEquals(tempCardLevelOne, game.board.levelOneOpen[2])
+        assertNotEquals(tempCardLevelOne, game.board.levelOneCards[0])
+        assertEquals(35, game.board.levelOneCards.size)
+        root.gameService.refill(2, 3)
+        assertEquals(tempCardLevelTwo, game.board.levelTwoOpen[3])
+        assertNotEquals(tempCardLevelTwo, game.board.levelTwoCards[0])
+        assertEquals(25, game.board.levelTwoCards.size)
+        root.gameService.refill(3, 1)
+        assertEquals(tempCardLevelThree, game.board.levelThreeOpen[1])
+        assertNotEquals(tempCardLevelThree, game.board.levelThreeCards[0])
+        assertEquals(15, game.board.levelThreeCards.size)
+    }
 }

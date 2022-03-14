@@ -79,6 +79,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.forEach {
             mapOfRoundsNeeded[it] = calculateAmountOfRoundsNeededToBuy(player, it)
         }
+        val sizeWithoutDuplicates = mapOfRoundsNeeded.values.toSet().size
         cardsOnBoard.sortWith(compareBy<DevCard> { mapOfRoundsNeeded[it]!!.first }.
             thenByDescending { mapOfRoundsNeeded[it]!!.second })
         val result: MutableMap<DevCard, Double> = mutableMapOf()
@@ -90,7 +91,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 if(mapOfRoundsNeeded[devCard] == mapOfRoundsNeeded[previousCard]) {
                     result[devCard] = previousCardScore
                 } else {
-                    result[devCard] = previousCardScore - (1.0 / (cardsOnBoard.size - 1).toDouble())
+                    result[devCard] = previousCardScore - (1.0 / (sizeWithoutDuplicates - 1).toDouble())
                 }
             }
         }
@@ -210,12 +211,14 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 missingGems[it] = 0
             } else {
                 result += (value / 2) + 1
+                missingGems[it] = 0
                 var remainingGems = 2
                 missingGems.forEach {
-                    if(remainingGems <= 0) {
-                        if(it.value > 0)
+                    if(remainingGems > 0) {
+                        if(it.value > 0) {
                             missingGems[it.key] = missingGems[it.key]!! - 1
-                        remainingGems -= 1
+                            remainingGems -= 1
+                        }
                     }
                 }
                 leftOverGems += remainingGems

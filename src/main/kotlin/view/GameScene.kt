@@ -195,23 +195,35 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     private var currentPlayerIndex: Int = -1
     
     private fun fillLayouts() {
-
 	//clear
-	nobleTiles.forEach{
-	    moveCardView(it, stack)
-	}
-	
-	levelOneCards.forEach{
-	    moveCardView(it, stack)
-	}
-	
-	levelTwoCards.forEach{
-	    moveCardView(it, stack)
-	}
-	
-	levelThreeCards.forEach{
-	    moveCardView(it, stack)
-	}
+		while(nobleTiles.isNotEmpty()){
+			for(card in nobleTiles){
+				moveCardView(card,stack)
+				break
+			}
+		}
+
+		while(levelOneCards.isNotEmpty()){
+			for(card in levelOneCards){
+				moveCardView(card,stack)
+				break
+			}
+		}
+
+		while(levelTwoCards.isNotEmpty()){
+			for(card in levelTwoCards){
+				moveCardView(card,stack)
+				break
+			}
+		}
+
+		while(levelThreeCards.isNotEmpty()){
+			for(card in levelThreeCards){
+				moveCardView(card,stack)
+				break
+			}
+		}
+
 
 	playerDevCards.forEach{
 	    it.forEach{
