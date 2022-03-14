@@ -2,6 +2,11 @@ package service
 
 import entity.*
 import java.io.File
+import java.io.FileWriter
+import java.io.PrintWriter
+
+
+
 
 /**
  *  Class for inputs and outputs
@@ -197,23 +202,52 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             out.write(rootService.gameService.currentPlayerIndex.toString())
             out.write(rootService.currentGame!!.validGame.toString())
         }
-
     }
 
-    /** deletes the file in the specified file path */
-    fun deleteGame(path : String)
-    {
-    }
+//    /** deletes the content of the file in the specified file path */
+//    fun deleteGame(path : String)
+//    {
+//        FileWriter(path + "gameSetting",false).close()
+//        FileWriter(path + "player1",false).close()
+//        FileWriter(path + "player2",false).close()
+//        FileWriter(path + "player3",false).close()
+//        FileWriter(path + "player4",false).close()
+//        FileWriter(path + "board",false).close()
+//    }
 
-    /** saves a highscore to a file including highscores of different games */
+    /** saves a highscore to a file including highscores of different games; maximum 10*/
     fun saveHighscore(score : Highscore)
     {
+        val currentHighscores = loadHighscore()
+        currentHighscores.add(score)
+        currentHighscores.sortByDescending { highscore -> highscore.score }
+        //es werden nur die 10 besten scores gespeichert
+        if(currentHighscores.size>10){
+            currentHighscores.removeAt(10)
+        }
+
+        //save updated highscores if changed
+        if(currentHighscores != loadHighscore()) {
+            val highscoreFile = File("src/main/resources/highscore")
+            highscoreFile.bufferedWriter().use{ out ->
+                for (highscore in currentHighscores) {
+                    out.write(highscore.playerName+","+highscore.score+ "\n")
+                }
+            }
+        }
     }
 
     /** loads a file including highscores */
-    fun loadHighscore(path : String) : List<Highscore>?
+    fun loadHighscore() : MutableList<Highscore>
     {
-        return  null
+        val highscoreFileList = File("src/main/resources/highscore").readLines()
+        val highscoreList = mutableListOf<Highscore>()
+        var content:List<String>
+        for(line in highscoreFileList){
+            content = line.split(",")
+            highscoreList.add(Highscore(content[0],content[1].toInt()))
+        }
+        return highscoreList
     }
 
     /*-HELP FUNCTION-*/
