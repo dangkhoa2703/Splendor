@@ -23,7 +23,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
     val backgroundImage = imageLoader.highscoreBackground()
     val highscores = imageLoader.highscores()
     private val headLineLabel = Label(
-        width = 300, height = 200,
+        width = 400, height = 200,
         posX = 760 , posY = 135,
         text = "",
         font = Font(size = 44),
@@ -83,7 +83,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
             for (i in 0..game.currentGameState.playerList.size-1){
                 rankings.add(game.currentGameState.playerList.get(i))
             }
-            rankings.sortBy { (it.score) }
+            rankings.sortByDescending{ (it.score) }
 
             labelList.add(rank0)
             labelList.add(rank1)
