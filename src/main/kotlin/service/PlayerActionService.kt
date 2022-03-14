@@ -56,7 +56,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
 
             // list of gem types has invalid size or content
-            if( types.size > 3 || (types.size == 3 && numDiffGemTypesInTypes != 3)) {
+            if( types.size > 3 || (types.size == 3 && numDiffGemTypesInTypes != 3) || types.contains(GemType.YELLOW)) {
                 throw IllegalArgumentException("no valid gem/type number") }
             else if (types.size < 3 && numDiffGemTypesInTypes == types.size && types.size != numDiffTypes) {
                 throw IllegalArgumentException("no valid gem/type number") }
