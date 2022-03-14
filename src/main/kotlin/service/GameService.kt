@@ -26,23 +26,37 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if (randomizedTurns) {
             playerList.shuffle() }
 
-        val levelOneStack = createCardStack(1)
+	val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
-        val levelOneOpen = levelOneStack.slice(0..3).toMutableList()
 
         val levelTwoStack = createCardStack(2)
         levelTwoStack.shuffle()
-        val levelTwoOpen = levelTwoStack.slice(0..3).toMutableList()
 
         val levelThreeStack = createCardStack(3)
         levelThreeStack.shuffle()
-        val levelThreeOpen = levelThreeStack.slice(0..3).toMutableList()
 
-        for(i in 0..3) {
-            levelOneStack.removeAt(i)
-            levelTwoStack.removeAt(i)
-            levelThreeStack.removeAt(i)
-        }
+
+	var tempList: MutableList<DevCard> = levelOneStack.slice(0..3).toMutableList()
+	val levelOneOpen = tempList
+	for(card in tempList) levelOneStack.remove(card)
+
+	tempList = levelTwoStack.slice(0..3).toMutableList()
+	val levelTwoOpen = tempList
+	for(card in tempList) levelTwoStack.remove(card)
+
+	tempList = levelThreeStack.slice(0..3).toMutableList()
+	val levelThreeOpen = tempList
+	for(card in tempList) levelThreeStack.remove(card)
+	
+
+        
+
+	playerList[0].gems.put(GemType.GREEN, 99)
+	playerList[0].gems.put(GemType.RED, 99)
+	playerList[0].gems.put(GemType.BLUE, 99)
+	playerList[0].gems.put(GemType.WHITE, 99)
+	playerList[0].gems.put(GemType.YELLOW, 99)
+	playerList[0].gems.put(GemType.BLACK, 99)
 
         // create Board
         val board = Board(
@@ -131,9 +145,9 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
         val affordableCards = acquirableCards().size
         val reservedCards = newCurrentGameState.currentPlayer.reservedCards.size
-        println(totalGemsOnBoard)
-        println(affordableCards)
-        println(reservedCards)
+        //println(totalGemsOnBoard)
+        //println(affordableCards)
+        //println(reservedCards)
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
             consecutiveNoAction++
@@ -174,15 +188,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         when(level){
             1 -> {
-                board.levelOneOpen.add(index,board.levelOneCards[0])
+                board.levelOneOpen.add(board.levelOneCards[0])
                 board.levelOneCards.removeAt(0)
             }
             2 -> {
-                board.levelTwoOpen.add(index,board.levelTwoCards[0])
+                board.levelTwoOpen.add(board.levelTwoCards[0])
                 board.levelTwoCards.removeAt(0)
             }
             3 -> {
-                board.levelThreeOpen.add(index,board.levelThreeCards[0])
+                board.levelThreeOpen.add(board.levelThreeCards[0])
                 board.levelThreeCards.removeAt(0)
             }
         }
@@ -324,8 +338,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         return DevCard(
             cardProp[0].trim().toInt(),
             tempMap,
-            cardProp[6].trim().toInt(),
             cardProp[7].trim().toInt(),
+            cardProp[6].trim().toInt(),
             color)
     }
 

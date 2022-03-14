@@ -95,7 +95,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                     when (card.level) {
                         1 -> { board.levelOneOpen.remove(card) }
                         2 -> { board.levelTwoOpen.remove(card) }
-                        else -> { board.levelThreeOpen.remove(card) }
+                        3 -> { board.levelThreeOpen.remove(card) }
+			else -> { throw IllegalArgumentException("Illegagl card.level "+card.level) }
                     }
                     rootService.gameService.refill(card.level, index)
                 } else {
