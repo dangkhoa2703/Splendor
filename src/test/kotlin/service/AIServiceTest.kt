@@ -11,14 +11,22 @@ class AIServiceTest {
     private var root = RootService()
 
     //Example cards
-    private val devCardOne = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
+    private val devCardOne = DevCard(id = 1, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
         bonus = GemType.BLACK, prestigePoints = 0)
     private val devCardTwo = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 5, GemType.RED to 3),2,
+        bonus = GemType.BLACK, prestigePoints = 2)
+    private val devCardThree = DevCard(id = 3, price = mutableMapOf(GemType.GREEN to 5, GemType.RED to 4),3,
+        bonus = GemType.BLACK, prestigePoints = 4)
+    private val devCardFour = DevCard(id = 4, price = mutableMapOf(GemType.GREEN to 4, GemType.RED to 6),2,
         bonus = GemType.BLACK, prestigePoints = 0)
-    private val devCardThree = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 5, GemType.RED to 4),3,
+    private val devCardFive = DevCard(id = 5, price = mutableMapOf(GemType.GREEN to 6, GemType.RED to 3),3,
         bonus = GemType.BLACK, prestigePoints = 0)
-    private val devCardFour = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 4, GemType.RED to 6),2,
-        bonus = GemType.BLACK, prestigePoints = 0)
+    private val devCardSix = DevCard(id = 6, price = mutableMapOf(GemType.BLUE to 2, GemType.GREEN to 6),2,
+        bonus = GemType.BLUE, prestigePoints = 2)
+
+    //Example noble tiles
+    private val nobleTileOne = NobleTile(1, mutableMapOf(GemType.BLUE to 1), prestigePoints = 3)
+    private val nobleTileTwo = NobleTile(2, mutableMapOf(GemType.RED to 2, GemType.BLUE to 1), prestigePoints = 3)
 
     //Example players
     private val testPlayer = Player("Anna", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 3,
@@ -29,8 +37,8 @@ class AIServiceTest {
     private val testPlayerWithBoni = Player("Carl", PlayerType.HUMAN, gems = mutableMapOf(),
         bonus = mutableMapOf(GemType.GREEN to 3, GemType.RED to 3), mutableListOf(), mutableListOf(),
         0, mutableListOf())
-    /** private val testPlayerFour = Player("David", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 5,
-        GemType.RED to 3), bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf()) */
+    private val testPlayerFour = Player("David", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 5,
+        GemType.RED to 3), bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
 
     //create example boards with three open devCards to test help functions
     private val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
@@ -45,6 +53,12 @@ class AIServiceTest {
     private val exampleBoard4 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
         mutableListOf(devCardFour), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3,
             GemType.RED to 3))
+    private val exampleBoard5 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+        mutableListOf(devCardFour), mutableListOf(), mutableListOf(devCardThree, devCardFive),
+        mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+    private val exampleBoardCalculateDevCardImportanceScore = Board(mutableListOf(nobleTileOne, nobleTileTwo),
+        mutableListOf(), mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardTwo, devCardSix), mutableListOf(),
+        mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
 
     /**
      * test for calculateDevCardCostScores in AIService
@@ -75,26 +89,66 @@ class AIServiceTest {
         //two rounds to uy devCardFour (with 1 leftover)
         val expected2: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardThree to 0.5, devCardFour to 0.0)
         assertEquals(expected2, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard4, testPlayer))
-        //testPlayerFour need zero rounds to buy devCardOne, zero rounds to buyDevCardTwo and one round to buy
-        //devCardThree, but the player needs to pay less for devCardOne, so the score is higher
-        /** Fehler: devCardThree 0.5 anstatt 0.0
-         * val expected3: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardTwo to 1.0, devCardThree to 0.0)
-         * assertEquals(expected3, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard3, testPlayerFour))
-         */
+        //testPlayerFour needs zero rounds to buy devCardOne, zero rounds to buyDevCardTwo and one round to buy
+        //devCardThree
+        val expected3: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardTwo to 1.0, devCardThree to 0.0)
+        assertEquals(expected3, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard3, testPlayerFour))
+        //testPlayerFour needs zero rounds to buy devCardOne, one round to buy devCardThree (with 2 leftovers), one
+        //round to buy devCardFive (with 2 leftovers) and two rounds to buy devCardFour (with 2 leftovers)
+        val expected4: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardThree to 0.5, devCardFive to 0.5,
+        devCardFour to 0.0)
+        assertEquals(expected4, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard5, testPlayerFour))
     }
 
     /**
      * test for calculateDevCardPurchasingPowerScoresForEnemies
-
+    */
     @Test
     fun calculateDevCardPurchasingPowerScoresForEnemiesTest() {
         val enemyPlayers: List<Player> = listOf(testPlayer, testPlayerFour)
         //The best cards to buy for our enemies on our exampleBoard3 are 1.devCardOne, 2.devCard2 and 3.devCardThree
+        //Score testPlayer: (devCardOne to 1.0, devCardTwo to 0.5, devCardThree to 0.0)
+        //Score testPlayerFour: (devCardOne to 1.0, devCardTwo to 1.0, devCardThree to 0.0)
+        //The average score for our cards is (devCardOne to 1.0, devCardTwo to 0.75, devCardThree to 0.0)
         //So our score for devCardOne need to be the lowest, the score for devCardThree has to be the highest
-        val expected1: Map<DevCard, Double> = mutableMapOf(devCardThree to 1.0, devCardTwo to 0.5, devCardOne to 0.0)
+        val expected1: Map<DevCard, Double> = mutableMapOf(devCardOne to 0.0, devCardTwo to 0.25, devCardThree to 1.0)
         assertEquals(expected1, root.aiService.calculateDevCardPurchasingPowerScoresForEnemies(exampleBoard3,
-    enemyPlayers))
-    }*/
+        enemyPlayers))
+    }
+
+    /**
+     * test for calculateDevCardImportanceScore in AIService
+     */
+    @Test
+    fun calculateDevCardImportanceScoreTest() {
+        /**
+         * 1. Given on board:
+         *      - devCardOne (Green 2, Red 3), prestige 0
+         *      - devCardTwo (Green 5, Red 3), prestige 2
+         *      - devCardThree (Green 5, Red 4), prestige 4
+         *      - devCardSix (Blue 2, Green 6), prestige 2
+         *      - nobleTileOne (Blue 1), prestige 3
+         *      - nobleTileTwo (Red 2, Blue 1), prestige 3
+         * 2. Calculate the amount of purchasable cards for the bonus of a card:
+         *      - card six = 1 (because  of blue bonus)
+         *      - all other cards = 0
+         * 3. Calculate the amount of noble tiles that need the bonus of the card
+         *      - green = 0
+         *      - red = 1
+         *      - blue = 2
+         * 4. Sort the cards on the board 1. after the prestige points, then after the amount of noble tiles and
+         *      then after the amount of purchasable cards
+         *          - Three, Two, Six, One (Two and Six have the same number of prestige points)
+         *          - Three, Six, Two, One (Six can get more noble tiles with the bonus than Two)
+         *          - Three, Six, Two, One
+         * 5. Give each card a score:
+         *          - Three = 1.0, Six = (2.0/3.0), Two = (1.0/3.0), One = 0.0
+         */
+        val expected: Map<DevCard, Double> = mutableMapOf(devCardThree to 1.0, devCardSix to 0.6666666666666667,
+            devCardTwo to 0.33333333333333337, devCardOne to 0.0)
+        assertEquals(expected,
+            root.aiService.calculateDevCardImportanceScore(exampleBoardCalculateDevCardImportanceScore))
+    }
 
     /**
      * test for calculateGemPrice in AIService
