@@ -63,6 +63,7 @@ class PlayerActionServiceTest {
         assertEquals(1, user.gems[GemType.RED])
         assertEquals(1, user.gems[GemType.BLUE])
         assertEquals(1, user.gems[GemType.GREEN])
+        assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types, user) }
     }
 
     /**
@@ -98,117 +99,127 @@ class PlayerActionServiceTest {
         assertTrue(player.reservedCards.contains(devCard3))
         assertTrue { root.currentGame!!.currentGameState.board.gems.getValue(GemType.YELLOW) == 0 }
         assertTrue { player.gems.getValue(GemType.YELLOW)  == 1 }
+
+        root.gameService.startNewGame(playerList, false, 1)
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.reserveCard(root.currentGame!!.currentGameState.board.levelOneOpen[0], 0, player)
+        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(root.currentGame!!.
+        currentGameState.board.levelOneOpen[0], 0, player) }
     }
-    /**
+
     /**
      * tests if open cards are reserved correct
-    */
+     */
     @Test
-    fun reserveCardFromOpenCardsTest() {
-    root.gameService.startNewGame(playerList, false, 1)
-    var player = root.currentGame!!.currentGameState.currentPlayer
-    val devCard1 = DevCard(0, gemMap, 1, 0, GemType.BLUE)
-    val devCard2 = DevCard(0, gemMap, 2, 0, GemType.RED)
-    val devCard3 = DevCard(0, gemMap, 3, 0, GemType.RED)
-    val devCard4 = DevCard(0, gemMap, 3, 1, GemType.RED)
-    val devCard5 = DevCard(0, gemMap, 3, 1, GemType.RED)
-    val board = root.currentGame!!.currentGameState.board
-    board.levelOneOpen.clear()
-    board.levelOneOpen.add(devCard1)
-    board.levelTwoOpen.clear()
-    board.levelTwoOpen.add(devCard2)
-    board.levelThreeOpen.clear()
-    board.levelThreeOpen.add(devCard3)
-    board.levelThreeOpen.add(devCard4)
-    board.gems[GemType.YELLOW] = 2
-    //reserveCard:
-    root.playerActionService.reserveCard(devCard1, 0, player)
-    assertNotEquals(devCard1, root.currentGame!!.currentGameState.board.levelOneOpen[0])
-    assertTrue(player.reservedCards.contains(devCard1))
-    assertTrue { root.currentGame!!.currentGameState.board.levelOneOpen.size == 4 }
-    assertTrue { root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] == 1 }
-    assertTrue { player.gems.getValue(GemType.YELLOW) == 1 }
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.playerActionService.reserveCard(devCard2, 0, player)
-    assertNotEquals(devCard2, root.currentGame!!.currentGameState.board.levelTwoOpen[0])
-    assertTrue(player.reservedCards.contains(devCard2))
-    assertTrue { root.currentGame!!.currentGameState.board.levelTwoOpen.size == 1 }
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.playerActionService.reserveCard(devCard3, 0, player)
-    assertNotEquals(devCard3, root.currentGame!!.currentGameState.board.levelThreeOpen[0])
-    assertTrue(player.reservedCards.contains(devCard3))
-    assertTrue { root.currentGame!!.currentGameState.board.levelThreeOpen.size == 2 }
-    assertTrue { root.currentGame!!.currentGameState.board.gems.getValue(GemType.YELLOW) == 0 }
-    assertNotNull(root.currentGame!!.currentGameState.board.gems)
-    assertTrue { player.gems.getValue(GemType.YELLOW) == 1 }
+    fun reserveCardFromOpenCardsTest()
+    {
+        root.gameService.startNewGame(playerList, false, 1)
+        var player = root.currentGame!!.currentGameState.currentPlayer
+        val devCard1 = DevCard(111, gemMap, 1, 0, GemType.BLUE)
+        val devCard2 = DevCard(222, gemMap, 2, 0, GemType.RED)
+        val devCard3 = DevCard(333, gemMap, 3, 0, GemType.RED)
+        val devCard4 = DevCard(444, gemMap, 3, 1, GemType.RED)
+        val devCard5 = DevCard(555, gemMap, 3, 1, GemType.RED)
+        val board = root.currentGame!!.currentGameState.board
+        board.levelOneOpen[0] = devCard1
+        board.levelTwoOpen[0] = devCard2
+        board.levelThreeOpen[0] = devCard3
+        board.levelThreeOpen[1] = devCard4
+        board.gems[GemType.YELLOW] = 2
+        //reserveCard:
+        root.playerActionService.reserveCard(devCard1, 0, player)
+        assertNotEquals(devCard1, root.currentGame!!.currentGameState.board.levelOneOpen[0])
+        assertTrue(player.reservedCards.contains(devCard1))
+        assertTrue { root.currentGame!!.currentGameState.board.levelOneOpen.size == 4 }
+        assertTrue { root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] == 1 }
+        assertTrue { player.gems.getValue(GemType.YELLOW) == 1 }
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.reserveCard(devCard2, 0, player)
+        assertNotEquals(devCard2, root.currentGame!!.currentGameState.board.levelTwoOpen[0])
+        assertTrue(player.reservedCards.contains(devCard2))
+        assertTrue { root.currentGame!!.currentGameState.board.levelTwoOpen.size == 4 }
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.reserveCard(devCard3, 0, player)
+        assertNotEquals(devCard3, root.currentGame!!.currentGameState.board.levelThreeOpen[0])
+        assertTrue(player.reservedCards.contains(devCard3))
+        assertTrue { root.currentGame!!.currentGameState.board.levelThreeOpen.size == 4 }
+        assertTrue { root.currentGame!!.currentGameState.board.gems.getValue(GemType.YELLOW) == 0 }
+        assertNotNull(root.currentGame!!.currentGameState.board.gems)
+        assertTrue { player.gems.getValue(GemType.YELLOW) == 1 }
 
-    assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard4, 0, player) }
+        assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(devCard4, 0, player) }
 
-    root.gameService.startNewGame(playerList, false, 1)
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
-    root.playerActionService.reserveCard(devCard5, index = 0, player)
-    assertEquals(0, player.gems[GemType.YELLOW])
+        root.gameService.startNewGame(playerList, false, 1)
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
+        root.playerActionService.reserveCard(devCard5, index = 0, player)
+        assertEquals(0, player.gems[GemType.YELLOW])
     }
 
     /**
      * tests if card is bought correct
-    */
+     */
     @Test
     fun buyCardTest() {
-    root.gameService.startNewGame(playerList, false, 1)
-    assertNotNull(root.currentGame)
-    gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
-    val devCard1 = DevCard(0, gemMap, 1, 1, GemType.BLUE)
-    val devCard2 = DevCard(0, gemMap, 2, 1, GemType.RED)
-    val devCard3 = DevCard(0, gemMap, 3, 1, GemType.RED)
-    val board = root.currentGame!!.currentGameState.board
-    var player = root.currentGame!!.currentGameState.currentPlayer
-    player.gems[GemType.RED] = 3
-    player.gems[GemType.GREEN] = 3
-    board.gems[GemType.RED] = 0
-    board.gems[GemType.GREEN] = 0
-    val score = player.score
-    player.bonus[GemType.BLUE] = 0
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
+        gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
+        val devCard1 = DevCard(0, gemMap, 1, 1, GemType.BLUE)
+        val devCard2 = DevCard(0, gemMap, 2, 1, GemType.RED)
+        val devCard3 = DevCard(0, gemMap, 3, 1, GemType.RED)
+        val board = root.currentGame!!.currentGameState.board
+        var player = root.currentGame!!.currentGameState.currentPlayer
+        player.gems[GemType.RED] = 3
+        player.gems[GemType.GREEN] = 3
+        board.gems[GemType.RED] = 0
+        board.gems[GemType.GREEN] = 0
+        val score = player.score
+        player.bonus[GemType.BLUE] = 0
 
-    //exception if card is not acquirable
-    val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
-    GemType.BLUE to 0, GemType.YELLOW to 0)
-    assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1, true, map,
-    0, player) }
+        //exception if card is not acquirable
+        val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
+            GemType.BLUE to 0, GemType.YELLOW to 0)
+        assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1, true, map,
+            0, player) }
 
-    board.levelOneOpen.clear()
-    board.levelOneOpen.add(devCard1)
-    board.levelTwoOpen.clear()
-    board.levelTwoOpen.add(devCard2)
-    board.levelThreeOpen.clear()
-    board.levelThreeOpen.add(devCard3)
+        board.levelOneOpen[0] = devCard1
+        board.levelTwoOpen[0] = devCard2
+        board.levelThreeOpen[0] = devCard3
 
-    //buy card from board level 1
-    root.playerActionService.buyCard(devCard1, true, player.gems, 0, player)
-    assertTrue { player.devCards.contains(devCard1) }
-    assertFalse { board.levelOneOpen.contains(devCard1) }
-    assertTrue { board.levelOneOpen.size == 1 }
-    assertEquals(score + 1, player.score)
-    assertEquals(1, player.bonus[GemType.BLUE])
-    assertEquals(2, board.gems[GemType.RED])
-    assertEquals(3, board.gems[GemType.GREEN])
-    assertEquals(1, player.gems[GemType.RED])
-    assertEquals(0, player.gems[GemType.GREEN])
+        //buy card from board level 1
+        root.playerActionService.buyCard(devCard1, true, player.gems, 0, player)
+        assertTrue { player.devCards.contains(devCard1) }
+        assertFalse { board.levelOneOpen.contains(devCard1) }
+        assertTrue { board.levelOneOpen.size == 4 }
+        assertEquals(score + 1, player.score)
+        assertEquals(1, player.bonus[GemType.BLUE])
+        assertEquals(2, board.gems[GemType.RED])
+        assertEquals(3, board.gems[GemType.GREEN])
+        assertEquals(1, player.gems[GemType.RED])
+        assertEquals(0, player.gems[GemType.GREEN])
 
-    //buy ard from other levels or reserved cards
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.playerActionService.buyCard(devCard2, true, gemMap, 0, player)
-    assertFalse { board.levelOneOpen.contains(devCard2) }
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.playerActionService.buyCard(devCard3, true, gemMap, 0, player)
-    assertFalse { board.levelOneOpen.contains(devCard3) }
-    player.devCards.remove(devCard1)
-    player.reservedCards.add(devCard1)
-    player = root.currentGame!!.currentGameState.currentPlayer
-    root.playerActionService.buyCard(devCard1, false, gemMap, 0, player)
-    assertFalse { player.reservedCards.contains(devCard1) }
-    } */
+        //buy card from other levels or reserved cards
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.buyCard(devCard2, true, gemMap, 0, player)
+        assertFalse { board.levelOneOpen.contains(devCard2) }
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.buyCard(devCard3, true, gemMap, 0, player)
+        assertFalse { board.levelOneOpen.contains(devCard3) }
+        player.devCards.remove(devCard1)
+        player.reservedCards.add(devCard1)
+        player = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.buyCard(devCard1, false, gemMap, 0, player)
+        assertFalse { player.reservedCards.contains(devCard1) }
+
+        root.gameService.startNewGame(playerList, false, 1)
+        player = root.currentGame!!.currentGameState.currentPlayer
+        player.gems[GemType.RED] = 10
+        player.gems[GemType.GREEN] = 10
+        root.playerActionService.buyCard(devCard1, false, gemMap, 0, player)
+        board.levelOneOpen[0] = devCard1
+        assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1, false, gemMap,
+            0, player) }
+    }
 
     /**
      * tests if nobleTiles are returned correct

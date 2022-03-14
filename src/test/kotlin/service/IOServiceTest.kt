@@ -10,8 +10,8 @@ class IOServiceTest {
 
     /** RootService reference */
     private var root = RootService()
-    val playerList2 = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
 
+    /** tests if saving and loading games works correctly */
     @Test
     fun testSaveAndLoadGame() {
         val playerList2 = listOf(Pair("p1", PlayerType.HUMAN), Pair("p2", PlayerType.HUMAN))
@@ -19,16 +19,11 @@ class IOServiceTest {
         val game = root.currentGame
         checkNotNull(game)
         val currentGame = game.currentGameState
-        val player = currentGame.currentPlayer
 
         currentGame.board.levelOneCards.clear()
         currentGame.board.levelOneCards.add(
-            root.gameService.createCard(
-                listOf("1", "2", "3", "0", "0", "0", "0", "0", "diamant")
-            )
-        )
+            root.gameService.createCard(listOf("1", "2", "3", "0", "0", "0", "0", "0", "diamant")))
         currentGame.currentPlayer.score = 11
-        val nobleTileId = game.currentGameState.board.nobleTiles[0].id
         game.currentGameState.board.nobleTiles.removeAt(0)
 
         //test save file
@@ -47,11 +42,11 @@ class IOServiceTest {
         assertEquals(0,root.gameService.currentPlayerIndex)
         assertEquals(11,loadGame.currentGameState.currentPlayer.score)
         assertEquals(1,loadGame.currentGameState.board.levelOneCards[0].id)
-
     }
 
+    /** tests if saving and loading highscores works correctly */
     @Test
-    fun testSaveAndLoadHighScore(){
+    fun testSaveAndLoadHighscore(){
         val highscore1 = Highscore("Dumbledore",100)
         val highscore2 = Highscore("Spider-man",99)
         val highscore3 = Highscore("BATMAN",10)
@@ -69,6 +64,5 @@ class IOServiceTest {
         val highscoreList = root.ioService.loadHighscore()
         assertEquals("Dumbledore",highscoreList[0].playerName)
         assertEquals(10,highscoreList[5].score)
-
     }
 }

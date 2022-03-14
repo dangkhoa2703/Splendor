@@ -16,10 +16,9 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun undo(){
         val game = rootService.currentGame!!
-        if(game.currentGameState.hasPrevious()){
+        if(game.currentGameState.hasPrevious()) {
             game.currentGameState = game.currentGameState.previous
-            game.validGame = false
-        }
+            game.validGame = false }
         else throw IllegalStateException("a previous state does not exist")
     }
 
@@ -29,10 +28,9 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun redo(){
         val game = rootService.currentGame!!
-        if(game.currentGameState.hasNext()){
+        if(game.currentGameState.hasNext()) {
             game.currentGameState = game.currentGameState.next
-            game.validGame = false
-        }
+            game.validGame = false }
         else throw IllegalStateException("a following state does not exist")
     }
 
@@ -73,7 +71,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             onAllRefreshables{ refreshAfterTakeGems()}
             // visit by nobleTiles, check gems
             // rootService.gameService.endTurn()
-        } else { return }
+        } else { throw IllegalArgumentException("not your turn") }
         rootService.gameService.nextPlayer()
     }
 
@@ -117,7 +115,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             //refreshAfterBuyCard()
             // visit by nobleTiles, check gems
             // rootService.gameService.endTurn()
-        } else{ return }
+        } else { throw IllegalArgumentException("not your turn") }
         rootService.gameService.nextPlayer()
         onAllRefreshables {refreshAfterBuyCard(card)}
     }
@@ -167,7 +165,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             // refreshAfterReserveCard()
             // visit by nobleTiles, check gems
             // rootService.gameService.endTurn()
-        } else { return }
+        } else { throw IllegalArgumentException("not your turn") }
         onAllRefreshables{ refreshAfterReserveCard(card)}
         rootService.gameService.nextPlayer()
     }
@@ -180,12 +178,12 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun selectNobleTile(card: NobleTile, user : Player){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
-        if(user == game.currentGameState.currentPlayer)
-        {
-            board.nobleTiles.remove(card)
-            user.nobleTiles.add(card)
-            user.score += card.prestigePoints
-        } else { return }
+        // if(user == game.currentGameState.currentPlayer)
+        // {
+        board.nobleTiles.remove(card)
+        user.nobleTiles.add(card)
+        user.score += card.prestigePoints
+        // } else { return }
         rootService.gameService.nextPlayer()
     }
 
@@ -197,12 +195,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun returnGems(gems: List<GemType>, user : Player){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
-        if(user == game.currentGameState.currentPlayer)
-        {
-            gems.forEach { gemType ->
-                user.gems[gemType] = user.gems.getValue(gemType) - 1
-                board.gems[gemType] = board.gems.getValue(gemType) + 1
-            }
-        } else { return }
+        // if(user == game.currentGameState.currentPlayer)
+        // {
+        gems.forEach { gemType ->
+            user.gems[gemType] = user.gems.getValue(gemType) - 1
+            board.gems[gemType] = board.gems.getValue(gemType) + 1 }
+        // } else { throw IllegalArgumentException("not your turn") }
     }
 }
