@@ -90,7 +90,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if(currentGameState.currentPlayer.score >= 15){
             currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
             println(currentGameState.playerList.toString())
-           onAllRefreshables { refreshAfterEndGame() }
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
 
@@ -353,7 +353,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      *
      * @return a list of Pair( level, cardIndex ) of acquirable card
      */
-     fun acquirableCards(): MutableList<Pair<Int,Int>>{
+    fun acquirableCards(): MutableList<Pair<Int,Int>>{
 
         val game = rootService.currentGame
         checkNotNull(game)

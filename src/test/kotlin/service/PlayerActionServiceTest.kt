@@ -25,8 +25,10 @@ class PlayerActionServiceTest {
     @Test
     fun takeGemsTest() {
         val game = root.currentGame
-        if(game != null) { assertThrows<IllegalStateException> {
-            root.playerActionService.takeGems(mutableListOf(GemType.RED), game.currentGameState.currentPlayer) }
+        root.gameService.startNewGame(playerList, false, 1)
+        if(game != null) {
+            assertThrows<IllegalStateException> {
+                root.playerActionService.takeGems(mutableListOf(GemType.RED), game.currentGameState.currentPlayer) }
             root.gameService.startNewGame(playerList, false, 1)
             assertNotNull(root.currentGame)
             val types = mutableListOf(GemType.RED, GemType.BLUE, GemType.BLACK, GemType.GREEN)
@@ -44,16 +46,19 @@ class PlayerActionServiceTest {
             types.remove(GemType.BLACK)
             types.remove(GemType.GREEN)
             //exception if board has at least three different types and chosen gemTypes are two different ones or one
-            assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types,
-                game.currentGameState.currentPlayer) }
+            assertThrows<IllegalArgumentException> {
+                root.playerActionService.takeGems(types,
+                    game.currentGameState.currentPlayer) }
             types.add(GemType.RED)
             //exception if three chosen gems contain less than three different GemTypes
-            assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types,
-                game.currentGameState.currentPlayer) }
+            assertThrows<IllegalArgumentException> {
+                root.playerActionService.takeGems(types,
+                    game.currentGameState.currentPlayer) }
             types.remove(GemType.BLUE)
             //exception if less than four gems of GemType are left
-            assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types,
-                game.currentGameState.currentPlayer) }
+            assertThrows<IllegalArgumentException> {
+                root.playerActionService.takeGems(types,
+                    game.currentGameState.currentPlayer) }
 
             //Functionality:
             //take two same gems
@@ -86,10 +91,10 @@ class PlayerActionServiceTest {
     @Test
     fun reserveCardFromStackTest() {
         val game = root.currentGame
+        assertNull(root.currentGame)
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
-            assertNull(root.currentGame)
-            root.gameService.startNewGame(playerList, false, 1)
-            assertNotNull(root.currentGame)
             val devCard1 = DevCard(0, gemMap, 1, 0, GemType.BLUE)
             val devCard2 = DevCard(0, gemMap, 2, 0, GemType.RED)
             val devCard3 = DevCard(0, gemMap, 3, 0, GemType.RED)
@@ -131,10 +136,10 @@ class PlayerActionServiceTest {
     @Test
     fun reserveCardFromOpenCardsTest() {
         val game = root.currentGame
+        assertNull(root.currentGame)
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
-            assertNull(root.currentGame)
-            root.gameService.startNewGame(playerList, false, 1)
-            assertNotNull(root.currentGame)
             val devCard1 = DevCard(0, gemMap, 1, 0, GemType.BLUE)
             val devCard2 = DevCard(0, gemMap, 2, 0, GemType.RED)
             val devCard3 = DevCard(0, gemMap, 3, 0, GemType.RED)
@@ -187,9 +192,9 @@ class PlayerActionServiceTest {
     @Test
     fun buyCardTest() {
         val game = root.currentGame
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
-            root.gameService.startNewGame(playerList, false, 1)
-            assertNotNull(root.currentGame)
             gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
             val devCard1 = DevCard(0, gemMap, 1, 1, GemType.BLUE)
             val devCard2 = DevCard(0, gemMap, 2, 1, GemType.RED)
@@ -206,8 +211,8 @@ class PlayerActionServiceTest {
             //exception if card is not acquirable
             val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
                 GemType.BLUE to 0, GemType.YELLOW to 0)
-            assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1,true, map,
-                0, game.currentGameState.currentPlayer) }
+            assertThrows<IllegalArgumentException> {
+                root.playerActionService.buyCard(devCard1,true, map, 0, game.currentGameState.currentPlayer) }
 
             board.levelOneOpen.clear()
             board.levelOneOpen.add(devCard1)
@@ -243,8 +248,8 @@ class PlayerActionServiceTest {
             assertFalse { player.reservedCards.contains(devCard1) }
 
             root.currentGame = null
-            assertThrows<IllegalStateException> { root.playerActionService.buyCard(devCard1, true,
-                    map, 0, game.currentGameState.currentPlayer) }
+            assertThrows<IllegalStateException> {
+                root.playerActionService.buyCard(devCard1, true, map, 0, game.currentGameState.currentPlayer) }
         }
     }
 
@@ -254,9 +259,9 @@ class PlayerActionServiceTest {
     @Test
     fun selectNobleTileTest() {
         val game = root.currentGame
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
-            root.gameService.startNewGame(playerList, false, 1)
-            assertNotNull(root.currentGame)
             val nobleTileOne = NobleTile(0, gemMap, 1)
             root.currentGame!!.currentGameState.board.nobleTiles.add(nobleTileOne)
             val score = root.currentGame!!.currentGameState.currentPlayer.score
@@ -282,6 +287,8 @@ class PlayerActionServiceTest {
     @Test
     fun returnGemTest() {
         val game = root.currentGame
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
             assertThrows<IllegalStateException> {
                 root.playerActionService.returnGems(mutableListOf(GemType.RED), game.currentGameState.currentPlayer) }
@@ -311,6 +318,8 @@ class PlayerActionServiceTest {
     @Test
     fun undoRedoTest() {
         val game = root.currentGame
+        root.gameService.startNewGame(playerList, false, 1)
+        assertNotNull(root.currentGame)
         if (game != null) {
             val gameStateOne = GameState(playerTwo, listOf(playerOne, playerTwo), Board())
             val gameStateTwo = GameState(playerTwo, listOf(playerOne, playerTwo), Board())

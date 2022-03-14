@@ -2,6 +2,11 @@ package service
 
 import entity.*
 import java.io.File
+import java.io.FileWriter
+import java.io.PrintWriter
+
+
+
 
 /**
  *  Class for inputs and outputs
@@ -10,12 +15,12 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 {
     /** loads a game saved locally in a file */
     fun loadGame(path: String): Splendor? {
-        val gameSettingFile = File(path + "gameSetting")
-        val playerOneFile = File(path + "player1")
-        val playerTwoFile = File(path + "player2")
-        val playerThreeFile = File(path + "player3")
-        val playerFourFile = File(path + "player4")
-        val boardFile = File(path + "board")
+        val gameSettingFile = File("$path/gameSetting")
+        val playerOneFile = File("$path/player1")
+        val playerTwoFile = File("$path/player2")
+        val playerThreeFile = File("$path/player3")
+        val playerFourFile = File("$path/player4")
+        val boardFile = File("$path/board")
         if (!gameSettingFile.exists()) { return null }
         val playerCount = gameSettingFile.readLines()[1].toInt()
 
@@ -31,11 +36,11 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val levelTwoCards = readDevCards(devCardsIDs)
         devCardsIDs = boardFileLines[4].removePrefix("[").removeSuffix("]").split(",")
         val levelTwoOpen = readDevCards(devCardsIDs)
-        devCardsIDs = boardFileLines[4].removePrefix("[").removeSuffix("]").split(",")
-        val levelThreeCards = readDevCards(devCardsIDs)
         devCardsIDs = boardFileLines[5].removePrefix("[").removeSuffix("]").split(",")
+        val levelThreeCards = readDevCards(devCardsIDs)
+        devCardsIDs = boardFileLines[6].removePrefix("[").removeSuffix("]").split(",")
         val levelThreeOpen = readDevCards(devCardsIDs)
-        val gemsFromFile = boardFileLines[6].removePrefix("{").removeSuffix("}")
+        val gemsFromFile = boardFileLines[7].removePrefix("{").removeSuffix("}")
         val gems = readMap(gemsFromFile)
         val board = Board(nobleTilesOnBoard, levelOneCards, levelOneOpen, levelTwoCards, levelTwoOpen,
             levelThreeCards, levelThreeOpen)
@@ -79,8 +84,8 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             "HARD" -> PlayerType.HARD
             else -> { throw java.lang.IllegalArgumentException("invalid player type") }
         }
-        val gems = readMap(fileLines[2].removePrefix("{").removeSuffix("{"))
-        val bonus = readMap(fileLines[3].removePrefix("{").removeSuffix("{"))
+        val gems = readMap(fileLines[2].removePrefix("{").removeSuffix("}"))
+        val bonus = readMap(fileLines[3].removePrefix("{").removeSuffix("}"))
         val reserved = readDevCards(fileLines[4].removePrefix("[").removeSuffix("]").split(","))
         val nobles = readNobleTiles(fileLines[5].removePrefix("[").removeSuffix("]").split(","))
         val score = fileLines[6].trim().toInt()
@@ -92,35 +97,39 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     private fun readDevCards(list :List<String>): MutableList<DevCard>{
         val devCards = mutableListOf<DevCard>()
         val cardConfigFile = File("src/main/resources/splendor-entwicklungskarten.csv")
+        val cardConfigStringList = cardConfigFile.readLines()
 
-        for (index in list) {
-            for (line in cardConfigFile.readLines()) {
-                val data = line.split(",")
-                if (data[0].contains(index)) {
-                    val tempMap = mapOf(
-                        GemType.WHITE to data[1].trim().toInt(),
-                        GemType.BLUE to data[2].trim().toInt(),
-                        GemType.GREEN to data[3].trim().toInt(),
-                        GemType.RED to data[4].trim().toInt(),
-                        GemType.BLACK to data[5].trim().toInt()
-                    )
-                    val color = when (data[8].trim()) {
-                        "diamant" -> GemType.WHITE
-                        "saphir" -> GemType.BLUE
-                        "smaragd" -> GemType.GREEN
-                        "rubin" -> GemType.RED
-                        "onyx" -> GemType.BLACK
-                        else -> { throw java.lang.IllegalArgumentException("invalid gem type") }
-                    }
-                    devCards.add(
-                        DevCard(
-                            data[0].trim().toInt(),
-                            tempMap,
-                            data[6].trim().toInt(),
-                            data[7].trim().toInt(),
-                            color))
-                }
+
+        if(list.size == 1 && list[0].trim() == ""){
+            return mutableListOf()
+        }
+
+        list.forEach { id ->
+            // retrieve the card's configuration according to card's id
+            val cardConfigString = cardConfigStringList[id.trim().toInt() + 1]
+            val cardConfig = cardConfigString.split(", ")
+            val tempMap = mapOf(
+                GemType.WHITE to cardConfig[1].trim().toInt(),
+                GemType.BLUE to cardConfig[2].trim().toInt(),
+                GemType.GREEN to cardConfig[3].trim().toInt(),
+                GemType.RED to cardConfig[4].trim().toInt(),
+                GemType.BLACK to cardConfig[5].trim().toInt()
+            )
+            val color = when (cardConfig[8].trim()) {
+                "diamant" -> GemType.WHITE
+                "saphir" -> GemType.BLUE
+                "smaragd" -> GemType.GREEN
+                "rubin" -> GemType.RED
+                "onyx" -> GemType.BLACK
+                else -> { throw java.lang.IllegalArgumentException("invalid gem type") }
             }
+            devCards.add(
+                DevCard(
+                    cardConfig[0].trim().toInt(),
+                    tempMap,
+                    cardConfig[6].trim().toInt(),
+                    cardConfig[7].trim().toInt(),
+                    color))
         }
         return devCards
     }
@@ -128,25 +137,30 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     private fun readNobleTiles( list :List<String>):MutableList<NobleTile> {
         val nobleTiles = mutableListOf<NobleTile>()
         val cardConfigFile = File("src/main/resources/splendor-adligenkarten.csv")
+        val cardConfigStringList = cardConfigFile.readLines()
 
-        for (index in list) {
-            for (line in cardConfigFile.readLines()) {
-                val data = line.split(",")
-                if (data[0].contains(index)) {
-                    val tempMap = mapOf(
-                        GemType.WHITE to data[1].trim().toInt(),
-                        GemType.BLUE to data[2].trim().toInt(),
-                        GemType.GREEN to data[3].trim().toInt(),
-                        GemType.RED to data[4].trim().toInt(),
-                        GemType.BLACK to data[5].trim().toInt()
-                    )
-                    nobleTiles.add(
-                        NobleTile(
-                            data[0].trim().toInt(),
-                            tempMap,
-                            data[6].trim().toInt()))
-                }
-            }
+        if(list.size == 1 && list[0].trim() == ""){
+            return mutableListOf()
+        }
+
+        list.forEach { id ->
+            // retrieve the card's configuration according to card's id
+            val cardConfigString = cardConfigStringList[id.trim().toInt() - 89]
+            val cardConfig = cardConfigString.split(", ")
+            val tempMap = mapOf(
+                GemType.WHITE to cardConfig[1].trim().toInt(),
+                GemType.BLUE to cardConfig[2].trim().toInt(),
+                GemType.GREEN to cardConfig[3].trim().toInt(),
+                GemType.RED to cardConfig[4].trim().toInt(),
+                GemType.BLACK to cardConfig[5].trim().toInt()
+            )
+            nobleTiles.add(
+                NobleTile(
+                    cardConfig[0].trim().toInt(),
+                    tempMap,
+                    cardConfig[6].trim().toInt()
+                )
+            )
         }
         return nobleTiles
     }
@@ -194,26 +208,54 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         gameFile.bufferedWriter().use{ out ->
             out.write(game.simulationSpeed.toString() + "\n" )
             out.write(game.currentGameState.playerList.size.toString() + "\n")
-            out.write(rootService.gameService.currentPlayerIndex.toString())
-            out.write(rootService.currentGame!!.validGame.toString())
+            out.write(rootService.gameService.currentPlayerIndex.toString() +"\n")
+            out.write(rootService.currentGame!!.validGame.toString() + "\n")
         }
-
     }
 
-    /** deletes the file in the specified file path */
-    fun deleteGame(path : String)
-    {
-    }
+//    /** deletes the content of the file in the specified file path */
+//    fun deleteGame(path : String)
+//    {
+//        FileWriter(path + "gameSetting",false).close()
+//        FileWriter(path + "player1",false).close()
+//        FileWriter(path + "player2",false).close()
+//        FileWriter(path + "player3",false).close()
+//        FileWriter(path + "player4",false).close()
+//        FileWriter(path + "board",false).close()
+//    }
 
-    /** saves a highscore to a file including highscores of different games */
+    /** saves a highscore to a file including highscores of different games; maximum 10*/
     fun saveHighscore(score : Highscore)
     {
+        val currentHighscores = loadHighscore()
+        currentHighscores.add(score)
+        currentHighscores.sortByDescending { highscore -> highscore.score }
+        //es werden nur die 10 besten scores gespeichert
+        if(currentHighscores.size>10){
+            currentHighscores.removeAt(10)
+        }
+
+        //save updated highscores if changed
+        if(currentHighscores != loadHighscore()) {
+            val highscoreFile = File("src/main/resources/highscore")
+            highscoreFile.bufferedWriter().use{ out ->
+                for (highscore in currentHighscores) {
+                    out.write(highscore.playerName+","+highscore.score+ "\n")
+                }
+            }
+        }
     }
 
     /** loads a file including highscores */
-    fun loadHighscore(path : String) : List<Highscore>?
-    {
-        return  null
+    fun loadHighscore() : MutableList<Highscore> {
+        val highscoreFileList = File("src/main/resources/highscore").readLines()
+        val highscoreList = mutableListOf<Highscore>()
+        var content:List<String>
+        for(line in highscoreFileList){
+            content = line.split(",")
+            highscoreList.add(Highscore(content[0],content[1].toInt()))
+        }
+        return highscoreList
     }
 
     /*-HELP FUNCTION-*/
@@ -222,18 +264,19 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         val mapList = mapString.split(",")
         /** for(pair in mapList){
-            pair.trim()
+        pair.trim()
         } */
         mapList.forEach { it.trim() }
 
         val map = mapList.associate {
             val (left, right) = it.split("=")
-            val gemType =  when(left){
+            val gemType =  when(left.trim()){
                 "WHITE" -> GemType.WHITE
                 "BLUE" -> GemType.BLUE
                 "GREEN" -> GemType.GREEN
                 "RED" -> GemType.RED
                 "BLACK" -> GemType.BLACK
+                "YELLOW" -> GemType.YELLOW
                 else -> {
                     throw java.lang.IllegalArgumentException(
                         "invalid gem type"
