@@ -20,8 +20,8 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	val backgroundImage = imageLoader.highscoreBackground()
 	val highscores = imageLoader.highscores()
 	private val headLineLabel = Label(
-		width = 600, height = 200,
-		posX = 660 , posY = 135,
+		width = 700, height = 200,
+		posX = 600 , posY = 135,
 		text = "",
 		font = Font(size = 44),
 		visual = highscores,
