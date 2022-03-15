@@ -41,4 +41,19 @@ class Player (
         bonus.toMutableMap(), reservedCards.toMutableList(), nobleTiles.toMutableList(),
         score, devCards.toMutableList())
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is Player)
+            return false
+        val otherPlayer: Player = other
+        return otherPlayer.name.equals(name)
+                && otherPlayer.playerType.equals(playerType)
+                && otherPlayer.gems.equals(gems)
+                && otherPlayer.bonus.equals(bonus)
+                && otherPlayer.reservedCards.equals(reservedCards)
+                && otherPlayer.nobleTiles.equals(nobleTiles)
+                && otherPlayer.score.equals(score)
+                && otherPlayer.devCards.equals(devCards)
+                && otherPlayer.id.equals(id)
+    }
+
 }

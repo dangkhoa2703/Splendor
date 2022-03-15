@@ -41,4 +41,18 @@ class Board (
         levelThreeOpen = levelThreeOpen.toMutableList(),
         gems = gems.toMutableMap())
 
+    /** Equals implementation */
+    override fun equals(other: Any?): Boolean {
+        if (other !is Board)
+            return false
+        val otherBoard: Board = other
+        return otherBoard.nobleTiles.equals(nobleTiles)
+                && otherBoard.levelOneOpen.equals(levelOneOpen)
+                && otherBoard.levelOneCards.equals(levelOneCards)
+                && otherBoard.levelTwoOpen.equals(levelTwoOpen)
+                && otherBoard.levelTwoCards.equals(levelTwoCards)
+                && otherBoard.levelThreeOpen.equals(levelThreeOpen)
+                && otherBoard.levelThreeCards.equals(levelThreeCards)
+    }
+
 }

@@ -35,22 +35,30 @@ class DecisionTree(var rootService: RootService) {
         return -1.0
     }
 
-    private fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>): Pair<Turn, Pair<Board, Player>>? {
+    /**
+     * Simulates the given move (through [turnType])
+     * @return appropriate [Turn], [Board] and [Player] objects
+     */
+    fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>): Pair<Turn, Pair<Board, Player>>? {
         val newBoard = board.cloneForSimulation()
         val newPlayer = player.clone()
+        // No cards on the board
+        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0)
+            return null
         val bestDevCards: Map<DevCard, Double> = rootService.aiService.calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)
         return when (turnType) {
             TurnType.TAKE_GEMS -> {
                 val chosenGems: Pair<Map<GemType, Int>, Boolean> = rootService.aiService.chooseGems(bestDevCards, player, board)
                 val mapOfChosenGems: MutableMap<GemType, Int> = chosenGems.first.toMutableMap()
-                if(mapOfChosenGems == null) { // Invalid move
+                if(mapOfChosenGems == null ||mapOfChosenGems.isEmpty() ) { // Invalid move
                     return null
                 }
                 val turn = Turn(mapOfChosenGems, listOf(), TurnType.TAKE_GEMS, chosenGems.second)
                 // Update Board and Player
                 newBoard.gems = newBoard.gems.combine(mapOfChosenGems, subtract = true)
-                newPlayer.gems.clear()
-                newPlayer.gems.putAll(newPlayer.gems.combine(mapOfChosenGems))
+                mapOfChosenGems.forEach {
+                    newPlayer.gems[it.key] = (newPlayer.gems[it.key] ?: 0) + it.value
+                }
                 return Pair(turn, Pair(newBoard, newPlayer))
             }
             TurnType.BUY_CARD -> {
@@ -58,7 +66,7 @@ class DecisionTree(var rootService: RootService) {
                 val affordableCards: MutableList<DevCard> = mutableListOf()
                 val totalGemsOfPlayer: Map<GemType, Int> = player.gems.combine(player.bonus)
                 for(card in cardsSortedAfterScore) {
-                    if(rootService.gameService.isCardAcquirable(card, totalGemsOfPlayer)) {
+                    if(isCardAcquirable(card, totalGemsOfPlayer)) {
                         affordableCards.add(card)
                         break
                     }
@@ -81,5 +89,25 @@ class DecisionTree(var rootService: RootService) {
             else -> null
         }
     }
+
+    /** Stolen from old commit
+     * check if the card is for the current player affordable
+     *
+     * @param card the card which the player chose
+     * @param payment map of gems from player
+     * @return true if player can this card afford, else return false
+     * */
+    private fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean {
+
+        val tempGemMap = card.price.toMutableMap()
+
+        card.price.forEach { (gemType) ->
+            tempGemMap[gemType] = tempGemMap.getValue(gemType) - payment.getValue(gemType)
+        }
+
+        val gemsNeeded = tempGemMap.filterValues { it >= 0 }.values.sum()
+        return (gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW))
+    }
+
 
 }
