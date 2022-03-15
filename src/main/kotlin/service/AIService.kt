@@ -230,10 +230,10 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * help-function to calculate which gems a player should choose
      */
-    fun chooseGems(bestDevCards: Map<DevCard, Double>, availableGems: MutableMap<GemType,Int>) : Map<GemType, Int> {
+    fun chooseGems(bestDevCards: Map<DevCard, Double>, player: Player, board: Board) : Pair<Map<GemType, Int>, Boolean> {
         val gems: Map<GemType, Int> = mutableMapOf()
         //solange ich mir die aktuelle Karte leisten kann, weitergehen
-        return gems
+        return Pair(gems, false)
     }
 
     fun computeTurnEvaluationScore(board: Board, player: Player, enemies: List<Player>): Double {
