@@ -90,8 +90,11 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     ).apply {
 	onMouseClicked = {
 	    val playerActionService = rootService.playerActionService
-	    val output = playerActionService.showHint()
-	    println(output)
+		val gameState = rootService.currentGame!!.currentGameState
+//	funktioniert erst, wenn calculateBestTurn nicht mehr null zurückgibt
+//		val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
+//	    val output = playerActionService.showHint(turn!!)
+//	    println(output)
 	}
     }
 

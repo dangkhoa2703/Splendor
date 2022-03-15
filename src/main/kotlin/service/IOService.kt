@@ -214,12 +214,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 //    /** deletes the content of the file in the specified file path */
 //    fun deleteGame(path : String)
 //    {
-//        FileWriter(path + "gameSetting",false).close()
-//        FileWriter(path + "player1",false).close()
-//        FileWriter(path + "player2",false).close()
-//        FileWriter(path + "player3",false).close()
-//        FileWriter(path + "player4",false).close()
-//        FileWriter(path + "board",false).close()
+
 //    }
 
     /** saves a highscore to a file including highscores of different games; maximum 10*/

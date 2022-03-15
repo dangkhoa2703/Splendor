@@ -7,6 +7,7 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.Highscore
+import entity.Player
 import entity.SplendorImageLoader
 import tools.aqua.bgw.util.Font.FontStyle
 import java.awt.Color
@@ -16,13 +17,13 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	val imageLoader = SplendorImageLoader()
 	val image = imageLoader.button()
 	val backgroundImage = imageLoader.highscoreBackground()
-    private val headLineLabel = Label(
+    /*private val headLineLabel = Label(
 	width = 300, height = 200,
 	posX = width/2 - 150, posY = 50,
 	text = "Highscores",
 	font = Font(size = 44)
     )
-
+	*/
     private var highscoreLabels: MutableList<Label> = mutableListOf()
 
     val backButton = Button(
@@ -33,70 +34,70 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
     )
 
     private fun loadHighscores(highscoreList: MutableList<Highscore>) {
-	highscoreLabels.forEach{ it.removeFromParent() }
-	highscoreLabels.clear()
+		highscoreLabels.forEach { it.removeFromParent() }
+		highscoreLabels.clear()
 
-	val size = highscoreList.size
-	if(size==0) return
-	
-	highscoreList.sortBy{ -it.score }
+		val size = highscoreList.size
+		if (size == 0) return
 
-	var player = highscoreList[0]
+		highscoreList.sortBy { -it.score }
 
-	var label = Label(
-	    width = 400, height = 180,
-	    posX = width/2 - 200, posY = 200,
-	    text = player.playerName+": "+player.score,
-	    font = Font(size=42, fontStyle = FontStyle.ITALIC, color = Color.WHITE )
+		var player = highscoreList[0]
 
-	)
+		labelList.add(rank0)
+		labelList.add(rank1)
+		labelList.add(rank2)
+		labelList.add(rank3)
+		println(highscoreList.size)
+		for(i in 0..highscoreList.size-1){
+			player= highscoreList[i]
+			val index = i+1
+			labelList.get(i).text=index.toString()+". Place: "+ player.playerName + ": " + player.score
+		}
 
-	highscoreLabels.add(label)
-	
-	for(i in 1..size-1) {
-	    player = highscoreList[i]
-	    label = Label(
-		width = 300, height = 80,
-		text = player.playerName+": "+player.score, 
-		font = Font(size=38, fontStyle = FontStyle.ITALIC, color = Color.WHITE)
-	    )
-
-	    if(size <= 6) {
-		label.posX = width/2 - 130.0
-		label.posY = 380.0+(i-1)*130.0
-	    }
-	    else {
-		label.posX = width/2 - 350.0
-		if((i-1)>4) label.posX+=400.0
-		label.posY = 400.0+(i-1)*130.0
-		if((i-1)>4) label.posY-=(5)*130.0
-	    }
-
-	    highscoreLabels.add(label)
 	}
 
-	highscoreLabels.forEach{ addComponents(it) }
-    }
-    
-    init {
-	val exampleHighscoreList: MutableList<Highscore> = mutableListOf(
-	    Highscore("Alice", 123),
-	    Highscore("Bob", 213),
-	    Highscore("Chris", 11),
-	    Highscore("A1", 45),
-	    Highscore("aaaaa", 34),
-	    Highscore("A23", 345),
-	    Highscore("Basdgtf", 1120),
-	    Highscore("asda", 12345)
+	/**[rank0] : Label to display winner */
+	val rank0 = Label(
+		420, 100, 1000, 500, "",
+		font = Font(size = 80, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
 	)
 
-	loadHighscores(exampleHighscoreList)
-	
+	/**[rank2] : Label to display runner up */
+	val rank1 = Label(
+		420, 200, 1000, 500, "",
+		font = Font(size = 70, color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
+	)
+
+	/**[rank2] : Label to display third player */
+	val rank2 = Label(
+		420, 300, 1000, 500, "",
+		font = Font(size = 60, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
+	)
+
+	/**[rank2] : Label to display loser */
+	val rank3 = Label(
+		420, 400, 1000, 500, "",
+		font = Font(size = 50, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
+	)
+
+	private val labelList : MutableList<Label> = mutableListOf()
+
+	override fun refreshAfterShowHighscores() {
+		loadHighscores(rootService.ioService.loadHighscore())
+	}
+    
+    init {
+	refreshAfterShowHighscores()
 	background = backgroundImage
 
 	addComponents(
-	    headLineLabel,
+
 	    backButton,
+		rank0,
+		rank1,
+		rank2,
+		rank3
 	)
     }
 }

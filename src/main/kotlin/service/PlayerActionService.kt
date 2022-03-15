@@ -1,9 +1,6 @@
 package service
 
-import entity.DevCard
-import entity.GemType
-import entity.NobleTile
-import entity.Player
+import entity.*
 
 /**
  * class to provide the logic for possible actions a player can take
@@ -43,7 +40,60 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     /**
      * @return a hint for the best next move for the current player and current situation
      */
-    fun showHint(): String{return ""}
+    fun showHint(turn:Turn): String{
+        val hint :String
+        val board = rootService.currentGame!!.currentGameState.board
+        val player = rootService.currentGame!!.currentGameState.currentPlayer
+        if(turn.turnType == TurnType.RESERVE_CARD){
+            val card = turn.card[0]
+            val placement = when(card.level){
+                1 -> board.levelOneOpen.indexOf(card)+1
+                2 -> board.levelTwoOpen.indexOf(card)+1
+                3 -> board.levelThreeOpen.indexOf(card)+1
+                else -> {throw IllegalStateException("this should not happen")}
+        }
+        hint = "You should reserve the level-${card.level}-card at position $placement."
+        }
+        else if(turn.turnType == TurnType.BUY_CARD){
+            val card = turn.card[0]
+            val placement :Int
+            if(player.reservedCards.contains(card)){
+                placement = player.reservedCards.indexOf(card)+1
+                hint = "You should buy your reserved card at position $placement."
+            }
+            else {
+                placement = when (card.level) {
+                    1 -> board.levelOneOpen.indexOf(card) + 1
+                    2 -> board.levelTwoOpen.indexOf(card) + 1
+                    3 -> board.levelThreeOpen.indexOf(card) + 1
+                    else -> {
+                        throw IllegalStateException("this should not happen")
+                    }
+                }
+                hint = "You should buy the level-${card.level}-card at position $placement."
+            }
+        }
+        else if (turn.turnType == TurnType.TAKE_GEMS){
+            val gemTypes = mutableListOf<GemType>()
+            for(gemType in GemType.values()){
+                if(turn.gems[gemType]!=null && turn.gems[gemType]!! >0){
+                    gemTypes.add(gemType)
+                }
+            }
+            if(gemTypes.size==1){
+                hint = "You should take two ${gemTypes[0]} gems."
+            }
+            else if(gemTypes.size==3){
+                hint = "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
+            }
+            else {
+                throw IllegalStateException("tip is wrong")
+            }
+        }
+        else{hint = "there is no help for you"}
+
+        return hint
+    }
 
     //player-game-action
     /**
