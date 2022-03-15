@@ -33,7 +33,8 @@ class Player (
     val nobleTiles : MutableList<NobleTile> = mutableListOf(),
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf(),
-    var id: Int = 0
+    var id: Int = 0,
+    var hasDoneTurn: Boolean = false
     ) {
 
     /** Clones a player */
