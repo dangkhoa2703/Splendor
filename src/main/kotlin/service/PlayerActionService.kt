@@ -80,14 +80,16 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                     gemTypes.add(gemType)
                 }
             }
-            if(gemTypes.size==1){
-                hint = "You should take two ${gemTypes[0]} gems."
-            }
-            else if(gemTypes.size==3){
-                hint = "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
-            }
-            else {
-                throw IllegalStateException("tip is wrong")
+            hint = when (gemTypes.size) {
+                1 -> {
+                    "You should take two ${gemTypes[0]} gems."
+                }
+                3 -> {
+                    "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
+                }
+                else -> {
+                    throw IllegalStateException("tip is wrong")
+                }
             }
         }
         else{hint = "there is no help for you"}
@@ -152,7 +154,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                         1 -> { board.levelOneOpen.remove(card) }
                         2 -> { board.levelTwoOpen.remove(card) }
                         3 -> { board.levelThreeOpen.remove(card) }
-			else -> { throw IllegalArgumentException("Illegagl card.level "+card.level) }
+			else -> { throw IllegalArgumentException("illegal card.level "+card.level) }
                     }
                     rootService.gameService.refill(card.level)
                 } else {

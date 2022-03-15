@@ -76,7 +76,7 @@ class PlayerActionServiceTest {
         val devCard2 = DevCard(0, gemMap, 2, 0, GemType.RED)
         val devCard3 = DevCard(0, gemMap, 3, 0, GemType.RED)
         var player = root.currentGame!!.currentGameState.currentPlayer
-        player.gems.put(GemType.YELLOW, 0)
+        player.gems[GemType.YELLOW] = 0
         root.currentGame!!.currentGameState.board.levelOneCards.clear()
         root.currentGame!!.currentGameState.board.levelOneCards.add(devCard1)
         root.currentGame!!.currentGameState.board.levelTwoCards.clear()
@@ -114,7 +114,7 @@ class PlayerActionServiceTest {
     fun reserveCardFromOpenCardsTest(){
         root.gameService.startNewGame(playerList, false, 1)
         var player = root.currentGame!!.currentGameState.currentPlayer
-        player.gems.put(GemType.YELLOW, 0)
+        player.gems[GemType.YELLOW] = 0
         val devCard1 = DevCard(111, gemMap, 1, 0, GemType.BLUE)
         val devCard2 = DevCard(222, gemMap, 2, 0, GemType.RED)
         val devCard3 = DevCard(333, gemMap, 3, 0, GemType.RED)
@@ -151,7 +151,7 @@ class PlayerActionServiceTest {
 
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
-        player.gems.put(GemType.YELLOW, 0)
+        player.gems[GemType.YELLOW] = 0
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
         root.playerActionService.reserveCard(devCard5, index = 0, player)
         assertEquals(0, player.gems[GemType.YELLOW])
@@ -178,8 +178,8 @@ class PlayerActionServiceTest {
         player.bonus[GemType.BLUE] = 0
 
         //exception if card is not acquirable
-        val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
-            GemType.BLUE to 0, GemType.YELLOW to 0)
+        //val map = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
+        //    GemType.BLUE to 0, GemType.YELLOW to 0)
         //assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(devCard1, true, map, 0, player) }
 
         board.levelOneOpen[0] = devCard1
@@ -332,7 +332,7 @@ class PlayerActionServiceTest {
         turn = Turn(mapOf(), listOf(),TurnType.EMPTY)
         hint = "there is no help for you"
         assertEquals(hint,root.playerActionService.showHint(turn))
-        gemsMap.put(GemType.BLACK,1)
+        gemsMap[GemType.BLACK] = 1
         turn = Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
         assertThrows<IllegalStateException> { root.playerActionService.showHint(turn) }
     }

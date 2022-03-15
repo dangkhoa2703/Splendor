@@ -176,7 +176,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      * deal a new card to the same place, where a card was removed
      *
      * @param level level of the card
-     * @param index  index of the removed card
      */
     fun refill(level: Int){
         val game = rootService.currentGame!!
@@ -351,7 +350,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val tempGemMap = card.price.toMutableMap()
 
         card.price.forEach { (gemType) ->
-            tempGemMap[gemType] = tempGemMap.getValue(gemType) - payment.getValue(gemType)
+            tempGemMap[gemType] =(tempGemMap.getValue(gemType) - payment.getValue(gemType)) -
+                    rootService.currentGame!!.currentGameState.currentPlayer.bonus.getValue(gemType)
         }
 
         val gemsNeeded = tempGemMap.filterValues { it >= 0 }.values.sum()

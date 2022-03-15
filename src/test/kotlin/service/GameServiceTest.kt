@@ -67,6 +67,8 @@ class GameServiceTest {
     @Test
     fun testIsCardAcquirable() {
         /** tests whether payment for a given card is correctly recognized as valid or invalid */
+        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
+        root.gameService.startNewGame(playerList2,false,1)
         val devCardOne = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
             bonus = GemType.BLACK, prestigePoints = 0)
         val validPaymentWithoutJoker = mapOf(GemType.YELLOW to 0, GemType.GREEN to 3, GemType.RED to 4)

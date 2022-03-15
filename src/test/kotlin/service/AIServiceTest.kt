@@ -1,3 +1,4 @@
+/**
 package service
 import entity.*
 import kotlin.test.*
@@ -245,4 +246,4 @@ class AIServiceTest {
             root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard5))
 
     }
-}
+} */
