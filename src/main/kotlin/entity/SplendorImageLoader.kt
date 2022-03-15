@@ -29,47 +29,35 @@ class SplendorImageLoader {
 
     private var images: List<ImageVisual> = listOf()
 
-    fun saveGameImage(): ImageVisual {
+    private fun image(path: String): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
-		    SAVEGAME_IMAGE
+		    path
 		)
 	    )
 	)
     }
+ 
+    fun nextPlayersImage(): ImageVisual {
+	return image("/players.png")
+    }
+
+    fun saveGameImage(): ImageVisual {
+	return image(SAVEGAME_IMAGE)
+    }
+    
     /**
      * function that returns Human Icon
      */
     fun humanIcon(): ImageVisual {
-	val image: BufferedImage = ImageIO.read(
-	    SplendorImageLoader::class.java.getResource(HUMAN_ICON)
-	)
-	return ImageVisual(image)
-    }
-    /**
-     * function that returns drag and drop image
-     */
-    fun dragAndDrop(): ImageVisual {
-	val image: BufferedImage = ImageIO.read(
-	    SplendorImageLoader::class.java.getResource(DRAG_N_DROP_ICON)
-	)
-	return ImageVisual(image)
+	return image(HUMAN_ICON)
     }
 
-	fun highscores(): ImageVisual {
-		val image: BufferedImage = ImageIO.read(
-			SplendorImageLoader::class.java.getResource(
-				"/highscores.png"
-		)
-		)
-		return ImageVisual(image)
-	}
+    fun highscores(): ImageVisual {
+	return image("/highscores.png")
+    }
 
-    
-
-    
-    
     /**
      * function that returns Start Background
      */

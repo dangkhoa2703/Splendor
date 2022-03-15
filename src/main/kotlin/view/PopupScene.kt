@@ -15,7 +15,7 @@ import tools.aqua.bgw.util.Font
 class PopupScene(
     private val rootService: RootService,
     private val gameScene: GameScene
-): MenuScene(1300, 1080), Refreshable {
+): MenuScene(1150, 1080), Refreshable {
 
     private val imageLoader: SplendorImageLoader = SplendorImageLoader()
 
@@ -113,17 +113,17 @@ class PopupScene(
 	val playerSaveCards = gameScene.playerSaveCards
 
 	var j = 0
-	println(currentPlayer)
 	for(i in 0..playerList.size-1) {
 	    val player = playerList[i]
-	    println(player)
-	    if(currentPlayer.equals(player)) continue
+	    if(currentPlayer.id.equals(player.id)) continue
 	    drawPlayer(j, player, playerDevCards[i].components, playerSaveCards[i].components)
 	    j++
 	}
     }
 
     init {
+	opacity = 0.8
+	
 	background = ColorVisual(136, 221, 136)
 	
 	standartComponents()

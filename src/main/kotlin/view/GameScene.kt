@@ -42,7 +42,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         posX = 1250, posY = 25,
         text = "",
         font = Font(size = 28),
-        visual = ColorVisual(221, 136, 136),
+        visual = imageLoader.nextPlayersImage(),
     )
 
     private val undoButton = Button(
