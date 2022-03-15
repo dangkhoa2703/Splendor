@@ -28,17 +28,13 @@ class DecisionTree(var rootService: RootService) {
         node.data = simulation.first
         // Leaf
         if(node.getChildren().isEmpty()) {
-            node.data!!.evaluation = rootService.aiService.computeTurnEvaluationScore(simulation.second.first, simulation.second.second, enemies)
+            node.data!!.evaluation = rootService.aiService.computeTurnEvaluationScore(simulation.second.second, enemies)
             return node.data!!.evaluation
         }
         //TODO: children
         return -1.0
     }
 
-    /**
-     * Simulates the given move (through [turnType])
-     * @return appropriate [Turn], [Board] and [Player] objects
-     */
     fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>): Pair<Turn, Pair<Board, Player>>? {
         val newBoard = board.cloneForSimulation()
         val newPlayer = player.clone()
@@ -50,15 +46,14 @@ class DecisionTree(var rootService: RootService) {
             TurnType.TAKE_GEMS -> {
                 val chosenGems: Pair<Map<GemType, Int>, Boolean> = rootService.aiService.chooseGems(bestDevCards, player, board)
                 val mapOfChosenGems: MutableMap<GemType, Int> = chosenGems.first.toMutableMap()
-                if(mapOfChosenGems == null ||mapOfChosenGems.isEmpty() ) { // Invalid move
+                if(mapOfChosenGems == null) { // Invalid move
                     return null
                 }
                 val turn = Turn(mapOfChosenGems, listOf(), TurnType.TAKE_GEMS, chosenGems.second)
                 // Update Board and Player
                 newBoard.gems = newBoard.gems.combine(mapOfChosenGems, subtract = true)
-                mapOfChosenGems.forEach {
-                    newPlayer.gems[it.key] = (newPlayer.gems[it.key] ?: 0) + it.value
-                }
+                newPlayer.gems.clear()
+                newPlayer.gems.putAll(newPlayer.gems.combine(mapOfChosenGems))
                 return Pair(turn, Pair(newBoard, newPlayer))
             }
             TurnType.BUY_CARD -> {

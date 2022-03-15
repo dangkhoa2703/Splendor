@@ -11,17 +11,38 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * Calculates the best possible Turn for the current player and returns an object of type Turn which includes
      * a map of gems and a list of at most one card whose contents depend on the TurnType
+     * @param player
+     * @param gameState
+     * @return The best possible turn for the player
      */
     fun calculateBestTurn(player : Player, gameState: GameState) : Turn?
     {
+        val decisionTree = DecisionTree(rootService)
+        val currentBoard = gameState.board
+        val playerList = gameState.playerList as MutableList<Player>
+        if (playerList[0] != player) {
+            playerList.remove(player)
+            playerList.add(0,player)
+        }
+        //Calculate amount of turns for computeDecisionTree
+        val aiDifficulty = when {
+            (player.playerType == PlayerType.EASY) -> 1
+            (player.playerType == PlayerType.MEDIUM) -> 2
+            //if Human or HARD
+            else -> 3
+        }
+        //return decisionTree.computeDecisionTree(aiDifficulty,currentBoard,playerList)
         return null
     }
 
     /**
      * Calculates the best possible card to buy based on predefined heuristics (specified here:
      * https://sopra-gitlab.cs.tu-dortmund.de/sopra22A/gruppe03/Projekt2/-/wikis/3-Produkt/KI-Gruppe#strategie-
-     *  f%C3%BCr-minimax-algorithmus)
-     * for each DevCard
+     *  f%C3%BCr-minimax-algorithmus) for each DevCard
+     * @param board
+     * @param player
+     * @param enemyPlayer
+     * @return Returns a map with all open cards and their individual score
      */
     fun calculateGeneralDevCardScore(board: Board, player: Player, enemyPlayer: List<Player>): Map<DevCard, Double> {
         val weights : DoubleArray = doubleArrayOf(0.4, 0.2, 0.2, 0.2)
@@ -38,7 +59,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates cost-scores for each DevCard
+     * Help-function that calculates the cost-scores for each DevCard
+     * @param board
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardCostScores(board: Board) : Map<DevCard, Double> {
@@ -67,7 +89,9 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates purchasing-power-scores for each DevCard
+     * Help-function that calculates the purchasing-power-scores for each DevCard for the current player
+     * @param board
+     * @param player
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardPurchasingPowerScores(board: Board, player: Player) : Map<DevCard, Double> {
@@ -101,6 +125,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     /**
      * Help-function that calculates the score of the cards based on the purchasing-power-scores of
      * the enemies
+     * @param board
+     * @param enemyPlayer
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardPurchasingPowerScoresForEnemies(board: Board, enemyPlayer: List<Player>) :
@@ -139,7 +165,8 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates the score of the cards based on the usefulness of the card
+     * Help-function that calculates the score of the cards based on the benefit of that card
+     * @param board
      * @return Map of all cards with respective scores
      */
     fun calculateDevCardImportanceScore(board: Board) : Map<DevCard, Double> {
@@ -147,16 +174,16 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         cardsOnBoard.addAll(board.levelOneOpen)
         cardsOnBoard.addAll(board.levelTwoOpen)
         cardsOnBoard.addAll(board.levelThreeOpen)
-        val mapOfBuyableDevCards: MutableMap<GemType, Int> = mutableMapOf()
+        val mapOfPurchasableDevCards: MutableMap<GemType, Int> = mutableMapOf()
         val mapOfNoblesWithRespectiveBonus: MutableMap<GemType, Int> = mutableMapOf()
         for(gemType in GemType.values()) {
-            var amountOfBuyableCards = 0
+            var amountOfPurchasableCards = 0
             for(cardOnBoard in cardsOnBoard) {
                 if(cardOnBoard.price.containsKey(gemType) && cardOnBoard.price[gemType]!! > 0) {
-                    amountOfBuyableCards++
+                    amountOfPurchasableCards++
                 }
             }
-            mapOfBuyableDevCards[gemType] = amountOfBuyableCards
+            mapOfPurchasableDevCards[gemType] = amountOfPurchasableCards
             var amountOfNoblesWithRespectiveBonus = 0
             for(noble in board.nobleTiles) {
                 if(noble.condition.containsKey(gemType) && noble.condition[gemType]!! > 0) {
@@ -167,7 +194,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         cardsOnBoard.sortWith(compareByDescending<DevCard> { it.prestigePoints }
             .thenByDescending { mapOfNoblesWithRespectiveBonus[it.bonus] ?: 0 }
-            .thenByDescending { mapOfBuyableDevCards[it.bonus] ?: 0 })
+            .thenByDescending { mapOfPurchasableDevCards[it.bonus] ?: 0 })
         val result: MutableMap<DevCard, Double> = mutableMapOf()
         result[cardsOnBoard[0]] = 1.0
         cardsOnBoard.forEachIndexed { index, _ ->
@@ -179,24 +206,34 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * Help-function that calculates the amount of missing gems from the gems of the player
-     * and the given map of gems
+     * Help-function that calculates the amount of missing gems the player needs to buy the card
+     * @param player
+     * @param costs the costs of a card
+     * @return Map with each missing GemType and the amount of missing gems of this GemType
      */
     fun calculateMissingGems(player: Player, costs: Map<GemType,Int>): MutableMap<GemType, Int> {
         val result = mutableMapOf<GemType, Int>()
-        player.gems.forEach {
-            val costsForIndividualGemType: Int = costs[it.key] ?: 0
-            val gemsOwnedByPlayer: Int = it.value + (player.bonus[it.key] ?: 0)
+        costs.keys.forEach {
+            val costsForIndividualGemType: Int = costs[it] ?: 0
+            var gemsOwnedByPlayer = 0
+            if (player.gems.containsKey(it)) {
+                gemsOwnedByPlayer = player.gems[it]!!
+            }
+            if (player.bonus.containsKey(it)) {
+                gemsOwnedByPlayer += (player.bonus[it] ?: 0)
+            }
             val difference = gemsOwnedByPlayer - costsForIndividualGemType
             if(difference < 0)
-                result[it.key] = -1 * difference
+                result[it] = -1 * difference
         }
         return result
     }
 
     /**
-     * Help-function that calculates amount of rounds needed to buy the card
-     * and therefore additional gems
+     * Help-function that calculates the amount of rounds needed to buy the card and how many additional gems we can get
+     * @param player
+     * @param card
+     * @return Pair(Amount of rounds, additional gems)
      */
     fun calculateAmountOfRoundsNeededToBuy(player: Player, card: DevCard): Pair<Int, Int> {
         var result = 0
@@ -228,8 +265,11 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     }
 
     /**
-     * help-function to calculate which gems a player should choose
-     * @return Pair with the choosen gems and boolean (true = take three gems, false = take two gems)
+     * Help-function to calculate which gems a player should choose
+     * @param bestDevCards all open cards with their own score
+     * @param player
+     * @param board
+     * @return Pair with the chosen gems and boolean (true = take three gems, false = take two gems)
      */
     fun chooseGems(bestDevCards: Map<DevCard, Double>, player: Player, board: Board) : Pair<Map<GemType, Int>,Boolean> {
         val gems: MutableMap<GemType, Int> = mutableMapOf()
@@ -239,15 +279,16 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         //safe all open cards that still need gems
         val devCardsWithMissingGems: ArrayList<DevCard> = arrayListOf()
-        bestDevCards.keys.forEach { it ->
+        bestDevCards.keys.forEach {
             val missingGemsColours: MutableMap<GemType, Int> = calculateMissingGems(player,it.price)
             if (missingGemsColours.isNotEmpty()) {
                 devCardsWithMissingGems.add(it)
             }
         }
         var takenGems = 0
+        val allMissingColours: MutableSet<GemType> = mutableSetOf()
         val gemsOnBoard = board.gems
-        devCardsWithMissingGems.forEach {
+        devCardsWithMissingGems.forEach { devCard ->
             //if no gems are left
             if (gemsOnBoard.isEmpty()) {
                 if (gems.size == 1) {
@@ -255,13 +296,14 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 }
                 return Pair(gems,true)
             }
-            val missingGemsForCurrentDevCard: MutableMap<GemType, Int> = calculateMissingGems(player,it.price)
+            val missingGemsForCurrentDevCard: MutableMap<GemType, Int> = calculateMissingGems(player,devCard.price)
             val sortedListOfMissingGems: List<GemType> = missingGemsForCurrentDevCard.keys
                 .sortedBy { missingGemsForCurrentDevCard[it] }
+            allMissingColours.addAll(sortedListOfMissingGems)
             sortedListOfMissingGems.forEach {
-                var amountOfGemColourOnBoard = gemsOnBoard[it]
+                var amountOfGemColourOnBoard = (gemsOnBoard[it] ?: 0)
                 var amountOfSameGemColour = 0
-                if (amountOfGemColourOnBoard!! > missingGemsForCurrentDevCard[it]!!) {
+                if (amountOfGemColourOnBoard > missingGemsForCurrentDevCard[it]!!) {
                     //while the colour is still available, the player still needs that colour and did not choose
                     //two gems of this colour yet
                     while ((amountOfGemColourOnBoard > 0)
@@ -288,7 +330,16 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         }
         //if we still have some gems left
         if (takenGems < 3 && board.gems.isNotEmpty()) {
-            // if there are still some gems on the board, choose random gems
+            // we cannot buy one card after taking gems, so we choose gems which helps us
+            board.gems.keys.forEach {
+                if (takenGems < 3 && allMissingColours.contains(it)) {
+                    if (!gems.containsKey(it)) {
+                        gems[it] = 1
+                        takenGems++
+                    }
+                }
+            }
+            // if we still can take gems and there are some gems on the board, choose random gems
             board.gems.keys.forEach {
                 if (takenGems < 3) {
                     if (!gems.containsKey(it)) {
@@ -303,14 +354,17 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
 
 
     /**
-     * function to calculate the heuristic
+     * Function to calculate the heuristic for our artificial intelligence
+     * @param player
+     * @param enemies
+     * @return The value of the heuristic
      */
-    fun computeTurnEvaluationScore(board: Board, player: Player, enemies: List<Player>): Double {
-        //1. Heuristic
+    fun computeTurnEvaluationScore(player: Player, enemies: List<Player>): Double {
+        // 1.Heuristic
         val playersPrestigePoints = player.score.toDouble()
-        //2. Heuristic
+        // 2.Heuristic
         val amountOfBoni = player.devCards.size.toDouble()
-        //3. Heuristic
+        // 3.Heuristic
         val winningProbability : Double
         //Calculate the probability to win the game
         var playerAmountOfGems = 0.0

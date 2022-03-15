@@ -4,7 +4,7 @@ import entity.*
 import kotlin.test.*
 
 /**
- *  test class for AIService
+ *  Test class for the AIService
  * */
 class AIServiceTest {
 
@@ -41,7 +41,7 @@ class AIServiceTest {
     private val testPlayerFour = Player("David", PlayerType.HUMAN, gems = mutableMapOf(GemType.GREEN to 5,
         GemType.RED to 3), bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
 
-    //create example boards with three open devCards to test help functions
+    //Example boards with three open devCards of each level to test help functions
     private val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
         mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardOne), mutableMapOf(GemType.GREEN to 3,
             GemType.RED to 3))
@@ -62,7 +62,7 @@ class AIServiceTest {
         mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
 
     /**
-     * test for calculateDevCardCostScores in AIService
+     * Test for calculateDevCardCostScores in AIService
      */
     @Test
     fun calculateDevCardCostScoresTest() {
@@ -78,7 +78,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateDevCardPurchasingPowerScores
+     * Test for calculateDevCardPurchasingPowerScores
      */
     @Test
     fun calculateDevCardPurchasingPowerScoresTest() {
@@ -102,7 +102,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateDevCardPurchasingPowerScoresForEnemies
+     * Test for calculateDevCardPurchasingPowerScoresForEnemies
     */
     @Test
     fun calculateDevCardPurchasingPowerScoresForEnemiesTest() {
@@ -118,7 +118,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateDevCardImportanceScore in AIService
+     * Test for calculateDevCardImportanceScore in AIService
      */
     @Test
     fun calculateDevCardImportanceScoreTest() {
@@ -152,7 +152,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateGemPrice in AIService
+     * Test for calculateGemPrice in AIService
      */
     @Test
     fun calculateGemPriceTest() {
@@ -160,7 +160,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateMissingGems in AIService
+     * Test for calculateMissingGems in AIService
      */
     @Test
     fun calculateMissingGemsTest() {
@@ -177,7 +177,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for calculateAmountOfRoundsNeededToBuy in AIService
+     * Test for calculateAmountOfRoundsNeededToBuy in AIService
      */
     @Test
     fun calculateAmountOfRoundsNeededToBuyTest() {
@@ -191,7 +191,7 @@ class AIServiceTest {
     }
 
     /**
-     * test for chooseGems in AIService
+     * Test for chooseGems in AIService
      */
     @Test
     fun chooseGemsTest() {
@@ -210,6 +210,8 @@ class AIServiceTest {
         val testPlayer = Player("Anna", PlayerType.HUMAN, gems = mutableMapOf(GemType.RED to 1,
             GemType.GREEN to 1, GemType.BLUE to 1), bonus = mutableMapOf(), mutableListOf(),
             mutableListOf(), 0, mutableListOf())
+        val testPlayer2 = Player("Bob", PlayerType.HUMAN, gems = mutableMapOf(GemType.RED to 2),
+            bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
 
         val bestDevCards: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0,
             devCardTwo to 0.5, devCardThree to 0.0)
@@ -229,6 +231,13 @@ class AIServiceTest {
         val exampleBoard5 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardFour), mutableListOf(),
             mutableListOf(devCardFive), mutableListOf(), mutableListOf(devCardSix), mutableMapOf(GemType.RED to 3,
                 GemType.GREEN to 3, GemType.BLACK to 3))
+        val exampleBoard6 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardFour), mutableListOf(),
+            mutableListOf(devCardFive), mutableListOf(), mutableListOf(devCardSix), mutableMapOf(GemType.RED to 1,
+                GemType.GREEN to 1))
+        val exampleBoard7 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
+                GemType.WHITE to 1, GemType.GREEN to 1, GemType.BLACK to 2))
+
         // 1. Board has 3 red gems left, so we want to choose two red gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 2),false),
             root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard1))
@@ -244,6 +253,18 @@ class AIServiceTest {
         // 5. All cards have no missing gems (take one gem for each of the first board gem-colours)
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
             root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard5))
-
+        // 6. The board has only two gems
+        assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1),true),
+            root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard6))
+        // 7. Player can buy no card after taking some gems; the player chooses "take three gems with the first
+        // three missing colours
+        // Player has two red gems
+        // Board has 1 red gem, 1 white gem, 1 green and 2 black gems
+        assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
+            root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard7))
+        /**
+         * assertEquals(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),
+         *   root.aiService.calculateMissingGems(testPlayer2,devCardOne.price))
+         */
     }
 }
