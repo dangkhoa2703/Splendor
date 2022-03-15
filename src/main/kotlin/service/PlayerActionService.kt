@@ -242,6 +242,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         user.score += card.prestigePoints
         // } else { return }
         rootService.gameService.nextPlayer()
+
+	onAllRefreshables{ refreshAfterSelectNobleTile(card) }
     }
 
     /**

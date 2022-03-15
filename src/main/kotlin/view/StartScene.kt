@@ -52,6 +52,8 @@ class StartScene(private val rootService: RootService): MenuScene(1920, 1080), R
 
 	background = image
 	//background = ColorVisual(108, 168, 59)
+
+	opacity = 1.0
 	
 	addComponents(
 	    startNewGameButton,

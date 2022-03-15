@@ -13,6 +13,8 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 
     private val gameScene :GameScene = GameScene(rootService).apply{
 	quitButton.onMouseClicked = {
+	    rootService.currentGame = null
+	    this@SplendorApplication.showMenuScene(startScene)
 	}
 	nextPlayersButton.onMouseClicked = {
 	    val currentPlayer: Player = recievePlayer()
