@@ -14,14 +14,15 @@ import java.io.PrintWriter
 class IOService(private val rootService: RootService): AbstractRefreshingService()
 {
     /** loads a game saved locally in a file */
-    fun loadGame(path: String): Splendor? {
+    fun loadGame(path: String){
         val gameSettingFile = File("$path/gameSetting")
-        val playerOneFile = File("$path/player1")
-        val playerTwoFile = File("$path/player2")
-        val playerThreeFile = File("$path/player3")
-        val playerFourFile = File("$path/player4")
+        val playersFile = mutableListOf<File>()
+        playersFile.add(File("$path/player1"))
+        playersFile.add(File("$path/player2"))
+        playersFile.add(File("$path/player3"))
+        playersFile.add(File("$path/player4"))
         val boardFile = File("$path/board")
-        if (!gameSettingFile.exists()) { return null }
+        if (!gameSettingFile.exists()) { throw IllegalArgumentException("save file not exists!") }
         val playerCount = gameSettingFile.readLines()[1].toInt()
 
         //create board
@@ -48,16 +49,9 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         //create Players
         val playerList = mutableListOf<Player>()
-        val playerOne = createPlayerFromFile(playerOneFile)
-        val playerTwo = createPlayerFromFile(playerTwoFile)
-        playerList.add(playerOne)
-        playerList.add(playerTwo)
-        if (playerCount > 2) {
-            val playerThree = createPlayerFromFile(playerThreeFile)
-            playerList.add(playerThree)
-            if (playerCount == 4) {
-                val playerFour = createPlayerFromFile(playerFourFile)
-                playerList.add(playerFour) } }
+        for(i in 1..playerCount){
+            playerList.add(createPlayerFromFile(playersFile[i-1]))
+        }
 
         //create Splendor
         val gameSettings = gameSettingFile.readLines()
@@ -68,10 +62,13 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             "false" -> false
             else -> { throw IllegalStateException("no valid game parameter") }
         }
-        val gameState = GameState(currentPlayer, playerList, board)
-        ///hier noch Highscore Objekte laden
 
-        return Splendor(simulationSpeed, gameState, mutableListOf(), validGame)
+        val gameState = GameState(currentPlayer, playerList, board)
+
+
+        val splendor = Splendor(simulationSpeed, gameState, mutableListOf(), validGame)
+        rootService.gameService.consecutiveNoAction = gameSettings[4].trim().toInt()
+        rootService.currentGame = splendor
     }
 
     private fun createPlayerFromFile(file:File):Player{
@@ -210,6 +207,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             out.write(game.currentGameState.playerList.size.toString() + "\n")
             out.write(rootService.gameService.currentPlayerIndex.toString() +"\n")
             out.write(rootService.currentGame!!.validGame.toString() + "\n")
+            out.write(rootService.gameService.consecutiveNoAction.toString() + "\n")
         }
     }
 
