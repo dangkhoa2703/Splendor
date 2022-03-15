@@ -128,7 +128,7 @@ class IOServiceTest {
 
         val highscoreList = root.ioService.loadHighscore()
         assertEquals("Dumbledore",highscoreList[0].playerName)
-        assertEquals(10.0,highscoreList[5].score)
+        assertEquals(30.0,highscoreList[5].score)
         assertEquals(10,highscoreList.size)
 
         //recreate old file
