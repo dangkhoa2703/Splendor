@@ -397,6 +397,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         return listOfAcquirableCards
     }
 
+}
+
 //    /**
 //     * Check if the current player can perform any valid move in this turn
 //     *
@@ -415,4 +417,3 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //
 //        return (totalGemsOnBoard != 0) || (affordableCards != 0) || (reservedCards < 3)
 //    }
-}

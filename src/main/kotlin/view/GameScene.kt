@@ -372,6 +372,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    val cardView: CardView? = devCardMap.forward(card.id)
 	    checkNotNull(cardView) { "No cardView found. "}
 	    cardView.isDraggable = draggable
+	    cardView.opacity = 0.5
 	    devCardsMap.add(card to cardView)
 	    moveCardView(cardView, layout)
 	}
@@ -387,10 +388,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	val nobleTilesOrigin = game.currentGameState.board.nobleTiles
 	val nobleTilesOriginId = toIdListNobleTile(nobleTilesOrigin)
+	println(nobleTilesOrigin.size)
 	
 	val levelOneCardsOrigin = game.currentGameState.board.levelOneOpen
+	println(levelOneCardsOrigin.size)
 	val levelTwoCardsOrigin = game.currentGameState.board.levelTwoOpen
+	println(levelTwoCardsOrigin.size)
 	val levelThreeCardsOrigin = game.currentGameState.board.levelThreeOpen
+	println(levelThreeCardsOrigin.size)
 
 	//REMOVE ONLY WHEN NEEDED
 	nobleTiles.filter{ !nobleTilesOriginId.contains(devCardMap.backward(it))}.forEachIndexed{
@@ -413,9 +418,12 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	fillDevCardLayout(levelTwoCards, levelTwoCardsOrigin)
 	fillDevCardLayout(levelThreeCards, levelThreeCardsOrigin)
 
+	println("Players: ")
 	val playerList = game.currentGameState.playerList
 	for(i in 0..playerList.size-1) {
 	    val player = playerList[i]
+	    println("\t"+player.devCards.size)
+	    println("\t"+player.reservedCards.size)
 	    fillDevCardLayout(playerDevCards[i], player.devCards)
 	    fillDevCardLayout(playerSaveCards[i], player.reservedCards)
 	}
@@ -677,7 +685,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	checkNotNull(cardView) { "No card found."}
 	
 	saved+=devCard
-	moveCardView(cardView, playerSaveCards[currentPlayerIndex])
+	//moveCardView(cardView, playerSaveCards[currentPlayerIndex])
 	
 	fillLayouts()
 
@@ -692,7 +700,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	val player = currentPlayer as Player
 	cardView.isDraggable = false
-	moveCardView(cardView, playerDevCards[currentPlayerIndex])
+	//moveCardView(cardView, playerDevCards[currentPlayerIndex])
 
 	scoreLabel.text = (player.score+devCard.prestigePoints).toString()
 	
