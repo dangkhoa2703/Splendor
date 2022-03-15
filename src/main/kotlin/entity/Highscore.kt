@@ -7,5 +7,5 @@ package entity
  * */
 class Highscore (
     val playerName: String,
-    val score: Int
+    val score: Double
 )

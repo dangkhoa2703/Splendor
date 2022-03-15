@@ -88,7 +88,7 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
-        //assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
+//        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
 
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
@@ -112,7 +112,7 @@ class GameServiceTest {
         root.gameService.nextPlayer()
         println(game.currentGameState.board.gems.toString())
         assertEquals(0,root.gameService.currentPlayerIndex)
-//        assertEquals(1,root.gameService.consecutiveNoAction)
+        assertEquals(1,root.gameService.consecutiveNoAction)
 
         game.currentGameState.playerList[0].score = 15
         root.gameService.nextPlayer()
@@ -153,9 +153,9 @@ class GameServiceTest {
             gem.setValue(8) }
 
         val acquirableCards =  root.gameService.acquirableCards()
-        assertEquals(1,acquirableCards[0].first)
-        assertEquals(2,acquirableCards[1].first)
-        assertEquals(3,acquirableCards[2].first)
+        assertEquals(1,acquirableCards[0].level)
+        assertEquals(2,acquirableCards[4].level)
+        assertEquals(3,acquirableCards[8].level)
 
         assertThrows<IllegalStateException> {
             root.currentGame = null
@@ -187,9 +187,10 @@ class GameServiceTest {
         game.currentGameState.currentPlayer.bonus[GemType.GREEN] = 4
         game.currentGameState.currentPlayer.bonus[GemType.WHITE] = 3
 
-        root.gameService.checkNobleTiles()
-//        assertEquals( 0,game.currentGameState.board.nobleTiles.size)
-//        assertEquals(3,game.currentGameState.currentPlayer.score)
+
+       val tempList =  root.gameService.checkNobleTiles()
+        assertEquals( 1,tempList[0].id)
+        assertEquals(3,tempList[0].prestigePoints)
     }
 
     /** tests if checkGems works correctly */
@@ -200,7 +201,7 @@ class GameServiceTest {
         val player1 = root.currentGame!!.currentGameState.currentPlayer
 
         /** currentPlayer has less or equal than ten gems */
-//        assertEquals(false, root.gameService.checkGems())
+        assertEquals(false, root.gameService.checkGems())
 
         /** currentPlayer has more than ten gems */
         player1.gems[GemType.BLUE] = player1.gems.getValue(GemType.BLUE) + 11
@@ -218,16 +219,20 @@ class GameServiceTest {
         val tempCardLevelTwo = game.board.levelTwoCards[0]
         val tempCardLevelThree = game.board.levelThreeCards[0]
 
-        root.gameService.refill(1, 2)
-//        assertEquals(tempCardLevelOne, game.board.levelOneOpen[2])
+        game.board.levelOneOpen.removeAt(0)
+        game.board.levelTwoOpen.removeAt(0)
+        game.board.levelThreeOpen.removeAt(0)
+
+        root.gameService.refill(1)
+        assertEquals(tempCardLevelOne, game.board.levelOneOpen[3])
         assertNotEquals(tempCardLevelOne, game.board.levelOneCards[0])
         assertEquals(35, game.board.levelOneCards.size)
-        root.gameService.refill(2, 3)
-//        assertEquals(tempCardLevelTwo, game.board.levelTwoOpen[3])
+        root.gameService.refill(2)
+        assertEquals(tempCardLevelTwo, game.board.levelTwoOpen[3])
         assertNotEquals(tempCardLevelTwo, game.board.levelTwoCards[0])
         assertEquals(25, game.board.levelTwoCards.size)
-        root.gameService.refill(3, 1)
-//        assertEquals(tempCardLevelThree, game.board.levelThreeOpen[1])
+        root.gameService.refill(3)
+        assertEquals(tempCardLevelThree, game.board.levelThreeOpen[3])
         assertNotEquals(tempCardLevelThree, game.board.levelThreeCards[0])
         assertEquals(15, game.board.levelThreeCards.size)
     }

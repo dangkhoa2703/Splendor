@@ -10,6 +10,6 @@ package entity
 data class Splendor (
     var simulationSpeed : Int,
     var currentGameState : GameState,
-    val highscores: MutableList<Highscore>,
+    val highscores: MutableList<Highscore> = mutableListOf(),
     var validGame : Boolean = true
 )

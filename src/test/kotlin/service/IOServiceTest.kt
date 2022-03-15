@@ -5,7 +5,6 @@ import entity.PlayerType
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.io.FileWriter
 import kotlin.test.assertEquals
 
 /**
@@ -15,7 +14,7 @@ class IOServiceTest {
 
     /** RootService reference */
     private var root = RootService()
-    val playerList = listOf(
+    private val playerList = listOf(
         Pair("p1", PlayerType.HUMAN),
         Pair("p2", PlayerType.MEDIUM),
         Pair("p3", PlayerType.EASY),
@@ -35,7 +34,6 @@ class IOServiceTest {
         currentGame.board.levelOneCards.add(
             root.gameService.createCard(listOf("1", "2", "3", "0", "0", "0", "0", "0", "diamant")))
         currentGame.currentPlayer.score = 11
-        //val nobleTileId = game.currentGameState.board.nobleTiles[0].id
         game.currentGameState.board.nobleTiles.removeAt(0)
 
         //test save file
@@ -104,12 +102,17 @@ class IOServiceTest {
         val oldHighscores = root.ioService.loadHighscore()
         //test on empty file
         highscoreFile.bufferedWriter().use{out-> out.write("")}
-        val highscore1 = Highscore("Dumbledore",100)
-        val highscore2 = Highscore("Spider-man",99)
-        val highscore3 = Highscore("BATMAN",10)
-        val highscore4 = Highscore("N00bMaster69",69)
-        val highscore5 = Highscore("Tifa Lockhart", 20)
-        val highscore6 = Highscore(":3",30)
+        val highscore1 = Highscore("Dumbledore",100.0)
+        val highscore2 = Highscore("Spider-man",99.0)
+        val highscore3 = Highscore("BATMAN",10.0)
+        val highscore4 = Highscore("N00bMaster69",69.69)
+        val highscore5 = Highscore("Tifa Lockhart", 20.0)
+        val highscore6 = Highscore(":3",30.0)
+        val highscore7 = Highscore("Pikachu",30.0)
+        val highscore8 = Highscore("BabyMetal",30.0)
+        val highscore9 = Highscore("Olaf",30.0)
+        val highscore10 = Highscore("Rambo",30.0)
+        val highscore11 = Highscore(":3",30.0)
 
         root.ioService.saveHighscore(highscore1)
         root.ioService.saveHighscore(highscore2)
@@ -117,9 +120,16 @@ class IOServiceTest {
         root.ioService.saveHighscore(highscore4)
         root.ioService.saveHighscore(highscore5)
         root.ioService.saveHighscore(highscore6)
+        root.ioService.saveHighscore(highscore7)
+        root.ioService.saveHighscore(highscore8)
+        root.ioService.saveHighscore(highscore9)
+        root.ioService.saveHighscore(highscore10)
+        root.ioService.saveHighscore(highscore11)
 
         val highscoreList = root.ioService.loadHighscore()
         assertEquals("Dumbledore",highscoreList[0].playerName)
+        assertEquals(10.0,highscoreList[5].score)
+        assertEquals(10,highscoreList.size)
 
         //recreate old file
         highscoreFile.bufferedWriter().use{out-> out.write("")}

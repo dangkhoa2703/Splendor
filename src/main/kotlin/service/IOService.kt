@@ -2,11 +2,6 @@ package service
 
 import entity.*
 import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
-
-
-
 
 /**
  *  Class for inputs and outputs
@@ -166,7 +161,6 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     fun saveGame(path : String) {
         val game = rootService.currentGame
         checkNotNull(game)
-        val currentPlayerIndex = rootService.gameService.currentPlayerIndex
         val players = game.currentGameState.playerList
         val board = game.currentGameState.board
 
@@ -245,7 +239,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         var content:List<String>
         for(line in highscoreFileList){
             content = line.split(",")
-            highscoreList.add(Highscore(content[0],content[1].toInt()))
+            highscoreList.add(Highscore(content[0],content[1].toDouble()))
         }
         return highscoreList
     }

@@ -111,8 +111,7 @@ class PlayerActionServiceTest {
      * tests if open cards are reserved correct
      */
     @Test
-    fun reserveCardFromOpenCardsTest()
-    {
+    fun reserveCardFromOpenCardsTest(){
         root.gameService.startNewGame(playerList, false, 1)
         var player = root.currentGame!!.currentGameState.currentPlayer
         player.gems.put(GemType.YELLOW, 0)

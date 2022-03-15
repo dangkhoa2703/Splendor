@@ -15,8 +15,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
-        simulationSpeed: Int)
-    {
+        simulationSpeed: Int){
         require(players.size in 2..4) { "invalid players' number" }
 
         // create players
@@ -30,8 +29,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         for((index, player) in playerList.withIndex()){
             player.id = index
         }
-
-	    val levelOneStack = createCardStack(1)
+        val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
 
         val levelTwoStack = createCardStack(2)
@@ -40,8 +38,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val levelThreeStack = createCardStack(3)
         levelThreeStack.shuffle()
 
-
-	    var tempList: MutableList<DevCard> = levelOneStack.slice(0..3).toMutableList()
+        var tempList: MutableList<DevCard> = levelOneStack.slice(0..3).toMutableList()
 	    val levelOneOpen = tempList
 	    for(card in tempList) levelOneStack.remove(card)
 
@@ -54,12 +51,12 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 	    for(card in tempList) levelThreeStack.remove(card)
 
 
-	    playerList[0].gems.put(GemType.GREEN, 99)
-	    playerList[0].gems.put(GemType.RED, 99)
-	    playerList[0].gems.put(GemType.BLUE, 99)
-	    playerList[0].gems.put(GemType.WHITE, 99)
-	    playerList[0].gems.put(GemType.YELLOW, 99)
-	    playerList[0].gems.put(GemType.BLACK, 99)
+//	    playerList[0].gems.put(GemType.GREEN, 99)
+//	    playerList[0].gems.put(GemType.RED, 99)
+//	    playerList[0].gems.put(GemType.BLUE, 99)
+//	    playerList[0].gems.put(GemType.WHITE, 99)
+//	    playerList[0].gems.put(GemType.YELLOW, 99)
+//	    playerList[0].gems.put(GemType.BLACK, 99)
 
         // create Board
         val board = Board(
@@ -181,7 +178,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      * @param level level of the card
      * @param index  index of the removed card
      */
-    fun refill(level: Int,index: Int){
+    fun refill(level: Int){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
 
@@ -204,7 +201,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     /**
      * Check which noble tiles can visit the current player
-     * @return a mutable list of the affordable noble tiles on board
+     * automatic add prestige point to player score if there is only on affordable card
+     * @return a mutable list of affordable noble tiles on board
      */
     fun checkNobleTiles(): MutableList<NobleTile>{
 
@@ -342,7 +340,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     }
 
     /**
-     * check if the card is for the current player affordable
+     * check if the card is for a player affordable
      *
      * @param card the card which the player chose
      * @param payment map of gems from player
@@ -365,14 +363,14 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      *
      * @return a list of Pair( level, cardIndex ) of acquirable card
      */
-    fun acquirableCards(): MutableList<Pair<Int,Int>>{
+    fun acquirableCards(): MutableList<DevCard>{
 
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
         val playerBonus = game.currentGameState.currentPlayer.bonus
         val playerGems = game.currentGameState.currentPlayer.gems
-        val listOfAcquirableCards = mutableListOf<Pair<Int,Int>>()
+        val listOfAcquirableCards = mutableListOf<DevCard>()
         val totalOwn : Map<GemType,Int> = mapOf(
             GemType.RED    to (playerBonus.getValue(GemType.RED)   + playerGems.getValue(GemType.RED)),
             GemType.GREEN  to (playerBonus.getValue(GemType.GREEN) + playerGems.getValue(GemType.GREEN)),
@@ -383,13 +381,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         for(i in 0..3) {
             if(isCardAcquirable(board.levelOneOpen[i], totalOwn)){
-                listOfAcquirableCards.add(Pair(1,i))
+                listOfAcquirableCards.add(board.levelOneOpen[i])
             }
             if(isCardAcquirable(board.levelTwoOpen[i], totalOwn)){
-                listOfAcquirableCards.add(Pair(2,i))
+                listOfAcquirableCards.add(board.levelTwoOpen[i])
             }
             if(isCardAcquirable(board.levelThreeOpen[i], totalOwn)){
-                listOfAcquirableCards.add(Pair(3,i))
+                listOfAcquirableCards.add(board.levelThreeOpen[i])
             }
         }
         return listOfAcquirableCards

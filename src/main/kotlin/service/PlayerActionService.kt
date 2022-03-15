@@ -154,7 +154,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                         3 -> { board.levelThreeOpen.remove(card) }
 			else -> { throw IllegalArgumentException("Illegagl card.level "+card.level) }
                     }
-                    rootService.gameService.refill(card.level, index)
+                    rootService.gameService.refill(card.level)
                 } else {
                     //move card from player.reservedCards to player.devCards
                     user.reservedCards.remove(card)
@@ -187,25 +187,24 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun reserveCard(card: DevCard, index:Int, user : Player){
         val board = rootService.currentGame!!.currentGameState.board
         if(user == rootService.currentGame!!.currentGameState.currentPlayer){
-            if(user.reservedCards.size < 3)
-            {
+            if(user.reservedCards.size < 3){
                 //move card from board to player.reservedCards
                 val level = card.level
                 if (level == 1) {
                     if(board.levelOneOpen.contains(card)) {
                         board.levelOneOpen.remove(card)
-                        rootService.gameService.refill(card.level, index) }
+                        rootService.gameService.refill(card.level) }
                     else{ board.levelOneCards.remove(card) }
                 } else if (level == 2) {
                     if(board.levelTwoOpen.contains(card)) {
                         board.levelTwoOpen.remove(card)
-                        rootService.gameService.refill(card.level, index)
+                        rootService.gameService.refill(card.level)
                     }
                     else{ board.levelTwoCards.remove(card) }
                 } else {
                     if(board.levelThreeOpen.contains(card)) {
                         board.levelThreeOpen.remove(card)
-                        rootService.gameService.refill(card.level, index) }
+                        rootService.gameService.refill(card.level) }
                     else{ board.levelThreeCards.remove(card) }
                 }
                 user.reservedCards.add(card)
