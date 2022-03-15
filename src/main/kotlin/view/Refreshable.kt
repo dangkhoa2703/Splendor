@@ -1,11 +1,14 @@
 package view
 
 import entity.DevCard
+import entity.Player
 
 interface Refreshable {
     fun refreshAfterStartNewGame() : Unit {}
 
     fun refreshAfterEndGame() : Unit {}
+
+    fun refreshAfterPopup(currentPlayer: Player): Unit {}
 
     fun refreshAfterShowHighscores() : Unit {}
 

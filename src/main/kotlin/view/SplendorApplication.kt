@@ -5,13 +5,25 @@ import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.BoardGameScene
 import service.RootService
 import tools.aqua.bgw.core.MenuScene
+import entity.Player
 
-class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
+class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{ 
 
     private val rootService = RootService()
 
     private val gameScene :GameScene = GameScene(rootService).apply{
 	quitButton.onMouseClicked = {
+	}
+	nextPlayersButton.onMouseClicked = {
+	    val currentPlayer: Player = recievePlayer()
+	    rootService.playerActionService.showPlayers(currentPlayer)
+	    this@SplendorApplication.showMenuScene(popUpScene)
+	}
+    }
+
+    private val popUpScene: MenuScene = PopupScene(rootService, gameScene).apply{
+	quitButton.onMouseClicked = {
+	    this@SplendorApplication.hideMenuScene()
 	}
     }
 
@@ -29,12 +41,12 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	}
     }
 
-	private val gameFinishScene: MenuScene = GameFinishScene(rootService).apply {
-		backButton.onMouseClicked = {
-			this@SplendorApplication.hideMenuScene()
-			this@SplendorApplication.showMenuScene(startScene)
-		}
+    private val gameFinishScene: MenuScene = GameFinishScene(rootService).apply {
+	backButton.onMouseClicked = {
+	    this@SplendorApplication.hideMenuScene()
+	    this@SplendorApplication.showMenuScene(startScene)
 	}
+    }
 
     private val highscoreScene: MenuScene = HighscoreScene(rootService).apply {
 	backButton.onMouseClicked = {
@@ -58,9 +70,9 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	}
     }
 
-	override fun refreshAfterEndGame() {
-		this@SplendorApplication.showMenuScene(gameFinishScene)
-	}
+    override fun refreshAfterEndGame() {
+	this@SplendorApplication.showMenuScene(gameFinishScene)
+    }
 
     override fun refreshAfterStartNewGame() {
 	this@SplendorApplication.hideMenuScene()
@@ -73,9 +85,16 @@ class SplendorApplication: BoardGameApplication("Splendor"), Refreshable{
 	    gameScene as Refreshable,
 	    loadGameScene as Refreshable , startScene as Refreshable,
 	    highscoreScene as Refreshable, configScene as Refreshable,
-		gameFinishScene as Refreshable
+	    gameFinishScene as Refreshable,
+	    popUpScene as Refreshable,
 	)
 	
 	this.showMenuScene(startScene)
+    }
+
+    private fun recievePlayer(): Player {
+	val player: Player? = gameScene.currentPlayer
+	checkNotNull(player) { "No player found. "}
+	return player
     }
 }

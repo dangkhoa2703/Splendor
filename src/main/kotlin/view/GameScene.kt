@@ -143,6 +143,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         }
     }
 
+    private val scoreLabel = Label(
+	width= 100, height = 100,
+	posX = 650, posY=12.5,
+	text = "",
+	font = Font(size = 24)
+    )
+
     private val discardGems = Button(
 	width = 100, height = 50,
         posX = 50, posY = 450,
@@ -197,8 +204,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	//visual = ColorVisual(221, 136, 136)	
     )
 
-    private var playerDevCards: MutableList<LinearLayout<CardView>> = mutableListOf()
-    private var playerSaveCards: MutableList<LinearLayout<CardView>> = mutableListOf()
+    var playerDevCards: MutableList<LinearLayout<CardView>> = mutableListOf()
+    var playerSaveCards: MutableList<LinearLayout<CardView>> = mutableListOf()
 
     private fun toCardView(id: Int, draggable: Boolean = false): CardView {
 	val cardView: CardView = CardView(
@@ -300,7 +307,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	if(!targetContainer.contains(cardView))targetContainer.add(cardView)
     }
 
-    private var currentPlayer: Player? = null
+    var currentPlayer: Player? = null
     private var currentPlayerIndex: Int = -1
 
     private fun toIdListDevCard(list: MutableList<DevCard>): MutableList<Int> {
@@ -613,6 +620,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val player = currentPlayer as Player
 
 	currentPlayerLabel.text = player.name
+	scoreLabel.text = player.score.toString()
 
 	fillLayouts()
 
@@ -639,9 +647,12 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
     override fun refreshAfterReserveCard(devCard: DevCard) {
 	val cardView: CardView? = devCardsMap.forward(devCard)
-	
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game  found." }
 	checkNotNull(cardView) { "No card found."}
+	
 	saved+=devCard
+	moveCardView(cardView, playerSaveCards[currentPlayerIndex])
 	
 	fillLayouts()
 
@@ -650,9 +661,15 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
     override fun refreshAfterBuyCard(devCard: DevCard) {
 	val cardView: CardView? = devCardsMap.forward(devCard)
-	
 	checkNotNull(cardView) { "No card found."}
+	
+	checkNotNull(currentPlayer) { "No player found. "}
+
+	val player = currentPlayer as Player
 	cardView.isDraggable = false
+	moveCardView(cardView, playerDevCards[currentPlayerIndex])
+
+	scoreLabel.text = (player.score+devCard.prestigePoints).toString()
 	
 	fillLayouts()
 
@@ -663,7 +680,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	for(i in 0..3) {
 	    val devCards: LinearLayout<CardView> = LinearLayout(
-		posX = 1380, posY = 100, width = 200, height = 800,
+		posX = 1380, posY = 100, width = 150, height = 800,
                 orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
 		visual = carbonImage,
                 //visual = ColorVisual(221, 136, 136),
@@ -671,7 +688,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    )
 
 	    val saveCards: LinearLayout<CardView> = LinearLayout(
-		posX = 280, posY = 100, width = 200, height = 800,
+		posX = 280, posY = 100, width = 150, height = 600,
                 orientation = Orientation.VERTICAL, alignment = Alignment.BOTTOM_CENTER,
 		visual = carbonImage,
                 //visual = ColorVisual(221, 136, 221),
@@ -721,6 +738,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    redoButton,
 	    undoButton,
 	    nextPlayersButton,
+	    scoreLabel,
 	)
     }
 }

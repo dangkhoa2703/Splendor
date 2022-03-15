@@ -10,6 +10,10 @@ import entity.Player
  */
 class PlayerActionService(private val rootService: RootService): AbstractRefreshingService() {
 
+    fun showPlayers(currentPlayer: Player) {
+	onAllRefreshables{ refreshAfterPopup(currentPlayer) }
+    }
+
     /**
      * undoes the last performed player-game-action
      * @throws IllegalStateException if a previous state does not exist
