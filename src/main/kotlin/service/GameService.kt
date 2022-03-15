@@ -15,7 +15,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun startNewGame(
         players: List<Pair<String,PlayerType>>,
         randomizedTurns: Boolean,
-        simulationSpeed: Int) {
+        simulationSpeed: Int)
+    {
         require(players.size in 2..4) { "invalid players' number" }
 
         // create players
@@ -24,9 +25,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             playerList.add(Player(player.first,player.second)) }
         // check if order should be randomized
         if (randomizedTurns) {
-            playerList.shuffle() }
+            playerList.shuffle()
+        }
+        for((index, player) in playerList.withIndex()){
+            player.id = index
+        }
 
-	val levelOneStack = createCardStack(1)
+	    val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
 
         val levelTwoStack = createCardStack(2)
@@ -36,27 +41,27 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         levelThreeStack.shuffle()
 
 
-	var tempList: MutableList<DevCard> = levelOneStack.slice(0..3).toMutableList()
-	val levelOneOpen = tempList
-	for(card in tempList) levelOneStack.remove(card)
+	    var tempList: MutableList<DevCard> = levelOneStack.slice(0..3).toMutableList()
+	    val levelOneOpen = tempList
+	    for(card in tempList) levelOneStack.remove(card)
 
-	tempList = levelTwoStack.slice(0..3).toMutableList()
-	val levelTwoOpen = tempList
-	for(card in tempList) levelTwoStack.remove(card)
+	    tempList = levelTwoStack.slice(0..3).toMutableList()
+	    val levelTwoOpen = tempList
+	    for(card in tempList) levelTwoStack.remove(card)
 
-	tempList = levelThreeStack.slice(0..3).toMutableList()
-	val levelThreeOpen = tempList
-	for(card in tempList) levelThreeStack.remove(card)
+	    tempList = levelThreeStack.slice(0..3).toMutableList()
+	    val levelThreeOpen = tempList
+	    for(card in tempList) levelThreeStack.remove(card)
 	
 
         
 
-	playerList[0].gems.put(GemType.GREEN, 99)
-	playerList[0].gems.put(GemType.RED, 99)
-	playerList[0].gems.put(GemType.BLUE, 99)
-	playerList[0].gems.put(GemType.WHITE, 99)
-	playerList[0].gems.put(GemType.YELLOW, 99)
-	playerList[0].gems.put(GemType.BLACK, 99)
+	    playerList[0].gems.put(GemType.GREEN, 99)
+	    playerList[0].gems.put(GemType.RED, 99)
+	    playerList[0].gems.put(GemType.BLUE, 99)
+	    playerList[0].gems.put(GemType.WHITE, 99)
+	    playerList[0].gems.put(GemType.YELLOW, 99)
+	    playerList[0].gems.put(GemType.BLACK, 99)
 
         // create Board
         val board = Board(
@@ -110,7 +115,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         //create new state
         val newPlayerList = mutableListOf<Player>()
-        println(board.gems.toString())
+
         val tempBoard = Board(
             board.nobleTiles.toMutableList(),
             board.levelOneCards.toMutableList(),
@@ -126,7 +131,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         currentGameState.playerList.forEach { player ->
             newPlayerList.add(
                 Player(player.name, player.playerType, player.gems, player.bonus, player.reservedCards,
-                    player.nobleTiles, player.score, player.devCards)
+                    player.nobleTiles, player.score, player.devCards, player.id)
             )
         }
         val newGameState = GameState(
@@ -141,13 +146,10 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val newBoard = game.currentGameState.board
 
         //update currentPlayerIndex and check if the next player can make a valid move
-//        currentPlayerIndex = (currentPlayerIndex + 1) % newCurrentGameState.playerList.size
+
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
         val affordableCards = acquirableCards().size
         val reservedCards = newCurrentGameState.currentPlayer.reservedCards.size
-        //println(totalGemsOnBoard)
-        //println(affordableCards)
-        //println(reservedCards)
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
             consecutiveNoAction++
@@ -163,18 +165,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 //        onAllRefreshables { refreshAfterNextPlayer }
     }
 
-//    /**
-//     * End game
-//     *
-//     * @return a list sort by players' score
-//     */
-//    fun endGame(){
-//        val game = rootService.currentGame
-//        checkNotNull(game)
-//        val currentGameState = game.currentGameState
-//
-//        currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
-//    }
 
     /**
      * deal a new card to the same place, where a card was removed

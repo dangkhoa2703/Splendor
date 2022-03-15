@@ -32,7 +32,8 @@ class Player (
     val reservedCards : MutableList<DevCard> = mutableListOf(),
     val nobleTiles : MutableList<NobleTile> = mutableListOf(),
     var score : Int = 0,
-    var devCards : MutableList<DevCard> = mutableListOf()
+    var devCards : MutableList<DevCard> = mutableListOf(),
+    var id: Int = 0
     ) {
 
     /** Clones a player */
