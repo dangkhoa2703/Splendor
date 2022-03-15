@@ -146,7 +146,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = buttonImage
     ).apply{
 	onMouseClicked = {
-	    refreshAfterEndTurn()
+	    rootService.gameService.nextPlayer()
+		refreshAfterEndTurn()
 	}
     }
 

@@ -229,13 +229,82 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
 
     /**
      * help-function to calculate which gems a player should choose
+     * @return Pair with the choosen gems and boolean (true = take three gems, false = take two gems)
      */
-    fun chooseGems(bestDevCards: Map<DevCard, Double>, availableGems: MutableMap<GemType,Int>) : Map<GemType, Int> {
-        val gems: Map<GemType, Int> = mutableMapOf()
-        //solange ich mir die aktuelle Karte leisten kann, weitergehen
-        return gems
+    fun chooseGems(bestDevCards: Map<DevCard, Double>, player: Player, board: Board) : Pair<Map<GemType, Int>,Boolean> {
+        val gems: MutableMap<GemType, Int> = mutableMapOf()
+        //if gems on board are empty
+        if (board.gems.isEmpty()) {
+            return Pair(mutableMapOf(),false)
+        }
+        //safe all open cards that still need gems
+        val devCardsWithMissingGems: ArrayList<DevCard> = arrayListOf()
+        bestDevCards.keys.forEach { it ->
+            val missingGemsColours: MutableMap<GemType, Int> = calculateMissingGems(player,it.price)
+            if (missingGemsColours.isNotEmpty()) {
+                devCardsWithMissingGems.add(it)
+            }
+        }
+        var takenGems = 0
+        val gemsOnBoard = board.gems
+        devCardsWithMissingGems.forEach {
+            //if no gems are left
+            if (gemsOnBoard.isEmpty()) {
+                if (gems.size == 1) {
+                    return Pair(gems,false)
+                }
+                return Pair(gems,true)
+            }
+            val missingGemsForCurrentDevCard: MutableMap<GemType, Int> = calculateMissingGems(player,it.price)
+            val sortedListOfMissingGems: List<GemType> = missingGemsForCurrentDevCard.keys
+                .sortedBy { missingGemsForCurrentDevCard[it] }
+            sortedListOfMissingGems.forEach {
+                var amountOfGemColourOnBoard = gemsOnBoard[it]
+                var amountOfSameGemColour = 0
+                if (amountOfGemColourOnBoard!! > missingGemsForCurrentDevCard[it]!!) {
+                    //while the colour is still available, the player still needs that colour and did not choose
+                    //two gems of this colour yet
+                    while ((amountOfGemColourOnBoard > 0)
+                        && (amountOfSameGemColour < missingGemsForCurrentDevCard[it]!!)
+                        && (amountOfSameGemColour < 2)
+                    ) {
+                        amountOfSameGemColour += 1
+                        amountOfGemColourOnBoard -= 1
+                    }
+                    if (gems.isEmpty() && amountOfSameGemColour == 2) {
+                        gems[it] = 2
+                        return Pair(gems,false)
+                    }
+                    if (!gems.containsKey(it) && (amountOfGemColourOnBoard > 0)) {
+                        gems[it] = 1
+                        takenGems++
+                    }
+                    gemsOnBoard[it]!!.minus(1)
+                    if (takenGems == 3) {
+                        return Pair(gems,true)
+                    }
+                }
+            }
+        }
+        //if we still have some gems left
+        if (takenGems < 3 && board.gems.isNotEmpty()) {
+            // if there are still some gems on the board, choose random gems
+            board.gems.keys.forEach {
+                if (takenGems < 3) {
+                    if (!gems.containsKey(it)) {
+                        gems[it] = 1
+                        takenGems++
+                    }
+                }
+            }
+        }
+        return Pair(gems,true)
     }
 
+
+    /**
+     * function to calculate the heuristic
+     */
     fun computeTurnEvaluationScore(board: Board, player: Player, enemies: List<Player>): Double {
         //1. Heuristic
         val playersPrestigePoints = player.score.toDouble()

@@ -23,8 +23,8 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
     val backgroundImage = imageLoader.highscoreBackground()
     val highscores = imageLoader.highscores()
     private val headLineLabel = Label(
-        width = 400, height = 200,
-        posX = 760 , posY = 135,
+        width = 700, height = 200,
+        posX = 600 , posY = 135,
         text = "",
         font = Font(size = 44),
         visual = highscores
@@ -62,15 +62,6 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
 
     val labelList : MutableList<Label> = mutableListOf()
 
-    /**[showScore] : Button that when pressed shows the scores of the players */
-    private val showScore = Button(
-        100,500,400,400,"SHOW HIGHSCORE", visual = image
-    ).apply {
-        onMouseClicked={
-            ranking()
-        }
-    }
-
     /**[ranking] : Method used to display the scores in descending order.
      *  Initially , the function checks if we have an existing game.
      *  In the case of an existing game , we sort the scores in descending order using sortBy and
@@ -95,17 +86,19 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         }
     }
 
+
     override fun refreshAfterEndGame() {
 	rank0.text=""
 	rank1.text=""
 	rank2.text=""
 	rank3.text=""
+        ranking()
     }
 
     init {
 
         background = backgroundImage
-        ranking()
+
         addComponents(
             headLineLabel,
             backButton,
@@ -113,7 +106,6 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
             rank1,
             rank2,
             rank3,
-            showScore
         )
 
     }
