@@ -5,17 +5,11 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
-import tools.aqua.bgw.components.container.LinearLayout
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.TextField
 import tools.aqua.bgw.visual.ImageVisual
 import entity.SplendorImageLoader
-import java.awt.MouseInfo
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
-import javax.swing.SwingUtilities
 import entity.PlayerType
-import tools.aqua.bgw.components.uicomponents.CheckBox
 import java.awt.Color
 
 /**
@@ -321,8 +315,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	shuffleButtons.forEach{ addComponents(it) }
 
 	//dummy input names for testing
-	textFields[0].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
-	textFields[1].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
+	textFields[0].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random()
+	textFields[1].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random()
 
 	// 81,126,44 why ?
 	background = backgroundImage
