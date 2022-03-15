@@ -7,7 +7,6 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.Player
 import entity.SplendorImageLoader
-import tools.aqua.bgw.visual.ImageVisual
 import java.awt.Color
 
 /** [GameFinishScene] : [MenuScene] that is displayed after the game ends depending on condition
@@ -54,7 +53,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         font= Font(size = 23, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
     )
 
-    /**[rank2] : Label to display loser */
+    /**[rank3] : Label to display loser */
     val rank3 = Label(
         420,400,1000,500,"",
         font= Font(size = 19, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
@@ -64,7 +63,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
 
     /**[ranking] : Method used to display the scores in descending order.
      *  Initially , the function checks if we have an existing game.
-     *  In the case of an existing game , we sort the scores in descending order using sortBy and
+     *  In the case of an existing game , we sort the scores in descending order using sortBy() and
      *  these are then displayed.
      * */
     fun ranking (){
@@ -86,7 +85,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         }
     }
 
-
+    /** [refreshAfterEndGame] : override function of refreshAfterEndGame, various rank texts are refreshed */
     override fun refreshAfterEndGame() {
 	rank0.text=""
 	rank1.text=""
@@ -95,6 +94,7 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         ranking()
     }
 
+    /**The view components are initially executed with the help of init */
     init {
 
         background = backgroundImage
