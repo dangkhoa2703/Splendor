@@ -7,17 +7,20 @@ class DecisionTree(var rootService: RootService) {
     /**
      * Builds the decision Tree with mini-max-algorithm
      */
-    fun computeDecisionTree(turns: Int, gameState: GameState) : Turn {
-        val root: TreeNode<Turn> = TreeNode.createEmptyTree(turns * gameState.playerList.size, 3)
-        miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0, TurnType.EMPTY, gameState.board.cloneForSimulation(), gameState.playerList.clone().toMutableList())
-        return root.getChildren().sortedBy { treeNode -> if (treeNode.data == null) -1.0 else treeNode.data!!.evaluation }[0].data!!
+    fun computeDecisionTree(turns: Int, board: Board, players: List<Player>) : Turn {
+        val root: TreeNode<Turn> = TreeNode.createEmptyTree(turns * players.size, 3)
+        miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0, TurnType.EMPTY,
+            board.cloneForSimulation(), players.clone().toMutableList())
+        return root.getChildren().sortedBy { treeNode -> if (treeNode.data == null) -1.0
+            else treeNode.data!!.evaluation }[0].data!!
     }
 
     /**
      * Executes miniMax-algorithm on [node]
      * @param player: Important: Simulated player has to be at the first index of the list, followed by enemies in order
      */
-    private fun miniMax(node: TreeNode<Turn>, alpha: Double, beta: Double, playerIndex: Int, turnType: TurnType, board: Board, player: MutableList<Player>): Double {
+    private fun miniMax(node: TreeNode<Turn>, alpha: Double, beta: Double, playerIndex: Int, turnType: TurnType,
+                        board: Board, player: MutableList<Player>): Double {
         val maximizing = playerIndex == 0
         // Simulate the current Turn
         val enemies: List<Player> = player.minus(player[playerIndex])
@@ -39,16 +42,19 @@ class DecisionTree(var rootService: RootService) {
      * Simulates the given move (through [turnType])
      * @return appropriate [Turn], [Board] and [Player] objects
      */
-    fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>): Pair<Turn, Pair<Board, Player>>? {
+    fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>):
+            Pair<Turn, Pair<Board, Player>>? {
         val newBoard = board.cloneForSimulation()
         val newPlayer = player.clone()
         // No cards on the board
         if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0)
             return null
-        val bestDevCards: Map<DevCard, Double> = rootService.aiService.calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)
+        val bestDevCards: Map<DevCard, Double> = rootService.aiService
+            .calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)
         return when (turnType) {
             TurnType.TAKE_GEMS -> {
-                val chosenGems: Pair<Map<GemType, Int>, Boolean> = rootService.aiService.chooseGems(bestDevCards, player, board)
+                val chosenGems: Pair<Map<GemType, Int>, Boolean> = rootService.aiService
+                    .chooseGems(bestDevCards, player, board)
                 val mapOfChosenGems: MutableMap<GemType, Int> = chosenGems.first.toMutableMap()
                 if(mapOfChosenGems.isEmpty()) { // Invalid move
                     return null
@@ -90,7 +96,7 @@ class DecisionTree(var rootService: RootService) {
         }
     }
 
-    /** Stolen from old commit
+    /**
      * check if the card is for the current player affordable
      *
      * @param card the card which the player chose

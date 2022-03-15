@@ -15,7 +15,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
      * @param gameState
      * @return The best possible turn for the player
      */
-    fun calculateBestTurn(player : Player, gameState: GameState) : Turn?
+    fun calculateBestTurn(player : Player, gameState: GameState) : Turn
     {
         val decisionTree = DecisionTree(rootService)
         val currentBoard = gameState.board
@@ -31,8 +31,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             //if Human or HARD
             else -> 3
         }
-        //return decisionTree.computeDecisionTree(aiDifficulty,currentBoard,playerList)
-        return null
+        return decisionTree.computeDecisionTree(aiDifficulty,currentBoard,playerList)
     }
 
     /**
