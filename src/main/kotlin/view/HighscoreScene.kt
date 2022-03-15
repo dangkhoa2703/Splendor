@@ -60,19 +60,19 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	/**[rank0] : Label to display winner */
 	val rank0 = Label(
 		420, 100, 1000, 500, "",
-		font = Font(size = 80, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
+		font = Font(size = 30, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank2] : Label to display runner up */
 	val rank1 = Label(
 		420, 200, 1000, 500, "",
-		font = Font(size = 70, color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
+		font = Font(size = 26, color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank2] : Label to display third player */
 	val rank2 = Label(
 		420, 300, 1000, 500, "",
-		font = Font(size = 60, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
+		font = Font(size = 22, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank2] : Label to display loser */
