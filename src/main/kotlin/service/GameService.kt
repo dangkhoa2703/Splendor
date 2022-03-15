@@ -52,9 +52,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 	    tempList = levelThreeStack.slice(0..3).toMutableList()
 	    val levelThreeOpen = tempList
 	    for(card in tempList) levelThreeStack.remove(card)
-	
 
-        
 
 	    playerList[0].gems.put(GemType.GREEN, 99)
 	    playerList[0].gems.put(GemType.RED, 99)
@@ -89,33 +87,22 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         currentPlayerIndex = 0
 
         rootService.currentGame = splendor
+        createNewGameState(false)
         onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
     }
 
     /**
      * create a new game state, link it to the chain and set the pointer to this game state
-     * if nobody can make a move or the current Player hat 15 point -> endGame()
      */
-    fun nextPlayer(){
+    fun createNewGameState(newIndex:Boolean):GameState{
         val game = rootService.currentGame
         checkNotNull(game)
         val currentGameState = game.currentGameState
         val board = game.currentGameState.board
 
-        currentPlayerIndex = (currentPlayerIndex + 1) % currentGameState.playerList.size
-
-        // if current player reach 15 or above -> end game
-        if(currentGameState.currentPlayer.score >= 15){
-            currentGameState.playerList = currentGameState.playerList.sortedByDescending { player -> player.score }
-            println(currentGameState.playerList.toString())
-            onAllRefreshables { refreshAfterEndGame() }
-            return
-        }
-
         //create new state
         val newPlayerList = mutableListOf<Player>()
-
         val tempBoard = Board(
             board.nobleTiles.toMutableList(),
             board.levelOneCards.toMutableList(),
@@ -130,9 +117,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // create a new players list with the properties of the current list
         currentGameState.playerList.forEach { player ->
             newPlayerList.add(
-                Player(player.name, player.playerType, player.gems, player.bonus, player.reservedCards,
-                    player.nobleTiles, player.score, player.devCards, player.id)
+                Player(player.name, player.playerType, player.gems.toMutableMap(), player.bonus.toMutableMap()
+                    , player.reservedCards.toMutableList(), player.nobleTiles.toMutableList(), player.score
+                    , player.devCards.toMutableList(), player.id)
             )
+        }
+        if(newIndex){
+            currentPlayerIndex = (currentPlayerIndex + 1) % newPlayerList.size
         }
         val newGameState = GameState(
             newPlayerList[currentPlayerIndex],
@@ -141,15 +132,33 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         //bind new gameState to chain and set pointer to the newGameState
         newGameState.previous = currentGameState
+        currentGameState.next = newGameState
         game.currentGameState = newGameState
-        val newCurrentGameState = game.currentGameState
-        val newBoard = game.currentGameState.board
+
+        return newGameState
+    }
+
+    /**
+     * if nobody can make a move or the current Player hat 15 point -> endGame()
+     */
+    fun nextPlayer(){
+        var newGameState = rootService.currentGame!!.currentGameState
+        val newBoard = newGameState.board
+
+        // if current player reach 15 or above -> end game
+        if(newGameState.currentPlayer.score >= 15){
+            newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
+            println(newGameState.playerList.toString())
+            onAllRefreshables { refreshAfterEndGame() }
+            return
+        }
+
+        newGameState = createNewGameState(true)
 
         //update currentPlayerIndex and check if the next player can make a valid move
-
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
         val affordableCards = acquirableCards().size
-        val reservedCards = newCurrentGameState.currentPlayer.reservedCards.size
+        val reservedCards = newGameState.currentPlayer.reservedCards.size
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
             consecutiveNoAction++
@@ -157,8 +166,8 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         }
 
         // if no player can make any move, end game with tie result
-        if(consecutiveNoAction == newCurrentGameState.playerList.size){
-            newCurrentGameState.playerList = newCurrentGameState.playerList.sortedByDescending { player -> player.score }
+        if(consecutiveNoAction == newGameState.playerList.size){
+            newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
 //            onAllRefreshables { refreshAfterEndGame(true) }
             return
         }
@@ -195,16 +204,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
     /**
      * Check which noble tiles can visit the current player
-     * automatic add prestige point to player score if there is only on affordable card
-     * @return a mutable list of indexes of the affordable noble tiles on board
+     * @return a mutable list of the affordable noble tiles on board
      */
-    fun checkNobleTiles(): MutableList<Int>{
+    fun checkNobleTiles(): MutableList<NobleTile>{
 
         val game = rootService.currentGame
         checkNotNull(game)
         val board = game.currentGameState.board
         val player = game.currentGameState.currentPlayer
-        val affordableNobleTile = mutableListOf<Int>()
+        val affordableNobleTile = mutableListOf<NobleTile>()
 
         board.nobleTiles.forEach { nobleTile ->
             // extract each card out of noble tiles
@@ -213,15 +221,15 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
                 // check if the noble can visit the player
                 tempGemMap[gemType] = tempGemMap.getValue(gemType) - player.bonus.getValue(gemType)
                 if (tempGemMap.filterValues { it >= 0 }.values.sum() == 0) {
-                    affordableNobleTile.add(board.nobleTiles.indexOf(nobleTile))
+                    affordableNobleTile.add(nobleTile)
                 }
             }
         }
 
-        if(affordableNobleTile.size == 1){
-            player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints
-            board.nobleTiles.removeAt(affordableNobleTile[0])
-        }
+//        if(affordableNobleTile.size == 1){
+//            player.score += board.nobleTiles[affordableNobleTile[0]].prestigePoints
+//            board.nobleTiles.removeAt(affordableNobleTile[0])
+//        }
 
         return affordableNobleTile
     }

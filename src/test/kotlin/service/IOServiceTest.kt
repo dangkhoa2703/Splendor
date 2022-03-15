@@ -8,6 +8,9 @@ import java.io.File
 import java.io.FileWriter
 import kotlin.test.assertEquals
 
+/**
+ *  test class for IOService
+ * */
 class IOServiceTest {
 
     /** RootService reference */
@@ -32,7 +35,7 @@ class IOServiceTest {
         currentGame.board.levelOneCards.add(
             root.gameService.createCard(listOf("1", "2", "3", "0", "0", "0", "0", "0", "diamant")))
         currentGame.currentPlayer.score = 11
-        val nobleTileId = game.currentGameState.board.nobleTiles[0].id
+        //val nobleTileId = game.currentGameState.board.nobleTiles[0].id
         game.currentGameState.board.nobleTiles.removeAt(0)
 
         //test save file
@@ -96,6 +99,11 @@ class IOServiceTest {
     /** tests if saving and loading highscores works correctly */
     @Test
     fun testSaveAndLoadHighscore(){
+        //save current highscores
+        val highscoreFile = File("src/main/resources/highscore")
+        val oldHighscores = root.ioService.loadHighscore()
+        //test on empty file
+        highscoreFile.bufferedWriter().use{out-> out.write("")}
         val highscore1 = Highscore("Dumbledore",100)
         val highscore2 = Highscore("Spider-man",99)
         val highscore3 = Highscore("BATMAN",10)
@@ -113,7 +121,10 @@ class IOServiceTest {
         val highscoreList = root.ioService.loadHighscore()
         assertEquals("Dumbledore",highscoreList[0].playerName)
 
-        val highscoreFile = File("src/main/resources/highscore")
+        //recreate old file
         highscoreFile.bufferedWriter().use{out-> out.write("")}
+        for (highscore in oldHighscores) {
+            root.ioService.saveHighscore(highscore)
+        }
     }
 }

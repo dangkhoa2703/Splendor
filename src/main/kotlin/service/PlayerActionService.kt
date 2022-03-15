@@ -128,7 +128,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             // visit by nobleTiles, check gems
             // rootService.gameService.endTurn()
         } else { throw IllegalArgumentException("not your turn") }
-        rootService.gameService.nextPlayer()
+       // rootService.gameService.nextPlayer()
     }
 
     /**
@@ -173,7 +173,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             // visit by nobleTiles, check gems
             // rootService.gameService.endTurn()
         } else { throw IllegalArgumentException("not your turn") }
-        rootService.gameService.nextPlayer()
+        //rootService.gameService.nextPlayer()
         onAllRefreshables {refreshAfterBuyCard(card)}
     }
 
@@ -224,7 +224,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             // rootService.gameService.endTurn()
         } else { throw IllegalArgumentException("not your turn") }
         onAllRefreshables{ refreshAfterReserveCard(card)}
-        rootService.gameService.nextPlayer()
+        //rootService.gameService.nextPlayer()
     }
 
     /**
@@ -235,13 +235,17 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun selectNobleTile(card: NobleTile, user : Player){
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
+        val availableCards = rootService.gameService.checkNobleTiles()
         // if(user == game.currentGameState.currentPlayer)
         // {
-        board.nobleTiles.remove(card)
-        user.nobleTiles.add(card)
-        user.score += card.prestigePoints
+        if(availableCards.contains(card)) {
+            board.nobleTiles.remove(card)
+            user.nobleTiles.add(card)
+            user.score += card.prestigePoints
+        }
+        else{throw IllegalArgumentException("the chosen card is not available for the current player")}
         // } else { return }
-        rootService.gameService.nextPlayer()
+        //rootService.gameService.nextPlayer()
     }
 
     /**
