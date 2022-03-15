@@ -95,6 +95,13 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
         }
     }
 
+    override fun refreshAfterEndGame() {
+	rank0.text=""
+	rank1.text=""
+	rank2.text=""
+	rank3.text=""
+    }
+
     init {
 
         background = backgroundImage

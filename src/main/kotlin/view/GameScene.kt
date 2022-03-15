@@ -51,7 +51,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         text = "",
         font = Font(size = 28),
         visual = imageLoader.undoButton()
-    )
+    ).apply{
+	onMouseClicked = {
+	    val playerActionService = rootService.playerActionService
+	    try{
+		playerActionService.undo()
+	    }
+	    catch(e: Exception) {
+		println(e)
+	    }
+	}
+    }
 
     private val redoButton = Button(
         width = 50, height = 50,
@@ -59,7 +69,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         text = "",
         font = Font(size = 28),
         visual = imageLoader.redoButton()
-    )
+    ).apply {
+	onMouseClicked = {
+	    val playerActionService = rootService.playerActionService
+	    try{
+		playerActionService.redo()
+	    }
+	    catch(e: Exception) {
+		println(e)
+	    }
+	}
+    }
 
     private val hintButton = Button(
         width = 50, height = 50,
@@ -67,7 +87,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         text = "",
         font = Font(size = 28),
         visual = imageLoader.hintButton()
-    )
+    ).apply {
+	onMouseClicked = {
+	    val playerActionService = rootService.playerActionService
+	    val output = playerActionService.showHint()
+	    println(output)
+	}
+    }
 
     private val saveGameButton = Button(
         width = 50, height = 50,
@@ -602,8 +628,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
 
-	initializePlayerGems()
-	initializeGameGems()
+	
 
 	
 
@@ -714,11 +739,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	imageLoader.preload()
 	
-	for(i in 1..99) {
+	for(i in 0..99) {
 	    val cardView = toCardView(i)
 	    stack.add(cardView)
 	    devCardMap.add(i to cardView)
 	}
+
+	initializePlayerGems()
+	initializeGameGems()
 	
 	background = imageLoader.table()
 

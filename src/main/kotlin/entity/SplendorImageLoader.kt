@@ -66,21 +66,9 @@ class SplendorImageLoader {
 		return ImageVisual(image)
 	}
 
-    /**
-     * function that returns Card Image
-     */
-    fun frontImageFor(id: Int): ImageVisual {
-	return images[id]
-    }
+    
 
-    private fun imageFor(id: Int): ImageVisual {
-	val idString = (id).toString()
-	return ImageVisual(
-	    ImageIO.read(
-		SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
-	    )
-	)
-    }
+    
     
     /**
      * function that returns Start Background
@@ -224,10 +212,26 @@ class SplendorImageLoader {
 	return tokenImages[type.toInt()-1]
     }
 
+    /**
+     * function that returns Card Image
+     */
+    fun frontImageFor(id: Int): ImageVisual {
+	return images[id]
+    }
+
     fun preload() {
 	for(i in 1..100){
 		images = images + imageFor(i)
 	}
+    }
+
+    private fun imageFor(id: Int): ImageVisual {
+	val idString = (id).toString()
+	return ImageVisual(
+	    ImageIO.read(
+		SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
+	    )
+	)
     }
 
     init {

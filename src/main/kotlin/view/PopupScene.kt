@@ -100,7 +100,7 @@ class PopupScene(
 	)
     }
 
-    override fun refreshAfterPopup(currentPlayer: Player): Unit {
+    override fun refreshAfterPopup(currentPlayer: Player) {
 	clearComponents()
 	standartComponents()
 	
@@ -113,9 +113,11 @@ class PopupScene(
 	val playerSaveCards = gameScene.playerSaveCards
 
 	var j = 0
+	println(currentPlayer)
 	for(i in 0..playerList.size-1) {
 	    val player = playerList[i]
-	    if(player.equals(currentPlayer)) continue
+	    println(player)
+	    if(currentPlayer.equals(player)) continue
 	    drawPlayer(j, player, playerDevCards[i].components, playerSaveCards[i].components)
 	    j++
 	}
