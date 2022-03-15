@@ -5,6 +5,7 @@ import entity.PlayerType
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
+import java.io.FileWriter
 import kotlin.test.assertEquals
 
 class IOServiceTest {
@@ -112,5 +113,8 @@ class IOServiceTest {
         val highscoreList = root.ioService.loadHighscore()
         assertEquals("Dumbledore",highscoreList[0].playerName)
         assertEquals(10,highscoreList[5].score)
+
+        val highscoreFile = File("src/main/resources/highscore")
+        highscoreFile.bufferedWriter().use{out-> out.write("")}
     }
 }

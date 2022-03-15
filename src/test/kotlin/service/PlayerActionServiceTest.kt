@@ -76,6 +76,7 @@ class PlayerActionServiceTest {
         val devCard2 = DevCard(0, gemMap, 2, 0, GemType.RED)
         val devCard3 = DevCard(0, gemMap, 3, 0, GemType.RED)
         var player = root.currentGame!!.currentGameState.currentPlayer
+        player.gems.put(GemType.YELLOW, 0)
         root.currentGame!!.currentGameState.board.levelOneCards.clear()
         root.currentGame!!.currentGameState.board.levelOneCards.add(devCard1)
         root.currentGame!!.currentGameState.board.levelTwoCards.clear()
@@ -115,6 +116,7 @@ class PlayerActionServiceTest {
     {
         root.gameService.startNewGame(playerList, false, 1)
         var player = root.currentGame!!.currentGameState.currentPlayer
+        player.gems.put(GemType.YELLOW, 0)
         val devCard1 = DevCard(111, gemMap, 1, 0, GemType.BLUE)
         val devCard2 = DevCard(222, gemMap, 2, 0, GemType.RED)
         val devCard3 = DevCard(333, gemMap, 3, 0, GemType.RED)
@@ -151,6 +153,7 @@ class PlayerActionServiceTest {
 
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
+        player.gems.put(GemType.YELLOW, 0)
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
         root.playerActionService.reserveCard(devCard5, index = 0, player)
         assertEquals(0, player.gems[GemType.YELLOW])
@@ -289,4 +292,52 @@ class PlayerActionServiceTest {
         assertEquals(gameStateTwo, root.currentGame!!.currentGameState)
         assertFalse { root.currentGame!!.validGame }
     }
+
+    /**
+     * tests if showHint works
+     */
+    @Test
+    fun showHintTest(){
+        root.gameService.startNewGame(playerList, false, 1)
+        val board = root.currentGame!!.currentGameState.board
+        val player = root.currentGame!!.currentGameState.currentPlayer
+        var turn:Turn
+        val testCard = DevCard(0,mapOf(),1,0,GemType.RED)
+
+        //best turn is to reserve a card
+        turn = Turn(mapOf(),listOf(testCard),TurnType.RESERVE_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard)
+        var hint = "You should reserve the level-1-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+
+        //best turn is to buy a card
+        turn = Turn(mapOf(),listOf(testCard),TurnType.BUY_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard)
+        hint = "You should buy the level-1-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+        player.reservedCards.add(testCard)
+        hint = "You should buy your reserved card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+
+        //best turn is to take gems
+        turn = Turn(mapOf(Pair(GemType.RED,2)),listOf(),TurnType.TAKE_GEMS)
+        hint = "You should take two RED gems."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+        val gemsMap = mutableMapOf(Pair(GemType.RED,1),Pair(GemType.GREEN,1),Pair(GemType.BLUE,1))
+        turn  =Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
+        hint = "You should take three gems of the colours GREEN, RED and BLUE."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+
+        //wrong turn
+        turn = Turn(mapOf(), listOf(),TurnType.EMPTY)
+        hint = "there is no help for you"
+        assertEquals(hint,root.playerActionService.showHint(turn))
+        gemsMap.put(GemType.BLACK,1)
+        turn = Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
+        assertThrows<IllegalStateException> { root.playerActionService.showHint(turn) }
+    }
+
+
 }
