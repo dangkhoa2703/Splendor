@@ -319,6 +319,8 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	
 	refresh()
 
+	opacity = 1.0
+
 	addComponents(
 	    headLineLabel,
 	    backButton,

@@ -11,18 +11,19 @@ import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.container.LinearLayout
 import tools.aqua.bgw.components.gamecomponentviews.CardView
 import tools.aqua.bgw.util.Font
+import entity.NobleTile
 
 class PopupScene(
     private val rootService: RootService,
     private val gameScene: GameScene
-): MenuScene(1300, 1080), Refreshable {
+): MenuScene(1400, 1080), Refreshable {
 
     private val imageLoader: SplendorImageLoader = SplendorImageLoader()
 
     val quitButton = Button(
 	width = 50, height = 50,
-	posX = 1150, posY = 50,
-	text = "X", visual = ColorVisual(221, 136, 136)
+	posX = 1250 - (1920-width)/2, posY = 25,
+	visual = imageLoader.nextPlayersImage()
     )
 
     private fun standartComponents(): Unit {
@@ -35,18 +36,25 @@ class PopupScene(
 	index: Int,
 	player: Player,
 	devCardsLayout: List<CardView>,
-	saveCardsLayout: List<CardView>
+	saveCardsLayout: List<CardView>,
+	nobleTilesLayout: List<CardView>,
     ){
 	val nameLabel = Label(
-	    posX =index*400+25+50, posY = 100,
+	    posX =index*500+25+75, posY = 100,
 	    height = 100, width = 200,
 	    text = player.name, font = Font(size = 24)
 	)
 
 	val typeLabel = Label(
-	    posX =index*400+25+50, posY = 150,
+	    posX =index*500+25+75, posY = 150,
 	    height = 100, width = 200,
 	    text = player.playerType.toString(), font = Font(size = 24)
+	)
+
+	val pointsLabel = Label(
+	    posX = index*500, posY = 125,
+	    text = player.score.toString(),
+	    font = Font(size = 40, fontWeight = Font.FontWeight.BOLD)
 	)
 
 	val devCards: MutableList<DevCard> = player.devCards
@@ -55,7 +63,7 @@ class PopupScene(
 	    val devCardLabel = Label(
 		width = 95, height = 150,
 		visual = devCardsLayout[i].frontVisual,
-		posX = index*400+25, posY = 225+i*40
+		posX = index*500+25, posY = 225+i*40
 	    )
 
 	    addComponents(devCardLabel)
@@ -67,10 +75,22 @@ class PopupScene(
 	    val saveCardLabel = Label(
 		width = 95, height = 150,
 		visual = saveCardsLayout[i].frontVisual,
-		posX = index*400+25+180, posY = 225+i*150
+		posX = index*500+25+120, posY = 225+i*150
 	    )
 
 	    addComponents(saveCardLabel)
+	}
+
+	val nobleTiles: MutableList<NobleTile> = player.nobleTiles
+
+	for(i in 0..nobleTiles.size-1) {
+	    val tileLabel = Label(
+		width = 95, height = 150,
+		visual = nobleTilesLayout[i].frontVisual,
+		posX = index*500+25+240, posY = 225+i*150
+	    )
+
+	    addComponents(tileLabel)
 	}
 
 	val gems = player.gems.entries
@@ -79,13 +99,13 @@ class PopupScene(
 	for(gem in gems) {
 	    if(gem.value==0) continue
 	    var gemLabel = Label(
-		posX = index*400+25+180, posY = 980 - j*50,
+		posX = index*500+25+120, posY = 980 - j*50,
 		width = 25, height = 25,
 		visual = imageLoader.tokenImage(gem.key)
 	    )
 
 	    var gemInfoLabel = Label(
-		posX = index*400+25+180+25, posY = 980 - j*50,
+		posX = index*500+25+120+25, posY = 980 - j*50,
 		width = 25, height = 25,
 		text = gem.value.toString(),
 		font = Font(size = 20)
@@ -97,6 +117,7 @@ class PopupScene(
 	addComponents(
 	    nameLabel,
 	    typeLabel,
+	    pointsLabel,
 	)
     }
 
@@ -111,19 +132,26 @@ class PopupScene(
 
 	val playerDevCards = gameScene.playerDevCards
 	val playerSaveCards = gameScene.playerSaveCards
+	val playerNobleTiles = gameScene.playerNobleTiles
 
 	var j = 0
-	println(currentPlayer)
 	for(i in 0..playerList.size-1) {
 	    val player = playerList[i]
-	    println(player)
-	    if(currentPlayer.equals(player)) continue
-	    drawPlayer(j, player, playerDevCards[i].components, playerSaveCards[i].components)
+	    if(currentPlayer.id.equals(player.id)) continue
+	    drawPlayer(
+		j,
+		player,
+		playerDevCards[i].components,
+		playerSaveCards[i].components,
+		playerNobleTiles[i].components,
+	    )
 	    j++
 	}
     }
 
     init {
+	opacity = 0.8
+	
 	background = ColorVisual(136, 221, 136)
 	
 	standartComponents()

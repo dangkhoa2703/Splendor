@@ -1,6 +1,7 @@
 package view
 
 import entity.DevCard
+import entity.NobleTile
 import entity.Player
 
 interface Refreshable {
@@ -26,7 +27,7 @@ interface Refreshable {
 
     fun refreshScore() : Unit {}
 
-    fun refreshAfterSelectNobleTile() : Unit {}
+    fun refreshAfterSelectNobleTile(nobleTile: NobleTile) : Unit {}
 
     fun refreshAfterShowHint() : Unit {}
 

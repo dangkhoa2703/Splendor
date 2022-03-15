@@ -1,3 +1,4 @@
+/**
 package service
 import entity.*
 import kotlin.test.*
@@ -189,4 +190,60 @@ class AIServiceTest {
         assertEquals(Pair(2,2), root.aiService.calculateAmountOfRoundsNeededToBuy(testPlayer,devCardThree))
     }
 
-}
+    /**
+     * test for chooseGems in AIService
+     */
+    @Test
+    fun chooseGemsTest() {
+        val devCardOne = DevCard(id = 1, price = mutableMapOf(GemType.RED to 3, GemType.BLUE to 1),1,
+            bonus = GemType.BLACK, prestigePoints = 0)
+        val devCardTwo = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 3, GemType.RED to 1),2,
+            bonus = GemType.BLACK, prestigePoints = 2)
+        val devCardThree = DevCard(id = 3, price = mutableMapOf(GemType.BLACK to 3, GemType.RED to 2),3,
+            bonus = GemType.BLACK, prestigePoints = 4)
+        val devCardFour = DevCard(id = 4, price = mutableMapOf(GemType.RED to 1),1,
+            bonus = GemType.BLACK, prestigePoints = 0)
+        val devCardFive = DevCard(id = 5, price = mutableMapOf(GemType.GREEN to 1),2,
+            bonus = GemType.BLACK, prestigePoints = 2)
+        val devCardSix = DevCard(id = 6, price = mutableMapOf(GemType.BLUE to 1),3,
+            bonus = GemType.BLACK, prestigePoints = 4)
+        val testPlayer = Player("Anna", PlayerType.HUMAN, gems = mutableMapOf(GemType.RED to 1,
+            GemType.GREEN to 1, GemType.BLUE to 1), bonus = mutableMapOf(), mutableListOf(),
+            mutableListOf(), 0, mutableListOf())
+
+        val bestDevCards: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0,
+            devCardTwo to 0.5, devCardThree to 0.0)
+        val bestDevCardsTwo: Map<DevCard, Double> = mutableMapOf(devCardSix to 1.0,
+            devCardFive to 0.5, devCardFour to 0.0)
+
+        val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 3))
+        val exampleBoard2 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
+            GemType.GREEN to 3, GemType.BLACK to 3))
+        val exampleBoard3 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 0,
+                GemType.GREEN to 3, GemType.BLACK to 3))
+        val exampleBoard4 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf())
+        val exampleBoard5 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardFour), mutableListOf(),
+            mutableListOf(devCardFive), mutableListOf(), mutableListOf(devCardSix), mutableMapOf(GemType.RED to 3,
+                GemType.GREEN to 3, GemType.BLACK to 3))
+        // 1. Board has 3 red gems left, so we want to choose two red gems
+        assertEquals(Pair(mutableMapOf(GemType.RED to 2),false),
+            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard1))
+        // 2. Board has only 1 red gem left, so we want to choose two green gems
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),
+            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard2))
+        // 3. Board has no red gems left, so we want to choose two green gems
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),
+            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard3))
+        // 4. Board has no gems
+        assertEquals(Pair(mutableMapOf(),false),
+            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard4))
+        // 5. All cards have no missing gems (take one gem for each of the first board gem-colours)
+        assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
+            root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard5))
+
+    }
+} */

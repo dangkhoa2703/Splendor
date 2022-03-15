@@ -13,7 +13,7 @@ class EntityTests
     private val playerTwo = Player(name = "Mirco", playerType = PlayerType.EASY)
     private val board = Board()
     private val gameStateOne = GameState(playerOne, listOf(playerOne, playerTwo), board)
-    private val highscoreOne = Highscore(playerOne.name, playerOne.score)
+    private val highscoreOne = Highscore(playerOne.name, 30.6)
     private var splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne,
         highscores = mutableListOf(highscoreOne))
     private val gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3, GemType.WHITE to 3, GemType.BLACK to 4,
@@ -104,7 +104,6 @@ class EntityTests
         assertEquals(1, splendor.highscores.size)
         assertEquals(true, splendor.validGame)
         assertEquals(playerOne.name, highscoreOne.playerName)
-        assertEquals(playerOne.score, highscoreOne.score)
 
         /** test if splendor's attributes can be changed correctly */
         splendor.simulationSpeed = 3

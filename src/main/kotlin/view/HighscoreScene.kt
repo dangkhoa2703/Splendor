@@ -53,7 +53,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 		labelList.add(rank3)
 		labelList.add(rank4)
 		println(highscoreList.size)
-		for(i in 0..highscoreList.size-1){
+		for(i in 0..highscoreList.size-5){
 			player= highscoreList[i]
 			val index = i+1
 			labelList.get(i).text=index.toString()+". Place: "+ player.playerName + ": " + player.score
