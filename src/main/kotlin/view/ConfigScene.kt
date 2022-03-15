@@ -198,6 +198,11 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	}
     }
 
+	/** [start] : used before the start of the game to assign the player types. We initially have an empty tuple List with the name and type of a
+	 * "to be assigned" player. Using the for loop we assign the types to each player, with HUMAN being the base case.
+	 *  Else we have a selection of three difficulties to select from. The various player names (from textfields[i])
+	 *  and player types are then accordingly assigned from namePair to players as a tuple.
+	 * */
     private fun start() {
 	var players: List<Pair<String, PlayerType>> = listOf()
 	for(i in 0..size) {
@@ -223,7 +228,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    players, selection[9]==0, selection[8]
 	)
     }
-	/**[startButton] : Button to start game after successful configuration*/
+	/**[startButton] : Button to start game after successful configuration using [start]*/
     private val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
@@ -238,7 +243,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     init{
 	val humanIcon: ImageVisual = imageLoader.humanIcon()
 	
-	
+	//GUI textfields for playername input
 	for(i in 0..3) {
 	    val textField = TextField(
 		posX = width/2 - 200, posY = 300+i*150,
@@ -250,6 +255,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		}
 	    }
 
+		//icon to choose to be a human player
 	    val icon = Button(
 		posX = width/2 + 250, posY = 300+i*150,
 		text = "", visual = humanIcon,
@@ -261,6 +267,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		}
 	    }
 
+		//text indicating difficulty of AI
 	    val difficultyText = Button(
 		posX = width/2 + 400 , posY = (300+i*150),
 			visual = ColorVisual.TRANSPARENT,
@@ -273,6 +280,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		}
 	    }
 
+		//Buttons for AI speed
 	    if(i<3) {
 		val speedButton = Button(
 		    posX = 500, posY = 450, width = 100, height = 100,
@@ -304,15 +312,17 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    difficultyTexts+=difficultyText
 	    
 	}
-	
+
+	//adding various components to the root node view
 	icons.forEach{ addComponents(it)}
 	textFields.forEach{ addComponents(it) }
 	difficultyTexts.forEach{ addComponents(it) }
 	speedButtons.forEach{ addComponents(it) }
 	shuffleButtons.forEach{ addComponents(it) }
 
+	//dummy input names for testing
 	textFields[0].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
-		textFields[1].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
+	textFields[1].text = listOf("Fry", "Bender", "Leela", "Amy", "Zoidberg").random();
 
 	// 81,126,44 why ?
 	background = backgroundImage
@@ -321,6 +331,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 
 	opacity = 1.0
 
+	//adding various components to the root node view
 	addComponents(
 	    headLineLabel,
 	    backButton,
