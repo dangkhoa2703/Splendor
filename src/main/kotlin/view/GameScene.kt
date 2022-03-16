@@ -3,6 +3,7 @@ package view
 import service.RootService
 import tools.aqua.bgw.core.BoardGameScene
 import entity.*
+import javafx.stage.DirectoryChooser
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
@@ -20,6 +21,7 @@ import tools.aqua.bgw.event.MouseEvent
 import tools.aqua.bgw.components.container.GameComponentContainer
 import kotlin.math.max
 import kotlin.math.min
+import java.io.File
 
 /**
  * [GameScene] : This is the Scene where most of the action happens in Splendor. The scene shows the complete table at
@@ -142,7 +144,16 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         text = "Save Game",
         font = Font(size = 17),
         visual = imageLoader.saveGameImage()
-    )
+    ).apply{
+		onMouseClicked = {
+			val directoryChooser: DirectoryChooser = DirectoryChooser()
+			val file: File? = directoryChooser.showDialog(null)
+			if(file!=null) {
+				val ioService = rootService.ioService
+				ioService.saveGame(file.absolutePath)
+			}
+		}
+	}
 
 	/**[quitButton] : Button, when triggered ends current game  */
     val quitButton = Button(
@@ -190,28 +201,33 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    
             val playerActionService = rootService.playerActionService
 
-	    checkNotNull(currentPlayer) { "No player found. "}
-	    val player = currentPlayer as Player
+	    	checkNotNull(currentPlayer) { "No player found. "}
+	    	val player = currentPlayer as Player
 
-	    val gemList: MutableList<GemType> = mutableListOf()
-	    for(gem in gameGemSelection.entries) {
-		var amount = gem.value
-		while(amount>0) {
-		    gemList.add(gem.key)
-		    amount--
-		}
-	    }
+	    	val gemList: MutableList<GemType> = mutableListOf()
 
-	    try {
-                playerActionService.takeGems(gemList, player)
-		for(gem in gameGemSelection.entries) {
-			gameGemSelection[gem.key] = 0
-		}
-		renderGameGems()
-            }
-            catch(e: Exception) {
+	    	for(gem in gameGemSelection.entries) {
+			var amount = gem.value
+				while(amount>0) {
+		   	 		gemList.add(gem.key)
+		    		amount--
+				}
+			}
+
+	    	try {
+				playerActionService.takeGems(gemList, player)
+				for (gem in gameGemSelection.entries) {
+					gameGemSelection[gem.key] = 0
+				}
+			}
+            	catch(e: Exception) {
                 println(e)
             }
+
+			for(gem in allGems) {
+				gameGemSelection[gem] = 0
+			}
+			renderGameGems()
         }
     }
 
@@ -230,7 +246,31 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         text = "Discard Gems",
         font = Font(size = 12),
         visual = buttonImage
-    )
+    ).apply {
+		onMouseClicked = {
+			val playerActionService = rootService.playerActionService
+
+			val gemList: MutableList<GemType> = mutableListOf()
+
+			for(gem in playerGemSelection.entries) {
+				var amount = gem.value
+				while(amount>0) {
+					gemList.add(gem.key)
+					amount--
+				}
+			}
+
+			checkNotNull(currentPlayer) { "No Player found. "}
+			try {
+				playerActionService.returnGems(gemList, currentPlayer as Player)
+			}
+			catch(e: Exception) {
+				println(e)
+			}
+
+			renderPlayerGems()
+		}
+	}
 
 	/**[stack] : devCard stack */
     private val stack: LabeledStackView = LabeledStackView(
@@ -310,38 +350,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
 	cardView.showFront()
 	return cardView
-    }
-
-	/**
-	 * [getCard] : Method to get desired card
-	 */
-    private fun getCard(cardView: CardView): DevCard?{
-	val number=devCardMap.backward(cardView)
-	var returnCard : DevCard? = null
-	if(number in 1..40){
-	    for(card in rootService.currentGame!!.currentGameState.board.levelOneOpen){
-		if(card.id==number){
-		    returnCard=card
-		}
-	    }
-	}
-	if(number in 41..70){
-	    for(card in rootService.currentGame!!.currentGameState.board.levelTwoOpen){
-		if(card.id==number){
-		    returnCard=card
-		}
-	    }
-	}
-
-	if(number in 71..90){
-	    for(card in rootService.currentGame!!.currentGameState.board.levelThreeOpen){
-		if(card.id==number){
-		    returnCard=card
-		}
-	    }
-	}
-
-	return returnCard
     }
 
 	/**
@@ -502,7 +510,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val playerList = game.currentGameState.playerList
 	for(i in playerList.indices) {
 	    val player = playerList[i]
-	    fillDevCardLayout(playerDevCards[i], player.devCards)
+	    fillDevCardLayout(playerDevCards[i], player.devCards,false)
 	    fillDevCardLayout(playerSaveCards[i], player.reservedCards)
 	    fillNobleTilesLayout(playerNobleTiles[i], player.nobleTiles, false)
 	}
@@ -521,7 +529,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	for(gem in allGems) {
 	    val icon = Label(
-		posX = 100.0 - 12.5, width=25.0, height=25.0,
+		posX = 100.0 - 25, width=50.0, height=50.0,
                 visual = imageLoader.tokenImage(gem),
 	    ).apply{
 		onMouseClicked = { event ->
@@ -531,13 +539,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    }
 
 	    val infoLabel = Label(
-		posX = 100.0 + 12.5, width=25.0, height=25.0,
-                text = "", font = Font(size = 20, color = Color.BLACK)
+		posX = 100.0 + 25, width=50.0, height=50.0,
+                text = "", font = Font(size = 40, color = Color.BLACK)
 	    )
 
 	    val selectLabel = Label(
-		posX = 100.0 - 50.0, width=25.0, height=25.0,
-                text = "", font = Font(size = 20, color = Color.BLACK)
+		posX = 100.0 - 75.0, width=50.0, height=50.0,
+                text = "", font = Font(size = 40, color = Color.BLACK)
 	    )
 
 	    playerGems.add(icon)
@@ -698,7 +706,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		gameGemMax[gem.key] = gem.value
 	}
 
-
 	for(gem in player.gems.entries) {
 		playerGemMax[gem.key] = gem.value
 	}
@@ -856,6 +863,19 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	refreshAfterTakeGems()
     }
+
+	override fun refreshAfterTakeGems(gems: Map<GemType, Int>) {
+
+		for(gem in allGems) {
+			playerGemSelection[gem]=0
+		}
+
+		for(gem in gems) {
+			playerGemMax[gem.key]=gem.value
+		}
+
+		renderPlayerGems()
+	}
 
     init {
 	loadAllComponents()

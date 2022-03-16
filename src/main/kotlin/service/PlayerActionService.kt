@@ -284,6 +284,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 user.gems[gemType] = user.gems.getValue(gemType) - 1
                 board.gems[gemType] = board.gems.getValue(gemType) + 1
             }
+            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
         } else { throw IllegalArgumentException("Not Ur Turn") }
     }
 }
