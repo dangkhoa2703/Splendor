@@ -1,5 +1,7 @@
 package entity
 
+import org.junit.jupiter.api.assertDoesNotThrow
+import tools.aqua.bgw.visual.ImageVisual
 import kotlin.test.*
 
 /**
@@ -189,7 +191,35 @@ class EntityTests
      */
     @Test
     fun loadImage(){
-       // val Image = Ima
+        assertDoesNotThrow {  SplendorImageLoader().saveGameImage()}
+        assertDoesNotThrow {  SplendorImageLoader().nextPlayersImage()}
+        assertDoesNotThrow {  SplendorImageLoader().humanIcon()}
+        assertDoesNotThrow {  SplendorImageLoader().highscores()}
+        assertDoesNotThrow {  SplendorImageLoader().startBackground()}
+        assertDoesNotThrow {  SplendorImageLoader().button()}
+        assertDoesNotThrow {  SplendorImageLoader().redoButton()}
+        assertDoesNotThrow {  SplendorImageLoader().hintButton()}
+        assertDoesNotThrow {  SplendorImageLoader().undoButton()}
+        assertDoesNotThrow {  SplendorImageLoader().table()}
+        assertDoesNotThrow {  SplendorImageLoader().cardBack()}
+        assertDoesNotThrow {  SplendorImageLoader().velocity(1)}
+        assertDoesNotThrow {  SplendorImageLoader().velocity(2)}
+        assertDoesNotThrow {  SplendorImageLoader().shuffleImage(0)}
+        assertDoesNotThrow {  SplendorImageLoader().shuffleImage(1)}
+        assertDoesNotThrow {  SplendorImageLoader().configBackground()}
+        assertDoesNotThrow {  SplendorImageLoader().highscoreBackground()}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(1)}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(2)}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(3)}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(4)}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(5)}
+        assertDoesNotThrow {  SplendorImageLoader().tokenImage(6)}
+        assertDoesNotThrow { SplendorImageLoader().carbon() }
+        assertDoesNotThrow { SplendorImageLoader().loadGame() }
+        assertDoesNotThrow { SplendorImageLoader().tokenImage(1) }
+        assertDoesNotThrow { SplendorImageLoader().preload() }
+        assertDoesNotThrow { SplendorImageLoader().imageFor(11) }
+        assertDoesNotThrow { SplendorImageLoader().image("/highscores.png") }
     }
 
 }
