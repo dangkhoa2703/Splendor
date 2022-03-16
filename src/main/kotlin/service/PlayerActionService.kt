@@ -20,6 +20,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(game.currentGameState.hasPrevious()) {
             game.currentGameState = game.currentGameState.previous
             game.validGame = false
+            game.turnCount--
         }
         else throw IllegalStateException("a previous state does not exist")
 	    onAllRefreshables { refreshAfterEndTurn() }
@@ -33,7 +34,9 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val game = rootService.currentGame!!
         if(game.currentGameState.hasNext()) {
             game.currentGameState = game.currentGameState.next
-            game.validGame = false }
+            game.validGame = false
+            game.turnCount++
+        }
         else throw IllegalStateException("a following state does not exist")
 	    onAllRefreshables { refreshAfterEndTurn() }
     }

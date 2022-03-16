@@ -69,15 +69,14 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
      * */
     private fun ranking (){
         val game = rootService.currentGame!!
-        val turnScore = game.turnCount.toDouble() / game.currentGameState.playerList.size.toDouble()
-        val rankings = game.currentGameState.playerList.
-            sortedByDescending { it.score.toDouble().pow( 1 / turnScore) }
+//        val turnScore = game.turnCount.toDouble() / game.currentGameState.playerList.size.toDouble()
+        val rankings = game.currentGameState.playerList.sortedByDescending { it.score }
         labelList.add(rank0)
         labelList.add(rank1)
         labelList.add(rank2)
         labelList.add(rank3)
         for(i in rankings.indices) { labelList[i].text = rankings[i].name + " has reached " +
-                (100000 * rankings[i].score.toDouble().pow(1 / turnScore)).roundToInt() + " Points" }
+                rankings[i].score + " Points" }
     }
 
     /** [refreshAfterEndGame] : override function of refreshAfterEndGame, various rank texts are refreshed */

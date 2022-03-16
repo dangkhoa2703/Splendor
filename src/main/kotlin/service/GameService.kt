@@ -2,6 +2,9 @@ package service
 
 import entity.*
 import java.io.File
+import java.math.RoundingMode
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  *  class for basic game functionalities
@@ -138,6 +141,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             return
         }
 
+        rootService.currentGame!!.turnCount++
         newGameState = createNewGameState(true)
 
         //check if the next player can make a valid move
@@ -168,7 +172,11 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         if(game.validGame){
             for (player in game.currentGameState.playerList){
-                rootService.ioService.saveHighscore(Highscore(player.name,player.score.toDouble()))
+                var score: Double =
+                    ((player.score).toDouble() + (1 / rootService.currentGame!!.turnCount)).
+                    toBigDecimal().setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                score *= 100
+                rootService.ioService.saveHighscore(Highscore(player.name, score))
             }
         }
     }

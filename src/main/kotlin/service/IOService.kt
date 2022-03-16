@@ -24,6 +24,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             "false" -> false
             else -> { throw IllegalStateException("no valid game parameter") }
         }
+        val turnCount = gameSettings[3].trim().toInt()
 
         //create gameStates and link them
         val gameStates = mutableListOf<GameState>()
@@ -40,7 +41,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         //create splendor
         val currentGameState = gameStates[indexCurrentGameState-1] //muss geprüft werden!!!!
-        val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame)
+        val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame,turnCount)
 
         rootService.currentGame = splendor
     }
@@ -230,13 +231,22 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         val gameSettingName = "$path/gameSetting"
         val gameFile = File(gameSettingName)
-        gameFile.bufferedWriter().use{ out ->
-            out.write((totalGameState-1).toString()+"\n")
-            out.write(indexCurrentGame.toString() + "\n")
-            out.write(game.simulationSpeed.toString() + "\n" )
-            out.write(game.currentGameState.playerList.size.toString() + "\n")
-            out.write(rootService.currentGame!!.validGame.toString() + "\n")
-        }
+        gameFile.writeText(
+            ((totalGameState-1).toString()+"\n") +
+            (indexCurrentGame.toString() + "\n") +
+            (game.simulationSpeed.toString() + "\n" ) +
+            (game.currentGameState.playerList.size.toString() + "\n") +
+            (rootService.currentGame!!.validGame.toString() + "\n") +
+            (rootService.currentGame!!.turnCount.toString() + "\n")
+        )
+//        gameFile.bufferedWriter().use{ out ->
+//            out.write((totalGameState-1).toString()+"\n")
+//            out.write(indexCurrentGame.toString() + "\n")
+//            out.write(game.simulationSpeed.toString() + "\n" )
+//            out.write(game.currentGameState.playerList.size.toString() + "\n")
+//            out.write(rootService.currentGame!!.validGame.toString() + "\n")
+//            out.write(rootService.currentGame!!.turnCount.toString() + "\n")
+//        }
     }
 
     private fun saveGameState(gameState: GameState, file: File){
@@ -300,8 +310,10 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val highscoreList = mutableListOf<Highscore>()
         var content:List<String>
         for(line in highscoreFileList){
-            content = line.split(",")
-            highscoreList.add(Highscore(content[0],content[1].toDouble()))
+            if(line != "") {
+                content = line.split(",")
+                highscoreList.add(Highscore(content[0], content[1].toDouble()))
+            }
         }
         return highscoreList
     }

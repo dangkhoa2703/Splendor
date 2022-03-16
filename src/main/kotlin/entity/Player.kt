@@ -22,19 +22,20 @@ class Player (
         GemType.BLUE to 0,
         GemType.YELLOW to 0),
     val bonus : MutableMap<GemType,Int> = mutableMapOf(
-        GemType.RED to 0,
-        GemType.GREEN to 0,
-        GemType.WHITE to 0,
-        GemType.BLACK to 0,
-        GemType.BLUE to 0,
-        GemType.YELLOW to 0
+        GemType.RED to 99,
+        GemType.GREEN to 99,
+        GemType.WHITE to 99,
+        GemType.BLACK to 99,
+        GemType.BLUE to 99,
+        GemType.YELLOW to 99
     ),
     val reservedCards : MutableList<DevCard> = mutableListOf(),
     val nobleTiles : MutableList<NobleTile> = mutableListOf(),
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf(),
     var id: Int = 0,
-    var hasDoneTurn: Boolean = false
+    var hasDoneTurn: Boolean = false,
+    var validForRanking: Boolean = true
     ) {
 
     /** Clones a player */

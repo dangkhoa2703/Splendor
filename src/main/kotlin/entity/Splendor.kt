@@ -9,10 +9,9 @@ package entity
  *  @property turnCount: counts the amount of turns of all players
  * */
 data class Splendor (
-    var simulationSpeed: Int,
-    var currentGameState: GameState,
+    var simulationSpeed : Int,
+    var currentGameState : GameState,
     val highscores: MutableList<Highscore> = mutableListOf(),
-    var validGame: Boolean = true)
-{
+    var validGame : Boolean = true,
     var turnCount: Int = 0
-}
+)
