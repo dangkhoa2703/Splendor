@@ -274,16 +274,13 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val gems: MutableMap<GemType, Int> = mutableMapOf()
         //if gems on board are empty
         if (board.gems.isEmpty()) {
-            return Pair(mutableMapOf(),false)
-        }
+            return Pair(mutableMapOf(),false) }
         //safe all open cards that still need gems
         val devCardsWithMissingGems: ArrayList<DevCard> = arrayListOf()
         bestDevCards.keys.forEach {
             val missingGemsColours: MutableMap<GemType, Int> = calculateMissingGems(player,it.price)
             if (missingGemsColours.isNotEmpty()) {
-                devCardsWithMissingGems.add(it)
-            }
-        }
+                devCardsWithMissingGems.add(it) } }
         var takenGems = 0
         val allMissingColours: MutableSet<GemType> = mutableSetOf()
         val gemsOnBoard = board.gems
@@ -300,29 +297,20 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                     //two gems of this colour yet
                     while ((amountOfGemColourOnBoard > 0)
                         && (amountOfSameGemColour < missingGemsForCurrentDevCard[it]!!)
-                        && (amountOfSameGemColour < 2)
-                    ) {
+                        && (amountOfSameGemColour < 2)) {
                         amountOfSameGemColour += 1
-                        amountOfGemColourOnBoard -= 1
-                    }
+                        amountOfGemColourOnBoard -= 1 }
                     if (gems.isEmpty() && amountOfSameGemColour == 2) {
                         gems[it] = 2
-                        return Pair(gems,false)
-                    }
+                        return Pair(gems,false) }
                     if (!gems.containsKey(it) && (amountOfGemColourOnBoard > 0)) {
                         gems[it] = 1
-                        takenGems++
-                    }
+                        takenGems++ }
                     gemsOnBoard[it] = gemsOnBoard[it]!!.minus(1)
                     if (gemsOnBoard[it] == 0) {
-                        gemsOnBoard.remove(it)
-                    }
+                        gemsOnBoard.remove(it) }
                     if (takenGems == 3) {
-                        return Pair(gems,true)
-                    }
-                }
-            }
-        }
+                        return Pair(gems,true) } } } }
         //if we still have some gems left
         if (takenGems < 3 && board.gems.isNotEmpty()) {
             // we cannot buy one card after taking gems, so we choose gems which helps us
@@ -330,23 +318,15 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                 if (takenGems < 3 && allMissingColours.contains(it)) {
                     if (!gems.containsKey(it)) {
                         gems[it] = 1
-                        takenGems++
-                    }
-                }
-            }
+                        takenGems++ } } }
             // if we still can take gems and there are some gems on the board, choose random gems
             board.gems.keys.forEach {
                 if (takenGems < 3) {
                     if (!gems.containsKey(it)) {
                         gems[it] = 1
-                        takenGems++
-                    }
-                }
-            }
+                        takenGems++ } } }
         }
-        if (gems.size == 1) {
-            return Pair(gems,false)
-        }
+        if (gems.size == 1) { return Pair(gems,false) }
         return Pair(gems,true)
     }
 

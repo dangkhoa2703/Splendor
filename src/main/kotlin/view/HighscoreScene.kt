@@ -10,7 +10,8 @@ import entity.SplendorImageLoader
 import tools.aqua.bgw.core.Alignment
 import java.awt.Color
 
-/**[MenuScene] that is used for visualizing highscores of previous games. Navigable when clicking the load Highscores button in [StartScene].
+/**[MenuScene] that is used for visualizing highscores of previous games. Navigable when clicking the load Highscores
+ * button in [StartScene].
  */
 class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
 

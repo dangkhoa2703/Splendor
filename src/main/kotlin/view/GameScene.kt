@@ -22,10 +22,13 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * [GameScene] : This is the Scene where most of the action happens in Splendor. The scene shows the complete table at once.
- * A player/AI "sits" on the bottom half of the screen, with a display of his development cards, gems (bottom left) and visited noble tiles
+ * [GameScene] : This is the Scene where most of the action happens in Splendor. The scene shows the complete table at
+ * once.
+ * A player/AI "sits" on the bottom half of the screen, with a display of his development cards, gems (bottom left) and
+ * visited noble tiles
  * if there are any.
- * Displayed at the top part of the screen is the name of current Player . Next to this is a function to see what the other players have in hand, to be
+ * Displayed at the top part of the screen is the name of current Player . Next to this is a function to see what the
+ * other players have in hand, to be
  * able to determine a next move.
  * In the middle of the screen are the open devCards, Noble Tiles.To the far right are the Gems available for taking.
  *  These are available for all players depending on the condition
@@ -412,7 +415,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     }
 
 	/**[moveCardView] : Method to switch a card view */
-    private fun moveCardView(cardView: CardView, targetContainer: GameComponentContainer<CardView>, flip: Boolean = false) {
+    private fun moveCardView(cardView: CardView, targetContainer: GameComponentContainer<CardView>,
+							 flip: Boolean = false) {
 	if (flip) {
 	    when (cardView.currentSide) {
 	        CardView.CardSide.BACK -> cardView.showFront()

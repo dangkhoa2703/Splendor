@@ -58,8 +58,8 @@ class AIServiceTest {
         mutableListOf(devCardFour), mutableListOf(), mutableListOf(devCardThree, devCardFive),
         mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
     private val exampleBoardCalculateDevCardImportanceScore = Board(mutableListOf(nobleTileOne, nobleTileTwo),
-        mutableListOf(), mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardTwo, devCardSix), mutableListOf(),
-        mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
+        mutableListOf(), mutableListOf(devCardOne), mutableListOf(), mutableListOf(devCardTwo, devCardSix),
+        mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.GREEN to 3, GemType.RED to 3))
 
     /**
      * Test for calculateDevCardCostScores in AIService
@@ -212,12 +212,8 @@ class AIServiceTest {
             mutableListOf(), 0, mutableListOf())
         val testPlayer2 = Player("Bob", PlayerType.HUMAN, gems = mutableMapOf(GemType.RED to 2),
             bonus = mutableMapOf(), mutableListOf(), mutableListOf(), 0, mutableListOf())
-
-        val bestDevCards: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0,
-            devCardTwo to 0.5, devCardThree to 0.0)
-        val bestDevCardsTwo: Map<DevCard, Double> = mutableMapOf(devCardSix to 1.0,
-            devCardFive to 0.5, devCardFour to 0.0)
-
+        val bestDevCards = mutableMapOf(devCardOne to 1.0, devCardTwo to 0.5, devCardThree to 0.0)
+        val bestDevCardsTwo = mutableMapOf(devCardSix to 1.0, devCardFive to 0.5, devCardFour to 0.0)
         val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 3))
         val exampleBoard2 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
@@ -262,9 +258,7 @@ class AIServiceTest {
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1),true),
             root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard6))
         // 7. Player can buy no card after taking some gems; the player chooses "take three gems with the first
-        // three missing colours
-        // Player has two red gems
-        // Board has 1 red gem, 1 white gem, 1 green and 2 black gems
+        // three missing colours; player has two red gems; Board has 1 red gem, 1 white gem, 1 green and 2 black gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
             root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard7))
         // 8. Player needs 2 red gems, but there is only 1 red gem on the board left (all other colours are also empty)

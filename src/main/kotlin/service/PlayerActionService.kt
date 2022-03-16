@@ -107,35 +107,32 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     fun takeGems(types : MutableList<GemType>, user : Player){
         val game = rootService.currentGame!!
         if(!game.currentGameState.currentPlayer.hasDoneTurn){
-        val currentGameState = game.currentGameState
-        val board = currentGameState.board
-        if(currentGameState.isInitialState){
-            rootService.gameService.createNewGameState(false)
-        }
-        if(currentGameState.currentPlayer == user)
-        {
-            val numDiffTypes =
-                currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
-            val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
+            val currentGameState = game.currentGameState
+            val board = currentGameState.board
+            if(currentGameState.isInitialState){ rootService.gameService.createNewGameState(false) }
+            if(currentGameState.currentPlayer == user) {
+                val numDiffTypes =
+                    currentGameState.board.gems.filter{it.key != GemType.YELLOW}.filterValues{ it > 0 }.size
+                val numDiffGemTypesInTypes = types.map { it.name }.toSet().size
 
-            // list of gem types has invalid size or content
-            if( types.size > 3 || (types.size == 3 && numDiffGemTypesInTypes != 3) || types.contains(GemType.YELLOW)) {
-                throw IllegalArgumentException("no valid gem/type number") }
-            else if (types.size < 3 && numDiffGemTypesInTypes == types.size && types.size != numDiffTypes) {
-                throw IllegalArgumentException("no valid gem/type number") }
-            else if ( types.size == 2 && numDiffGemTypesInTypes == 1 && board.gems.getValue(types[0]) < 4) {
-                throw IllegalArgumentException("two same gems can only be chosen if four gems of their type are left") }
-            // take gems
-            else{ types.forEach{ gemType ->
-                user.gems[gemType] = user.gems.getValue(gemType) + 1
-                board.gems[gemType] = board.gems.getValue(gemType) - 1 } }
-            rootService.gameService.consecutiveNoAction = 0
-            // update GUI
-            onAllRefreshables{ refreshAfterTakeGems()}
-            // visit by nobleTiles, check gems
-            // rootService.gameService.endTurn()
-        } else { throw IllegalArgumentException("not your turn") }
-       // rootService.gameService.nextPlayer()
+                // list of gem types has invalid size or content
+                if( types.size > 3 || (types.size == 3 && numDiffGemTypesInTypes != 3) ||
+                    types.contains(GemType.YELLOW) ||
+                    (types.size < 3 && numDiffGemTypesInTypes == types.size && types.size != numDiffTypes)) {
+                    throw IllegalArgumentException("no valid gem/type number") }
+                else if ( types.size == 2 && numDiffGemTypesInTypes == 1 && board.gems.getValue(types[0]) < 4) {
+                    throw IllegalArgumentException("two same gems can only be chosen if four gems of their type " +
+                            "are left") }
+                // take gems
+                else{ types.forEach{ gemType ->
+                    user.gems[gemType] = user.gems.getValue(gemType) + 1
+                    board.gems[gemType] = board.gems.getValue(gemType) - 1 } }
+                rootService.gameService.consecutiveNoAction = 0
+                // update GUI
+                onAllRefreshables{ refreshAfterTakeGems()}
+                // visit by nobleTiles, check gems
+                // rootService.gameService.endTurn()
+            } else { throw IllegalArgumentException("not your turn") }
             rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
         } else { throw IllegalArgumentException ("NOT UR TURN") }
     }
@@ -152,9 +149,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val game = rootService.currentGame!!
         if(!game.currentGameState.currentPlayer.hasDoneTurn) {
             val board = game.currentGameState.board
-            if(game.currentGameState.isInitialState){
-                rootService.gameService.createNewGameState(false)
-            }
+            if(game.currentGameState.isInitialState) { rootService.gameService.createNewGameState(false) }
             if (user == game.currentGameState.currentPlayer) {
                 if (rootService.gameService.isCardAcquirable(card, payment)) {
                     if (boardGameCard) {
