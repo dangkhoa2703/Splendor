@@ -19,7 +19,6 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val indexCurrentGameState = gameSettings[1].trim().toInt()
         val simulationSpeed = gameSettings[2].trim().toInt()
         val playerCount = gameSettings[3].trim().toInt()
-        val currentPlayerIndex = gameSettings[4].trim().toInt()
         val validGame = when (gameSettings[5].trim()) {
             "true" -> true
             "false" -> false

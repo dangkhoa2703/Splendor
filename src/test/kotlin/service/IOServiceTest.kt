@@ -3,7 +3,6 @@ package service
 import entity.Highscore
 import entity.PlayerType
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -27,9 +26,6 @@ class IOServiceTest {
         root.gameService.startNewGame(playerList, false, 1)
         val game = root.currentGame
         checkNotNull(game)
-        val currentGame = game.currentGameState
-        val player = currentGame.currentPlayer
-
         root.gameService.nextPlayer()
         root.gameService.nextPlayer()
 

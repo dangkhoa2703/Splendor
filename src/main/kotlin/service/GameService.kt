@@ -152,7 +152,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         var newGameState = rootService.currentGame!!.currentGameState
         val newBoard = newGameState.board
 
-        val player = rootService.currentGame!!.currentGameState.currentPlayer
         if (checkGems()){
             throw IllegalArgumentException("DISCARD GEMS")
         }
