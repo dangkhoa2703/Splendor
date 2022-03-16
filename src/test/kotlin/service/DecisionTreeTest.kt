@@ -3,6 +3,9 @@ package service
 import entity.*
 import kotlin.test.*
 
+/**
+ *  Test class for DecisionTrees
+ * */
 class DecisionTreeTest {
 
     private val rootService: RootService = RootService()

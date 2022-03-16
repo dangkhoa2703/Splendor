@@ -14,8 +14,8 @@ import entity.SplendorImageLoader
 
 class StartScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
-	val imageLoader = SplendorImageLoader()
-	val image = imageLoader.button()
+	private val imageLoader = SplendorImageLoader()
+	private val image = imageLoader.button()
 
 	/**[startNewGameButton] : Button to start a new game.*/
     val startNewGameButton = Button(

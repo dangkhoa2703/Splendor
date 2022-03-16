@@ -5,7 +5,6 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
-import entity.Player
 import entity.SplendorImageLoader
 import java.awt.Color
 
@@ -17,10 +16,10 @@ import java.awt.Color
  */
 
 class GameFinishScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
-    val imageLoader = SplendorImageLoader()
-    val image = imageLoader.button()
-    val backgroundImage = imageLoader.highscoreBackground()
-    val highscores = imageLoader.highscores()
+    private val imageLoader = SplendorImageLoader()
+    private val image = imageLoader.button()
+    private val backgroundImage = imageLoader.highscoreBackground()
+    private val highscores = imageLoader.highscores()
     private val headLineLabel = Label(
         width = 700, height = 200,
         posX = 600 , posY = 135,
@@ -37,52 +36,45 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
     )
 
     /**[rank0] : Label to display winner */
-    val rank0 = Label(
+    private val rank0 = Label(
         420,100,1000,500,"",
         font= Font(size = 28, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
     )
     /**[rank2] : Label to display runner up */
-    val rank1 = Label(
+    private val rank1 = Label(
         420,200,1000,500,"",
         font= Font(size = 25,  color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
     )
 
     /**[rank2] : Label to display third player */
-    val rank2 = Label(
+    private val rank2 = Label(
         420,300,1000,500,"",
         font= Font(size = 23, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
     )
 
     /**[rank3] : Label to display loser */
-    val rank3 = Label(
+    private val rank3 = Label(
         420,400,1000,500,"",
         font= Font(size = 19, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
     )
 
-    val labelList : MutableList<Label> = mutableListOf()
+    private val labelList : MutableList<Label> = mutableListOf()
 
     /**[ranking] : Method used to display the scores in descending order.
      *  Initially , the function checks if we have an existing game.
      *  In the case of an existing game , we sort the scores in descending order using sortBy() and
      *  these are then displayed.
      * */
-    fun ranking (){
-        val rankings : MutableList<Player> = mutableListOf()
-        val game = rootService.currentGame
-        if(game!=null) {
-            for (i in 0..game.currentGameState.playerList.size-1){
-                rankings.add(game.currentGameState.playerList.get(i))
-            }
-            rankings.sortByDescending{ (it.score) }
-
+    private fun ranking (){
+        val game = rootService.currentGame!!
+        val rankings = game.currentGameState.playerList.sortedByDescending { it.score }
             labelList.add(rank0)
             labelList.add(rank1)
             labelList.add(rank2)
             labelList.add(rank3)
-            for(i in 0..rankings.size-1) {
-                labelList.get(i).text = rankings.get(i).name+" has reached "+rankings.get(i).score.toString()+ " Points"
+            for(i in rankings.indices) {
+                labelList[i].text = rankings[i].name + " has reached " + rankings[i].score.toString() + " Points"
             }
-        }
     }
 
     /** [refreshAfterEndGame] : override function of refreshAfterEndGame, various rank texts are refreshed */

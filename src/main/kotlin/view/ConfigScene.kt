@@ -145,7 +145,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    it.isVisible = false
 	    it.opacity = 0.2
 	}
-	for(i in 0..difficultyTexts.size-1) {
+	for(i in difficultyTexts.indices) {
 	    val but: Button = difficultyTexts[i]
 	    var absIndex: Int = selection[i*2+1]
 	    if(absIndex<0) absIndex*=-1
@@ -154,7 +154,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    but.text = difficulties[absIndex]
 	}
 
-	var speedVisible: Boolean = true
+	var speedVisible = true
 	for(i in 0..size) {
 	    textFields[i].isVisible = true
 	    icons[i].isVisible = true

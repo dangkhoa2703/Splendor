@@ -145,11 +145,10 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param card the card the player wants to buy
      * @param boardGameCard true if the card was not reserved first
      * @param payment represents the gems the player chooses to pay with
-     * @param index the position of the card in her line on the bord (index is 1 to 4)
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
-    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int, user : Player){
+    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, user : Player){
         val game = rootService.currentGame!!
         if(!game.currentGameState.currentPlayer.hasDoneTurn) {
             val board = game.currentGameState.board
@@ -205,11 +204,10 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     /**
      * player reserves a card
      * @param card the player wants to reserve
-     * @param index the position of the card in her line on the bord (index is 1 to 4)
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the player already has three reserved cards
      */
-    fun reserveCard(card: DevCard, index:Int, user : Player){
+    fun reserveCard(card: DevCard, user : Player){
         if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
             if(rootService.currentGame!!.currentGameState.isInitialState){
                 rootService.gameService.createNewGameState(false)

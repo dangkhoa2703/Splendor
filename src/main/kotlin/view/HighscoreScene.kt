@@ -14,10 +14,10 @@ import java.awt.Color
  */
 class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
 
-	val imageLoader = SplendorImageLoader()
-	val image = imageLoader.button()
-	val backgroundImage = imageLoader.highscoreBackground()
-	val highscores = imageLoader.highscores()
+	private val imageLoader = SplendorImageLoader()
+	private val image = imageLoader.button()
+	private val backgroundImage = imageLoader.highscoreBackground()
+	private val highscores = imageLoader.highscores()
 	private val headLineLabel = Label(
 		width = 700, height = 200,
 		posX = 600 , posY = 135,
@@ -46,7 +46,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 
 		highscoreList.sortBy { -it.score }
 
-		var player = highscoreList[0]
+		var player: Highscore
 
 		labelList.add(rank0)
 		labelList.add(rank1)
@@ -57,36 +57,36 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 		for(i in 0..4){
 			player= highscoreList[i]
 			val index = i+1
-			labelList.get(i).text=index.toString()+". Place: "+ player.playerName + ": " + player.score
+			labelList[i].text=index.toString()+". Place: "+ player.playerName + ": " + player.score
 		}
 
 	}
 
 	/**[rank0] : Label to display player with the topmost prestige points */
-	val rank0 = Label(
+	private val rank0 = Label(
 		420, 100, 1000, 500, "",
 		font = Font(size = 40, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank1] : Label to display runner up with topmost points */
-	val rank1 = Label(
+	private val rank1 = Label(
 		420, 200, 1000, 500, "",
 		font = Font(size = 36, color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank2] : Label to display third player with most points */
-	val rank2 = Label(
+	private val rank2 = Label(
 		420, 300, 1000, 500, "",
 		font = Font(size = 32, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
 	)
 
 	/**[rank3] : Label to display fourth player with most points */
-	val rank3 = Label(
+	private val rank3 = Label(
 		420, 400, 1000, 500, "",
 		font = Font(size = 28, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
 	)
 	/**[rank4] : Label to display loser of the winners */
-	val rank4 = Label(
+	private val rank4 = Label(
 		420, 500, 1000, 500, "",
 		font = Font(size = 24, color = Color.MAGENTA, fontStyle = Font.FontStyle.ITALIC)
 	)

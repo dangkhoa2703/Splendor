@@ -25,7 +25,7 @@ class PopupScene(
 	visual = imageLoader.nextPlayersImage()
     )
 
-    private fun standartComponents() {
+    private fun standardComponents() {
 	addComponents(
 	    quitButton,
 	)
@@ -58,7 +58,7 @@ class PopupScene(
 
 	val devCards: MutableList<DevCard> = player.devCards
 	
-	for(i in 0..devCards.size-1) {
+	for(i in 0 until devCards.size) {
 	    val devCardLabel = Label(
 		width = 95, height = 150,
 		visual = devCardsLayout[i].frontVisual,
@@ -70,7 +70,7 @@ class PopupScene(
 
 	val saveCards: MutableList<DevCard> = player.reservedCards
 
-	for(i in 0..saveCards.size-1) {
+	for(i in 0 until saveCards.size) {
 	    val saveCardLabel = Label(
 		width = 95, height = 150,
 		visual = saveCardsLayout[i].frontVisual,
@@ -82,7 +82,7 @@ class PopupScene(
 
 	val nobleTiles: MutableList<NobleTile> = player.nobleTiles
 
-	for(i in 0..nobleTiles.size-1) {
+	for(i in 0 until nobleTiles.size) {
 	    val tileLabel = Label(
 		width = 95, height = 150,
 		visual = nobleTilesLayout[i].frontVisual,
@@ -97,13 +97,13 @@ class PopupScene(
 	var j = 0
 	for(gem in gems) {
 	    if(gem.value==0) continue
-	    var gemLabel = Label(
+	    val gemLabel = Label(
 		posX = index*500+25+120, posY = 980 - j*50,
 		width = 25, height = 25,
 		visual = imageLoader.tokenImage(gem.key)
 	    )
 
-	    var gemInfoLabel = Label(
+	    val gemInfoLabel = Label(
 		posX = index*500+25+120+25, posY = 980 - j*50,
 		width = 25, height = 25,
 		text = gem.value.toString(),
@@ -122,7 +122,7 @@ class PopupScene(
 
     override fun refreshAfterPopup(currentPlayer: Player) {
 	clearComponents()
-	standartComponents()
+	standardComponents()
 	
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
@@ -134,9 +134,9 @@ class PopupScene(
 	val playerNobleTiles = gameScene.playerNobleTiles
 
 	var j = 0
-	for(i in 0..playerList.size-1) {
+	for(i in playerList.indices) {
 	    val player = playerList[i]
-	    if(currentPlayer.id.equals(player.id)) continue
+	    if(currentPlayer.id == player.id) continue
 	    drawPlayer(
 		j,
 		player,
@@ -153,6 +153,6 @@ class PopupScene(
 	
 	background = ColorVisual(136, 221, 136)
 	
-	standartComponents()
+	standardComponents()
     }
 }

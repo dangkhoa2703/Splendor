@@ -86,19 +86,19 @@ class PlayerActionServiceTest {
         root.currentGame!!.currentGameState.board.levelThreeCards.add(devCard3)
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 2
         //reserveCard:
-        root.playerActionService.reserveCard(devCard1, 0, player)
+        root.playerActionService.reserveCard(devCard1, player)
         assertFalse(root.currentGame!!.currentGameState.board.levelOneCards.contains(devCard1))
         assertTrue(player.reservedCards.contains(devCard1))
         assertTrue { root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] == 1 }
         assertTrue { player.gems[GemType.YELLOW] == 1 }
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.reserveCard(devCard2, 0, player)
+        root.playerActionService.reserveCard(devCard2, player)
         assertFalse(root.currentGame!!.currentGameState.board.levelTwoCards.contains(devCard2))
         assertTrue(player.reservedCards.contains(devCard2))
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.reserveCard(devCard3, 0, player)
+        root.playerActionService.reserveCard(devCard3, player)
         assertFalse(root.currentGame!!.currentGameState.board.levelThreeCards.contains(devCard3))
         assertTrue(player.reservedCards.contains(devCard3))
         assertTrue { root.currentGame!!.currentGameState.board.gems.getValue(GemType.YELLOW) == 0 }
@@ -106,7 +106,7 @@ class PlayerActionServiceTest {
 
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.reserveCard(root.currentGame!!.currentGameState.board.levelOneOpen[0], 0, player)
+        root.playerActionService.reserveCard(root.currentGame!!.currentGameState.board.levelOneOpen[0], player)
         //assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(root.currentGame!!. currentGameState.board.levelOneOpen[0], 0, player) }
     }
 
@@ -130,7 +130,7 @@ class PlayerActionServiceTest {
         board.levelThreeOpen[1] = devCard4
         board.gems[GemType.YELLOW] = 2
         //reserveCard:
-        root.playerActionService.reserveCard(devCard1, 0, player)
+        root.playerActionService.reserveCard(devCard1, player)
         assertNotEquals(devCard1, root.currentGame!!.currentGameState.board.levelOneOpen[0])
         assertTrue(player.reservedCards.contains(devCard1))
         assertTrue { root.currentGame!!.currentGameState.board.levelOneOpen.size == 4 }
@@ -138,13 +138,13 @@ class PlayerActionServiceTest {
         assertTrue { player.gems.getValue(GemType.YELLOW) == 1 }
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.reserveCard(devCard2, 0, player)
+        root.playerActionService.reserveCard(devCard2, player)
         assertNotEquals(devCard2, root.currentGame!!.currentGameState.board.levelTwoOpen[0])
         assertTrue(player.reservedCards.contains(devCard2))
         assertTrue { root.currentGame!!.currentGameState.board.levelTwoOpen.size == 4 }
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.reserveCard(devCard3, 0, player)
+        root.playerActionService.reserveCard(devCard3, player)
         assertNotEquals(devCard3, root.currentGame!!.currentGameState.board.levelThreeOpen[0])
         assertTrue(player.reservedCards.contains(devCard3))
         assertTrue { root.currentGame!!.currentGameState.board.levelThreeOpen.size == 4 }
@@ -154,7 +154,7 @@ class PlayerActionServiceTest {
         player = root.currentGame!!.currentGameState.currentPlayer
         player.gems[GemType.YELLOW] = 0
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
-        root.playerActionService.reserveCard(devCard5, index = 0, player)
+        root.playerActionService.reserveCard(devCard5, player)
         assertEquals(0, player.gems[GemType.YELLOW])
     }
 
@@ -183,7 +183,7 @@ class PlayerActionServiceTest {
         board.levelThreeOpen[0] = devCard3
 
         //buy card from board level 1
-        root.playerActionService.buyCard(devCard1, true, player.gems, 0, player)
+        root.playerActionService.buyCard(devCard1, true, player.gems, player)
         assertTrue { player.devCards.contains(devCard1) }
         assertFalse { board.levelOneOpen.contains(devCard1) }
         assertTrue { board.levelOneOpen.size == 4 }
@@ -197,24 +197,24 @@ class PlayerActionServiceTest {
         //buy card from other levels or reserved cards
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.buyCard(devCard2, true, gemMap, 0, player)
+        root.playerActionService.buyCard(devCard2, true, gemMap, player)
         assertFalse { board.levelOneOpen.contains(devCard2) }
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.buyCard(devCard3, true, gemMap, 0, player)
+        root.playerActionService.buyCard(devCard3, true, gemMap, player)
         assertFalse { board.levelOneOpen.contains(devCard3) }
         player.devCards.remove(devCard1)
         player.reservedCards.add(devCard1)
         root.gameService.nextPlayer()
         player = root.currentGame!!.currentGameState.currentPlayer
-        root.playerActionService.buyCard(devCard1, false, gemMap, 0, player)
+        root.playerActionService.buyCard(devCard1, false, gemMap, player)
         assertFalse { player.reservedCards.contains(devCard1) }
 
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
         player.gems[GemType.RED] = 10
         player.gems[GemType.GREEN] = 10
-        root.playerActionService.buyCard(devCard1, false, gemMap, 0, player)
+        root.playerActionService.buyCard(devCard1, false, gemMap, player)
         board.levelOneOpen[0] = devCard1
     }
 

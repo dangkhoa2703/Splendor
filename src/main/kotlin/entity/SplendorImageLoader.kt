@@ -133,7 +133,7 @@ class SplendorImageLoader {
     fun velocity(index: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
-		SplendorImageLoader::class.java.getResource("/velocity/velocity_"+index.toString()+".png")
+		SplendorImageLoader::class.java.getResource("/velocity/velocity_$index.png")
 	    )
 	)
     }
@@ -141,7 +141,7 @@ class SplendorImageLoader {
     fun shuffleImage(index: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
-		SplendorImageLoader::class.java.getResource("/shuffle/shuffle_"+index.toString()+".png")
+		SplendorImageLoader::class.java.getResource("/shuffle/shuffle_$index.png")
 	    )
 	)
     }
@@ -174,7 +174,7 @@ class SplendorImageLoader {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
-		    "/tokens/token"+int+".png"
+			"/tokens/token$int.png"
 		)
 	    )
 	)
@@ -220,7 +220,7 @@ class SplendorImageLoader {
 	val idString = (id).toString()
 	return ImageVisual(
 	    ImageIO.read(
-		SplendorImageLoader::class.java.getResource("/cards/"+idString+".jpg")
+		SplendorImageLoader::class.java.getResource("/cards/$idString.jpg")
 	    )
 	)
     }

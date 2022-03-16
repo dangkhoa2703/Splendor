@@ -10,7 +10,7 @@ class Turn (
     val gems: Map<GemType, Int>,
     val card: List<DevCard>,
     val turnType: TurnType,
-    val takeThreeDifferentGems: Boolean = false) {
+    private val takeThreeDifferentGems: Boolean = false) {
 
     /** Variable to temporarily save calculated score for turn */
     var evaluation: Double = -1.0
@@ -20,9 +20,9 @@ class Turn (
         if (other !is Turn)
             return false
         val otherTurn: Turn = other
-        return otherTurn.gems.equals(gems) && otherTurn.card.equals(card)
-                && otherTurn.turnType.equals(turnType)
-                && otherTurn.takeThreeDifferentGems.equals(takeThreeDifferentGems)
+        return otherTurn.gems == gems && otherTurn.card == card
+                && otherTurn.turnType == turnType
+                && otherTurn.takeThreeDifferentGems == takeThreeDifferentGems
     }
 
 }
