@@ -267,17 +267,11 @@ class AIServiceTest {
         // Board has 1 red gem, 1 white gem, 1 green and 2 black gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
             root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard7))
-        // 8. Player needs 2 red gems, but there is only one red gem on the board left
-        // (all other colours are also empty)
+        // 8. Player needs 2 red gems, but there is only 1 red gem on the board left (all other colours are also empty)
         assertEquals(Pair(mutableMapOf(GemType.RED to 1),false),
             root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard8))
         // 9. There are only two gems on the board left
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),true),
             root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard9))
-
-        /**
-         * assertEquals(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),
-         *   root.aiService.calculateMissingGems(testPlayer2,devCardOne.price))
-         */
     }
 }

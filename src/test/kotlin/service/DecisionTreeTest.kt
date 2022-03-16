@@ -33,9 +33,13 @@ class DecisionTreeTest {
         Player("Peter", PlayerType.HUMAN)
     )
 
+    /**
+     * Test for simulateMove gems
+     */
     @Test
     fun testSimulateMove_gems() {
-        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree.simulateMove(TurnType.TAKE_GEMS, board, player, enemies)
+        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+            .simulateMove(TurnType.TAKE_GEMS, board, player, enemies)
         assertNotNull(test)
         assertEquals(Turn(mutableMapOf(
             GemType.RED to 1,
@@ -54,10 +58,14 @@ class DecisionTreeTest {
         assertEquals(comparePlayer, test.second.second)
     }
 
+    /**
+     * Test for simulateMove null
+     */
     @Test
     fun testSimulateMove_null() {
         val player = Player("test", PlayerType.HUMAN)
-        var test: Pair<Turn, Pair<Board, Player>>? = decisionTree.simulateMove(TurnType.BUY_CARD, this.board, player, enemies)
+        var test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+            .simulateMove(TurnType.BUY_CARD, this.board, player, enemies)
         assertNull(test)
         val board: Board = this.board.cloneForSimulation()
         board.gems.clear()
@@ -65,10 +73,14 @@ class DecisionTreeTest {
         assertNull(test)
     }
 
+    /**
+     * Test for simulateMove cards
+     */
     @Test
     fun testSimulateMove_cards() {
         player.gems[GemType.RED] = 2
-        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree.simulateMove(TurnType.BUY_CARD, board, player, enemies)
+        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+            .simulateMove(TurnType.BUY_CARD, board, player, enemies)
         assertNotNull(test)
         val boughtCard = board.levelOneOpen[0]
         assertEquals(Turn(mutableMapOf(), listOf(boughtCard), TurnType.BUY_CARD), test.first)
