@@ -19,10 +19,10 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
     {
         val decisionTree = DecisionTree(rootService)
         val currentBoard = gameState.board
-        val playerList = gameState.playerList as MutableList<Player>
+        var playerList = gameState.playerList as MutableList<Player>
         if (playerList[0] != player) {
-            playerList.remove(player)
-            playerList.add(0,player)
+            playerList = playerList.subList(playerList.indexOf(player), playerList.size)
+                .plus(playerList.subList(0, playerList.indexOf(player))) as MutableList<Player>
         }
         //Calculate amount of turns for computeDecisionTree
         val aiDifficulty = when {
@@ -288,13 +288,6 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val allMissingColours: MutableSet<GemType> = mutableSetOf()
         val gemsOnBoard = board.gems
         devCardsWithMissingGems.forEach { devCard ->
-            //if no gems are left
-            if (gemsOnBoard.isEmpty()) {
-                if (gems.size == 1) {
-                    return Pair(gems,false)
-                }
-                return Pair(gems,true)
-            }
             val missingGemsForCurrentDevCard: MutableMap<GemType, Int> = calculateMissingGems(player,devCard.price)
             val sortedListOfMissingGems: List<GemType> = missingGemsForCurrentDevCard.keys
                 .sortedBy { missingGemsForCurrentDevCard[it] }
@@ -320,7 +313,10 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                         gems[it] = 1
                         takenGems++
                     }
-                    gemsOnBoard[it]!!.minus(1)
+                    gemsOnBoard[it] = gemsOnBoard[it]!!.minus(1)
+                    if (gemsOnBoard[it] == 0) {
+                        gemsOnBoard.remove(it)
+                    }
                     if (takenGems == 3) {
                         return Pair(gems,true)
                     }
@@ -347,6 +343,9 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                     }
                 }
             }
+        }
+        if (gems.size == 1) {
+            return Pair(gems,false)
         }
         return Pair(gems,true)
     }
