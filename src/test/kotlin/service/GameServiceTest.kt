@@ -22,14 +22,14 @@ class GameServiceTest {
         root.gameService.currentPlayerIndex = 0
 
         val playerList1 = listOf(Pair("p1",PlayerType.HUMAN))
-        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
+        val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.EASY))
         val playerList3 = listOf(
-            Pair("p1",PlayerType.HUMAN),
-            Pair("p2",PlayerType.HUMAN),
+            Pair("p1",PlayerType.MEDIUM),
+            Pair("p2",PlayerType.HARD),
             Pair("p3",PlayerType.HUMAN))
         val playerList5 = listOf(
             Pair("p1",PlayerType.HUMAN),
-            Pair("p2",PlayerType.HUMAN),
+            Pair("p2",PlayerType.EASY),
             Pair("p3",PlayerType.HUMAN),
             Pair("p4",PlayerType.HUMAN),
             Pair("p5",PlayerType.HUMAN))
@@ -69,8 +69,12 @@ class GameServiceTest {
         /** tests whether payment for a given card is correctly recognized as valid or invalid */
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
-        val devCardOne = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
-            bonus = GemType.BLACK, prestigePoints = 0)
+        val devCardOne = DevCard(
+            id = 2,
+            price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),
+            level =1,
+            bonus = GemType.BLACK,
+            prestigePoints = 0)
         val validPaymentWithoutJoker = mapOf(GemType.YELLOW to 0, GemType.GREEN to 3, GemType.RED to 4)
         val validPaymentWithJoker = mapOf(GemType.YELLOW to 2, GemType.GREEN to 1, GemType.RED to 2)
         val invalidPayment = mapOf(GemType.YELLOW to 1, GemType.GREEN to 2, GemType.RED to 1)

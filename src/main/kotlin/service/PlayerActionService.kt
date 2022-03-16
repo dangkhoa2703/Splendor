@@ -41,7 +41,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @return a hint for the best next move for the current player and current situation
      */
     fun showHint(turn:Turn): String{
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
             if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
         val hint :String
         val board = rootService.currentGame!!.currentGameState.board
@@ -108,7 +108,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun takeGems(types : MutableList<GemType>, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
 
         val game = rootService.currentGame!!
         val currentGameState = game.currentGameState
@@ -151,12 +151,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param card the card the player wants to buy
      * @param boardGameCard true if the card was not reserved first
      * @param payment represents the gems the player chooses to pay with
-     * @param index the position of the card in her line on the bord (index is 1 to 4)
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
-    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
+    fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, user : Player){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn) {
             if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
             val game = rootService.currentGame!!
             val board = game.currentGameState.board
@@ -211,12 +210,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     /**
      * player reserves a card
      * @param card the player wants to reserve
-     * @param index the position of the card in her line on the bord (index is 1 to 4)
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the player already has three reserved cards
      */
-    fun reserveCard(card: DevCard, index:Int, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
+    fun reserveCard(card: DevCard, user : Player){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
             if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
         val board = rootService.currentGame!!.currentGameState.board
         if(user == rootService.currentGame!!.currentGameState.currentPlayer){
@@ -269,7 +267,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun selectNobleTile(card: NobleTile, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn) {
             if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
             val game = rootService.currentGame!!
             val board = game.currentGameState.board
@@ -300,7 +298,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun returnGems(gems: List<GemType>, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn) {
             val game = rootService.currentGame!!
             val board = game.currentGameState.board
             // if(user == game.currentGameState.currentPlayer)
@@ -317,7 +315,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
     }
 
     fun countGems(): Int{
-        var counter: Int =0
+        var counter =0
         val player =rootService.currentGame!!.currentGameState.currentPlayer
         for (gem in player.gems){
             counter+=gem.value

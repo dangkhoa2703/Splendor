@@ -329,7 +329,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val isSaved: Boolean = saved.contains(devCard)
 	
 	try{
-	    playerActionService.buyCard(devCard, !isSaved, playerGemSelection, 0, player)
+	    playerActionService.buyCard(devCard, !isSaved, playerGemSelection, player)
 	    if(isSaved) saved-=devCard
 	    return true
 	}
@@ -354,7 +354,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val player = currentPlayer as Player
 
 	try {
-	    playerActionService.reserveCard(devCard, 0, player)
+	    playerActionService.reserveCard(devCard, player)
 	    return true
 	}
 	catch(e: Exception) {

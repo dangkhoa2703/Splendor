@@ -11,7 +11,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * loads a game from the given file path
      */
-    fun loadGame(path:String):Splendor{
+    fun loadGame(path:String){
         //get information for splendor
         val gameSettingFile = File("$path/gameSetting")
         val gameSettings = gameSettingFile.readLines()
@@ -19,8 +19,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val indexCurrentGameState = gameSettings[1].trim().toInt()
         val simulationSpeed = gameSettings[2].trim().toInt()
         val playerCount = gameSettings[3].trim().toInt()
-        val currentPlayerIndex = gameSettings[4].trim().toInt()
-        val validGame = when (gameSettings[5].trim()) {
+        val validGame = when (gameSettings[4].trim()) {
             "true" -> true
             "false" -> false
             else -> { throw IllegalStateException("no valid game parameter") }
@@ -42,8 +41,8 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         //create splendor
         val currentGameState = gameStates[indexCurrentGameState-1] //muss geprüft werden!!!!
         val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame)
-        rootService.gameService.consecutiveNoAction = gameSettings[6].trim().toInt()
-        return splendor
+        rootService.gameService.consecutiveNoAction = gameSettings[5].trim().toInt()
+        rootService.currentGame = splendor
     }
 
 
@@ -207,11 +206,11 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             indexCurrentGame++
         }
 
+
         //create new file and save game state
         while(toSaveGameState.hasNext()){
             val fileName = "$path/gameState${totalGameState}.txt"
             val saveFile = File(fileName)
-            saveFile.writeText("")
             saveGameState(toSaveGameState,saveFile)
             totalGameState++
             toSaveGameState = toSaveGameState.next
@@ -224,45 +223,42 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             out.write(indexCurrentGame.toString() + "\n")
             out.write(game.simulationSpeed.toString() + "\n" )
             out.write(game.currentGameState.playerList.size.toString() + "\n")
-            out.write(rootService.gameService.currentPlayerIndex.toString() +"\n")
             out.write(rootService.currentGame!!.validGame.toString() + "\n")
             out.write(rootService.gameService.consecutiveNoAction.toString() + "\n")
         }
     }
 
-    /**
-     * saves a gameState to a file
-     */
     private fun saveGameState(gameState: GameState, file: File){
 
         val players = gameState.playerList
         val board = gameState.board
+        var saveContent = ""
 
-            file.bufferedWriter().use { out ->
-                for (player in players) {
-                    out.write(player.name + "\n")
-                    out.write(player.playerType.toString() + "\n")
-                    out.write(player.gems.toString() + "\n")
-                    out.write(player.bonus.toString() + "\n")
-                    out.write(cardToString(player.reservedCards, isDevCard = true) + "\n")
-                    out.write(cardToString(nobleTileList = player.nobleTiles, isDevCard = false) + "\n")
-                    out.write(player.score.toString() + "\n")
-                    out.write(player.devCards.toString() + "\n" + "\n" + "\n")
-                }
-                //save current board infos
-                out.write(cardToString(nobleTileList = board.nobleTiles, isDevCard = false) + "\n")
-                out.write(cardToString(board.levelOneCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelOneOpen, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelTwoCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelTwoOpen, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelThreeCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelThreeOpen, isDevCard = true) + "\n")
-                out.write(board.gems.toString() + "\n"+ "\n"+ "\n")
-                out.write(players.indexOf(gameState.currentPlayer).toString())
-            }
+        for (player in players) {
+            saveContent += "${player.name}\n" +
+                    "${player.playerType}\n" +
+                    "${player.gems}\n" +
+                    "${player.bonus}\n" +
+                    "${cardToString(player.reservedCards, isDevCard = true)}\n" +
+                    "${cardToString(nobleTileList = player.nobleTiles, isDevCard = false)}\n" +
+                    "${player.score}\n" +
+                    "${player.devCards}\n\n\n"
+        }
 
+        //save current board infos
+        saveContent += "${cardToString(nobleTileList = board.nobleTiles, isDevCard = false)}\n" +
+                "${cardToString(board.levelOneCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelOneOpen, isDevCard = true)}\n" +
+                "${cardToString(board.levelTwoCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelTwoOpen, isDevCard = true)}\n" +
+                "${cardToString(board.levelThreeCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelThreeOpen, isDevCard = true)}\n" +
+                "${board.gems}\n\n\n" +
+                //currentPlayerIndex
+                "${rootService.gameService.currentPlayerIndex}"
+
+        file.writeText(saveContent)
     }
-
 
     /** saves a highscore to a file including highscores of different games; maximum 10*/
     fun saveHighscore(score : Highscore) {
