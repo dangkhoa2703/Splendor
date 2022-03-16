@@ -73,6 +73,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             playerList[0],
             playerList,
             board)
+        gameState.isInitialState = true
 
         //create Splendor(current game)
         val splendor = Splendor(
@@ -85,6 +86,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         rootService.currentGame = splendor
         //createNewGameState(false)
+
         onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
     }
@@ -92,7 +94,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     /**
      * create a new game state, link it to the chain and set the pointer to this game state
      */
-    fun createNewGameState(newIndex:Boolean):GameState{
+    fun createNewGameState(notFirstGameState:Boolean):GameState{
         val game = rootService.currentGame
         checkNotNull(game)
         val currentGameState = game.currentGameState
@@ -119,19 +121,27 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
                     , player.devCards.toMutableList(), player.id)
             )
         }
-        if(newIndex){
+
+        if(notFirstGameState){
             currentPlayerIndex = (currentPlayerIndex + 1) % newPlayerList.size
         }
         val newGameState = GameState(
             newPlayerList[currentPlayerIndex],
             newPlayerList,
             tempBoard)
-
-        //bind new gameState to chain and set pointer to the newGameState
-        newGameState.previous = currentGameState
-        currentGameState.next = newGameState
-        game.currentGameState = newGameState
-
+        if(notFirstGameState) {
+            //bind new gameState to chain and set pointer to the newGameState
+            newGameState.previous = currentGameState
+            currentGameState.next = newGameState
+            game.currentGameState = newGameState
+        }
+        else{
+            //for undo, put new gamestate at beginning, is used to create first game state
+            currentGameState.previous = newGameState
+            newGameState.next = currentGameState
+            currentGameState.isInitialState = false
+            newGameState.isInitialState = true
+        }
         return newGameState
     }
 
@@ -143,9 +153,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val newBoard = newGameState.board
 
         val player = rootService.currentGame!!.currentGameState.currentPlayer
-        var numberPlayerGems = 0
-        for (gemType in GemType.values()){numberPlayerGems+=(player.gems.getValue(gemType))}
-        if (numberPlayerGems>=10){
+        if (checkGems()){
             throw IllegalArgumentException("DISCARD GEMS")
         }
         // if current player reach 15 or above -> end game
