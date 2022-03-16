@@ -727,6 +727,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
 
+	game.turnCount++
+
 	currentPlayer = game.currentGameState.currentPlayer
 	currentPlayerIndex = game.currentGameState.playerList.indexOf(currentPlayer)
 	checkNotNull(currentPlayer) { "No player found."}

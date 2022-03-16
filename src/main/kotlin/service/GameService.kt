@@ -18,21 +18,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         // create players
         val playerList = mutableListOf<Player>()
-        for(player in players) {
-            playerList.add(Player(player.first,player.second)) }
+        for(player in players) { playerList.add(Player(player.first,player.second)) }
+
         // check if order should be randomized
-        if (randomizedTurns) {
-            playerList.shuffle()
-        }
-        for((index, player) in playerList.withIndex()){
-            player.id = index
-        }
+        if (randomizedTurns) { playerList.shuffle() }
+
+        for((index, player) in playerList.withIndex()) { player.id = index }
+
         val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
-
         val levelTwoStack = createCardStack(2)
         levelTwoStack.shuffle()
-
         val levelThreeStack = createCardStack(3)
         levelThreeStack.shuffle()
 
@@ -48,38 +44,14 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 	    val levelThreeOpen = tempList
 	    for(card in tempList) levelThreeStack.remove(card)
 
-
-//	    playerList[0].gems.put(GemType.GREEN, 99)
-//	    playerList[0].gems.put(GemType.RED, 99)
-//	    playerList[0].gems.put(GemType.BLUE, 99)
-//	    playerList[0].gems.put(GemType.WHITE, 99)
-//	    playerList[0].gems.put(GemType.YELLOW, 99)
-//	    playerList[0].gems.put(GemType.BLACK, 99)
-
         // create Board
-        val board = Board(
-            createNobleTiles(players.size),
-            levelOneStack,
-            levelOneOpen,
-            levelTwoStack,
-            levelTwoOpen,
-            levelThreeStack,
-            levelThreeOpen)
-
+        val board = Board(createNobleTiles(players.size), levelOneStack, levelOneOpen, levelTwoStack, levelTwoOpen,
+            levelThreeStack, levelThreeOpen)
         //create GameState
-        val gameState = GameState(
-            playerList[0],
-            playerList,
-            board)
+        val gameState = GameState(playerList[0], playerList, board)
         gameState.isInitialState = true
-
         //create Splendor(current game)
-        val splendor = Splendor(
-            simulationSpeed,
-            gameState,
-            mutableListOf())
-
-
+        val splendor = Splendor(simulationSpeed, gameState, mutableListOf())
 
         rootService.currentGame = splendor
         //createNewGameState(false)
