@@ -37,17 +37,17 @@ class IOServiceTest {
         root.ioService.saveGame("src/test/resources/testSaveFile")
 
         //test save file
-        val gameState3 = File("src/test/resources/testSaveFile/gameState3.txt").readLines()
+        val gameState2 = File("src/test/resources/testSaveFile/gameState2.txt").readLines()
         val gameSetting = File("src/test/resources/testSaveFile/gameSetting").readLines()
 
-        assertEquals("32",gameState3[36])
-        assertEquals(10,gameState3[12].slice(5..6).toInt())
+        assertEquals("32",gameState2[36])
+        assertEquals(10,gameState2[12].slice(5..6).toInt())
         assertEquals("true", gameSetting[4])
 
         root.ioService.loadGame("src/test/resources/testSaveFile")
         val loadGame = root.currentGame
         checkNotNull(loadGame)
-        assertEquals(2,root.gameService.currentPlayerIndex)
+        assertEquals(2,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(32,loadGame.currentGameState.playerList[3].score)
 
         //test Gems exception

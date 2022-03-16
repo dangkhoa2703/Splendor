@@ -41,7 +41,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         //create splendor
         val currentGameState = gameStates[indexCurrentGameState-1] //muss geprüft werden!!!!
         val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame)
-        rootService.gameService.consecutiveNoAction = gameSettings[5].trim().toInt()
+
         rootService.currentGame = splendor
     }
 
@@ -49,24 +49,34 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /** loads a game state */
     fun loadGameState(file: File,numberPlayers:Int):GameState{
         val lines = file.readLines()
+        val players = mutableListOf<Player>()
+        var nextLineAt = 0
+
+        for(i in 0 until numberPlayers){
+            val line = lines.subList(i*10, i*10+8)
+            players.add(createPlayerFromLines(line))
+            nextLineAt += 10
+        }
+
+
 
         //create Players
-        val players = mutableListOf<Player>()
-        var nextLineAt = 20
-        val playerOneLines = lines.subList(0,8)
-        players.add(createPlayerFromLines(playerOneLines))
-        val playerTwoLines = lines.subList(10,18)
-        players.add(createPlayerFromLines(playerTwoLines))
-        if (numberPlayers>2){
-            val playerThreeLines = lines.subList(20,28)
-            players.add(createPlayerFromLines(playerThreeLines))
-            nextLineAt = 30
-            if(numberPlayers==4){
-                val playerFourLines = lines.subList(30,38)
-                players.add(createPlayerFromLines(playerFourLines))
-                nextLineAt = 40
-            }
-        }
+//        val players = mutableListOf<Player>()
+//        var nextLineAt = 20
+//        val playerOneLines = lines.subList(0,8)
+//        players.add(createPlayerFromLines(playerOneLines))
+//        val playerTwoLines = lines.subList(10,18)
+//        players.add(createPlayerFromLines(playerTwoLines))
+//        if (numberPlayers>2){
+//            val playerThreeLines = lines.subList(20,28)
+//            players.add(createPlayerFromLines(playerThreeLines))
+//            nextLineAt = 30
+//            if(numberPlayers==4){
+//                val playerFourLines = lines.subList(30,38)
+//                players.add(createPlayerFromLines(playerFourLines))
+//                nextLineAt = 40
+//            }
+//        }
 
         //create board
         val boardFileLines = lines.subList(nextLineAt,nextLineAt+9)
@@ -92,7 +102,10 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         //create gameState
         val currentPlayer = players[lines[nextLineAt+10].toInt()]
-        return GameState(currentPlayer, players, board)
+        val game = GameState(currentPlayer, players, board)
+        game.currentPlayerIndex = lines[nextLineAt+10].toInt()
+        game.consecutiveNoAction = lines[nextLineAt+11].toInt()
+        return game
     }
 
     /**
@@ -223,7 +236,6 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             out.write(game.simulationSpeed.toString() + "\n" )
             out.write(game.currentGameState.playerList.size.toString() + "\n")
             out.write(rootService.currentGame!!.validGame.toString() + "\n")
-            out.write(rootService.gameService.consecutiveNoAction.toString() + "\n")
         }
     }
 
@@ -253,8 +265,9 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
                 "${cardToString(board.levelThreeCards, isDevCard = true)}\n" +
                 "${cardToString(board.levelThreeOpen, isDevCard = true)}\n" +
                 "${board.gems}\n\n\n" +
-                //currentPlayerIndex
-                "${rootService.gameService.currentPlayerIndex}"
+                //currentPlayerIndex and consecutiveNoAction
+                "${rootService.currentGame!!.currentGameState.currentPlayerIndex}\n" +
+                "${rootService.currentGame!!.currentGameState.consecutiveNoAction}\n"
 
         file.writeText(saveContent)
     }

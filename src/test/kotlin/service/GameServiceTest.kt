@@ -16,10 +16,10 @@ class GameServiceTest {
     /** tests if games start correctly */
     @Test
     fun testCreateNewGame() {
-        // set currentPlayerIndex
-        root.gameService.currentPlayerIndex = 1
-        assertEquals(1, root.gameService.currentPlayerIndex)
-        root.gameService.currentPlayerIndex = 0
+//        // set rootService.currentGame!!.currentGameState.currentPlayerIndex
+//        root.currentGame!!.currentGameState.currentPlayerIndex = 1
+//        assertEquals(1, root.currentGame!!.currentGameState.currentPlayerIndex)
+//        root.currentGame!!.currentGameState.currentPlayerIndex = 0
 
         val playerList1 = listOf(Pair("p1",PlayerType.HUMAN))
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.EASY))
@@ -102,8 +102,8 @@ class GameServiceTest {
         checkNotNull(game)
 
         root.gameService.nextPlayer()
-        assertEquals(1,root.gameService.currentPlayerIndex)
-        assertEquals(0,root.gameService.consecutiveNoAction)
+        assertEquals(1,root.currentGame!!.currentGameState.currentPlayerIndex)
+        assertEquals(0,root.currentGame!!.currentGameState.consecutiveNoAction)
 
         //next player cannot make any move
         game.currentGameState.playerList[0].reservedCards.addAll(
@@ -117,15 +117,15 @@ class GameServiceTest {
 
         root.gameService.nextPlayer()
         println(game.currentGameState.board.gems.toString())
-        assertEquals(0,root.gameService.currentPlayerIndex)
-        assertEquals(1,root.gameService.consecutiveNoAction)
+        assertEquals(0,root.currentGame!!.currentGameState.currentPlayerIndex)
+        assertEquals(1,root.currentGame!!.currentGameState.consecutiveNoAction)
 
         game.currentGameState.playerList[0].score = 15
         root.gameService.nextPlayer()
         assertEquals("p1",game.currentGameState.playerList[0].name)
 
         // test if game state are correctly create
-        root.gameService.consecutiveNoAction = 0
+        root.currentGame!!.currentGameState.consecutiveNoAction = 0
         root.gameService.nextPlayer()
         val newGame = root.currentGame
         checkNotNull(newGame)
@@ -137,7 +137,7 @@ class GameServiceTest {
 
         // test if no player can make any move
         val tempSortedList = game.currentGameState.playerList.sortedByDescending { player -> player.score }
-        root.gameService.consecutiveNoAction = game.currentGameState.playerList.size
+        root.currentGame!!.currentGameState.consecutiveNoAction = game.currentGameState.playerList.size
         root.gameService.nextPlayer()
         assertEquals(tempSortedList, game.currentGameState.playerList)
 

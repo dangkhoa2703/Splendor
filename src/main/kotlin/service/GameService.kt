@@ -8,8 +8,6 @@ import java.io.File
  * */
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
-    var consecutiveNoAction = 0
-    var currentPlayerIndex = 0
 
     /** initializes a new game and connects it to the rootService */
     fun startNewGame(
@@ -81,11 +79,12 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             gameState,
             mutableListOf())
 
-        consecutiveNoAction = 0
-        currentPlayerIndex = 0
+
 
         rootService.currentGame = splendor
         //createNewGameState(false)
+        rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
+        rootService.currentGame!!.currentGameState.currentPlayerIndex = 0
 
         onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
@@ -122,14 +121,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             )
         }
 
+        var nextPlayerIndex = 0
         if(notFirstGameState){
-            currentPlayerIndex = (currentPlayerIndex + 1) % newPlayerList.size
+            nextPlayerIndex =
+                (rootService.currentGame!!.currentGameState.currentPlayerIndex + 1) % newPlayerList.size
         }
         val newGameState = GameState(
-            newPlayerList[currentPlayerIndex],
+            newPlayerList[nextPlayerIndex],
             newPlayerList,
             tempBoard)
         if(notFirstGameState) {
+            newGameState.currentPlayerIndex = nextPlayerIndex
             //bind new gameState to chain and set pointer to the newGameState
             newGameState.previous = currentGameState
             currentGameState.next = newGameState
@@ -166,18 +168,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         newGameState = createNewGameState(true)
 
-        //update currentPlayerIndex and check if the next player can make a valid move
+        //check if the next player can make a valid move
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
         val affordableCards = acquirableCards().size
         val reservedCards = newGameState.currentPlayer.reservedCards.size
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
-            consecutiveNoAction++
-            println("plus one")
+            newGameState.consecutiveNoAction++
         }
 
         // if no player can make any move, end game with tie result
-        if(consecutiveNoAction == newGameState.playerList.size){
+        if(rootService.currentGame!!.currentGameState.consecutiveNoAction == newGameState.playerList.size){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
             saveHighscoresAfterEndGame()
 //            onAllRefreshables { refreshAfterEndGame(true) }

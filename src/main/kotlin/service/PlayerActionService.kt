@@ -19,7 +19,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val game = rootService.currentGame!!
         if(game.currentGameState.hasPrevious()) {
             game.currentGameState = game.currentGameState.previous
-            game.validGame = false }
+            game.validGame = false
+        }
         else throw IllegalStateException("a previous state does not exist")
 	    onAllRefreshables { refreshAfterEndTurn() }
     }
@@ -129,7 +130,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             else{ types.forEach{ gemType ->
                 user.gems[gemType] = user.gems.getValue(gemType) + 1
                 board.gems[gemType] = board.gems.getValue(gemType) - 1 } }
-            rootService.gameService.consecutiveNoAction = 0
+            rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
             // update GUI
             onAllRefreshables{ refreshAfterTakeGems()}
             // visit by nobleTiles, check gems
@@ -149,8 +150,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @throws IllegalArgumentException if the card can't be bought with given payment (and boni)
      */
     fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, user : Player){
-        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn) {
-            if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
+//        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn) {
+//            if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
             val game = rootService.currentGame!!
             val board = game.currentGameState.board
             if(game.currentGameState.isInitialState){
@@ -188,7 +189,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                     user.bonus[card.bonus] = user.bonus.getValue(card.bonus) + 1
                     user.devCards.add(card)
                 } else throw IllegalArgumentException("card is not acquirable")
-                rootService.gameService.consecutiveNoAction = 0
+                rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
                 // update GUI
                 //refreshAfterBuyCard()
                 // visit by nobleTiles, check gems
@@ -199,7 +200,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             //rootService.gameService.nextPlayer()
             onAllRefreshables { refreshAfterBuyCard(card) }
             rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
-        } else { throw IllegalArgumentException("NOT UR TURN") }
     }
 
     /**
@@ -244,7 +244,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                     board.gems[GemType.YELLOW] = board.gems.getValue(GemType.YELLOW) - 1 }
             }
             else throw IllegalArgumentException("a player can only reserve up to three cards")
-            rootService.gameService.consecutiveNoAction = 0
+            rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
             // update GUI
             // refreshAfterReserveCard()
             // visit by nobleTiles, check gems

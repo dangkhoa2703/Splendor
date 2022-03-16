@@ -17,6 +17,8 @@ class GameState(
     var previous: GameState = this
     var isInitialState: Boolean = false
 
+    var currentPlayerIndex = 0
+    var consecutiveNoAction = 0
     /** gets indication whether a gameState follows */
     fun hasNext(): Boolean{
         return (next != this)
