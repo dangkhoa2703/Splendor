@@ -21,7 +21,7 @@ private const val LOAD_IMAGE = "savegame.png"
 private const val HIGHSCORES_IMAGE = "highscores.png"
 
 /**
- * Class to load Images from ressources
+ * Class to load Images from resources
  */
 class SplendorImageLoader {
 
@@ -38,29 +38,33 @@ class SplendorImageLoader {
 	    )
 	)
     }
- 
+
+	/**[nextPlayersImage]: function that returns next players image
+	 * @return image(players.png)*/
     fun nextPlayersImage(): ImageVisual {
 	return image("/players.png")
     }
 
+	/**[saveGameImage]: function that returns save game image
+	 * @return image(SAVEGAME_IMAGE)*/
     fun saveGameImage(): ImageVisual {
 	return image(SAVEGAME_IMAGE)
     }
-    
-    /**
-     * function that returns Human Icon
-     */
+
+	/**[humanIcon]: function that returns Human Icon
+	 * @return image(HUMAN_ICON)*/
     fun humanIcon(): ImageVisual {
 	return image(HUMAN_ICON)
     }
 
+	/**[highscores]: function that returns highscores
+	 * @return highscores.png*/
     fun highscores(): ImageVisual {
 	return image("/highscores.png")
     }
 
-    /**
-     * function that returns Start Background
-     */
+	/**[startBackground]: function that returns startbackground
+	 * @return Splendor Background*/
     fun startBackground(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -68,9 +72,9 @@ class SplendorImageLoader {
 	    )
 	)
     }
-    /**
-     * function that returns Button Design
-     */
+
+	/**[button]: function that returns button images
+	 * @return BUTTON_IMAGE */
     fun button(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -78,9 +82,8 @@ class SplendorImageLoader {
 	    )
 	)
     }
-    /**
-     * function that returns Redo Button Image
-     */
+
+    /**function that returns Redo Button Image*/
     fun redoButton(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
