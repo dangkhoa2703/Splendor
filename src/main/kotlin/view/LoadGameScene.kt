@@ -59,7 +59,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
     }
 
 	/**[startButton] : Button that visually represents the start button of loadGameScene. */
-    private val startButton = Button(
+    val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size=18),
@@ -69,7 +69,12 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 		onMouseClicked = {
 			val ioService = rootService.ioService
 			checkNotNull(file) { "No file found. "}
-			ioService.loadGame((file as File).absolutePath)
+			try {
+				ioService.loadGame((file as File).absolutePath)
+			}
+			catch(e: Exception) {
+				println(e)
+			}
 		}
 	}
 

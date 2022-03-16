@@ -46,6 +46,10 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
             this@SplendorApplication.hideMenuScene()
             this@SplendorApplication.showMenuScene(startScene)
         }
+        startButton.onMousePressed = {
+            this@SplendorApplication.hideMenuScene()
+            this@SplendorApplication.showGameScene(gameScene)
+        }
     }
 
 	/**[configScene] : Of type MenuScene; applied to the ConfigScene. By clicking the

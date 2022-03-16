@@ -95,10 +95,11 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	onMouseClicked = {
 	    val playerActionService = rootService.playerActionService
 	    try{
-		playerActionService.undo()
+			playerActionService.undo()
 	    }
 	    catch(e: Exception) {
-		println(e)
+			errorLabel.text = e.toString()
+			println(e)
 	    }
 	}
     }
@@ -117,6 +118,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		playerActionService.redo()
 	    }
 	    catch(e: Exception) {
+			errorLabel.text = e.toString()
 		println(e)
 	    }
 	}
@@ -148,8 +150,15 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    val playerActionService = rootService.playerActionService
 		val gameState = rootService.currentGame!!.currentGameState
 		val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
-	    val output = playerActionService.showHint(turn)
-	    println(output)
+	    var output = playerActionService.showHint(turn)
+		output = "Note that the char sequence passed to the transform function is ephemeral and is valid only inside that function. You should not store it or allow it to escape in some way, unless you made a snapshot of it. The last char sequence may have fewer characters than the given size."
+		val lines = output.chunked(20)
+		var i = lines.size
+		for(line in lines) {
+			hint.text+=line
+			if(i!=1) hint.text+="\n"
+			i--
+		}
 	}
     }
 
@@ -281,6 +290,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 				playerActionService.returnGems(gemList, currentPlayer as Player)
 			}
 			catch(e: Exception) {
+				errorLabel.text = e.toString()
 				println(e)
 			}
 
@@ -417,6 +427,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
+		errorLabel.text = e.toString()
 	    println(e)
 	}
 
@@ -439,6 +450,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
+		errorLabel.text = e.toString()
 	    println(e)
 	}
 	return false
@@ -924,6 +936,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    scoreLabel,
 	    reservedCardsLabel,
 	    devCardsLabel,
+		hint,
+		errorLabel,
 	)
     }
 }
