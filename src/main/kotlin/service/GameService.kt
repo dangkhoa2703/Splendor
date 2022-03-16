@@ -143,9 +143,10 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val newBoard = newGameState.board
 
         // if current player reach 15 or above -> end game
-        if(newGameState.currentPlayer.score >= 15){
+        if(newGameState.currentPlayer.score >= 2){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
             println(newGameState.playerList.toString())
+            saveHighscoresAfterEndGame()
             onAllRefreshables { refreshAfterEndGame() }
             return
         }
@@ -165,12 +166,26 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // if no player can make any move, end game with tie result
         if(consecutiveNoAction == newGameState.playerList.size){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
+            saveHighscoresAfterEndGame()
 //            onAllRefreshables { refreshAfterEndGame(true) }
             return
         }
 //        onAllRefreshables { refreshAfterNextPlayer }
     }
 
+    /**
+     * method to save highscores after end game
+     * don't use in combination with save game or quit game
+     */
+    fun saveHighscoresAfterEndGame(){
+        val game = rootService.currentGame
+        checkNotNull(game)
+        if(game.validGame){
+            for (player in game.currentGameState.playerList){
+                rootService.ioService.saveHighscore(Highscore(player.name,player.score.toDouble()))
+            }
+        }
+    }
 
     /**
      * deal a new card to the same place, where a card was removed
