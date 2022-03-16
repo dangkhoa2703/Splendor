@@ -100,12 +100,14 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if(notFirstGameState){
             nextPlayerIndex =
                 (rootService.currentGame!!.currentGameState.currentPlayerIndex + 1) % newPlayerList.size
+            println(nextPlayerIndex.toString())
         }
         val newGameState = GameState(
             newPlayerList[nextPlayerIndex],
             newPlayerList,
             tempBoard)
         if(notFirstGameState) {
+            print("notfirstgameState ${nextPlayerIndex}")
             newGameState.currentPlayerIndex = nextPlayerIndex
             //bind new gameState to chain and set pointer to the newGameState
             newGameState.previous = currentGameState
@@ -135,7 +137,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // if current player reach 15 or above -> end game
         if(newGameState.currentPlayer.score >= 15){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
-            println(newGameState.playerList.toString())
             saveHighscoresAfterEndGame()
             onAllRefreshables { refreshAfterEndGame() }
             return

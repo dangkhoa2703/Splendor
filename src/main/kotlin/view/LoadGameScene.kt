@@ -71,6 +71,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 			checkNotNull(file) { "No file found. "}
 			try {
 				ioService.loadGame((file as File).absolutePath)
+				println("game is loaded")
 			}
 			catch(e: Exception) {
 				println(e)
@@ -99,4 +100,17 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	    fileName,
 	)
     }
+
+	fun loadGame(){
+		val ioService = rootService.ioService
+		checkNotNull(file) { "No file found. "}
+		try {
+			println("game is loaded")
+			ioService.loadGame((file as File).absolutePath)
+			println("game is loaded")
+		}
+		catch(e: Exception) {
+			println(e)
+		}
+	}
 }
