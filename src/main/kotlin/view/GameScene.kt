@@ -63,7 +63,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		height/2-200,
 		400,
 		500,
-		"Peter", font = Font(size = 26, color = Color.WHITE)
+		"", font = Font(size = 26, color = Color.WHITE)
 	)
 
 	val errorLabel=Label(
@@ -71,7 +71,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		1000,
 		1000,
 		100,
-		"Error", font = Font(size = 20, color = Color.WHITE)
+		"", font = Font(size = 20, color = Color.WHITE)
 	)
 
     //BUTTONS
@@ -758,8 +758,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
-
-	scoreLabel.text = (player.score+nobleTile.prestigePoints).toString()
+		println(scoreLabel.text)
+	scoreLabel.text = (player.score).toString()
+		println(scoreLabel.text)
     }
 
 	/**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */
@@ -891,7 +892,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	cardView.isDraggable = false
 	//moveCardView(cardView, playerDevCards[currentPlayerIndex])
 
-	scoreLabel.text = (player.score+devCard.prestigePoints).toString()
+	scoreLabel.text = (player.score).toString()
 	
 	fillLayouts()
 
