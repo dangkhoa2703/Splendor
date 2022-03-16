@@ -4,12 +4,19 @@ import service.RootService
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
-import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import javafx.stage.FileChooser
 import java.io.File
 import entity.SplendorImageLoader
-import tools.aqua.bgw.visual.ImageVisual
+
+
+/** [LoadGameScene] : [MenuScene] that is displayed after the game ends depending on condition
+ *  [imageLoader] : Facilitates loading of various images needed for the [LoadGameScene] using SplendorImageLoader
+ *   [image] : Facilitates loading of various buttons needed for the [LoadGameScene] using SplendorImageLoader
+ *   [backgroundImage] : Facilitates loading of background needed for the [LoadGameScene] using SplendorImageLoader
+ *   [headLineLabel] :   Label indicating LoadScene
+ *   [fileName] : File names
+ */
 
 class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
@@ -34,7 +41,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 
     )
 
-
+	/**[chooseFileButton] : Button that facilitates selection of a saved game. */
     private val chooseFileButton = Button(
 	width = 800, height = 450,
 	posX = width/2 - 400, posY = height/2 - 225,
@@ -54,13 +61,15 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	}
     }
 
+	/**[startButton] : Button that visually represents the start button of loadGameScene. */
     private val startButton = Button(
 	width = 200, height = 100,
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size=18),
 	visual = image
-    ) 
+    )
 
+	/**[backButton] : Button that visually represents the back button of loadGameScene. */
     val backButton = Button(
 	width = 200, height = 100,
 	posX = 50, posY = 930,

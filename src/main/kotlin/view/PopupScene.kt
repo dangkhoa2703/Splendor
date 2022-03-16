@@ -8,7 +8,6 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
-//import tools.aqua.bgw.components.container.LinearLayout
 import tools.aqua.bgw.components.gamecomponentviews.CardView
 import tools.aqua.bgw.util.Font
 import entity.NobleTile
@@ -26,7 +25,7 @@ class PopupScene(
 	visual = imageLoader.nextPlayersImage()
     )
 
-    private fun standartComponents(): Unit {
+    private fun standartComponents() {
 	addComponents(
 	    quitButton,
 	)

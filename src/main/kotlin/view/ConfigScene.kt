@@ -15,14 +15,12 @@ import java.awt.Color
 /**
  *  Graphical User Interface Scene, used to configure Players and AI for [SplendorApplication]
  *  It is of type MenuScene with dimensions 1920x1080 px
+ *  [imageLoader]: used to load various images from the SplendorImageLoader() class, needed for configScene
+ *  [image] : provides facility for buttons needed for the configScene
+ *  [backgroundImage] : background image of config scene
  */
 class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
-	/**
-	 * [imageLoader] : used to load various images from the SplendorImageLoader() class, needed for configScene
-	 * [image] : provides facility for buttons needed for the configScene
-	 * [backgroundImage] : background image of config scene
-	 */
     private val imageLoader = SplendorImageLoader()
     private val image = imageLoader.button()
 	private val backgroundImage = imageLoader.configBackground()
