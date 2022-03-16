@@ -19,23 +19,62 @@ class DecisionTree(var rootService: RootService) {
      * Executes miniMax-algorithm on [node]
      * @param player: Important: Simulated player has to be at the first index of the list, followed by enemies in order
      */
-    private fun miniMax(node: TreeNode<Turn>, alpha: Double, beta: Double, playerIndex: Int, turnType: TurnType,
+    private fun miniMax(node: TreeNode<Turn>, alpha_: Double, beta_: Double, playerIndex: Int, turnType: TurnType,
                         board: Board, player: MutableList<Player>): Double {
+        var alpha = alpha_
+        var beta = beta_
         val maximizing = playerIndex == 0
         // Simulate the current Turn
         val enemies: List<Player> = player.minus(player[playerIndex])
-        val simulation: Pair<Turn, Pair<Board, Player>>? = simulateMove(turnType, board, player[playerIndex], enemies)
-        if(simulation == null) {
-            return -1.0 // Invalid move
+        var simulation: Pair<Turn, Pair<Board, Player>>? = null
+        if(turnType != TurnType.EMPTY) {
+            simulation = simulateMove(turnType, board, player[playerIndex], enemies)
+            if(simulation == null) {
+                return -1.0 // Invalid move
+            }
+            node.data = simulation.first
         }
-        node.data = simulation.first
         // Leaf
         if(node.getChildren().isEmpty()) {
-            node.data!!.evaluation = rootService.aiService.computeTurnEvaluationScore(simulation.second.second, enemies)
+            node.data!!.evaluation = rootService.aiService.computeTurnEvaluationScore(simulation!!.second.second, enemies)
             return node.data!!.evaluation
         }
-        //TODO: children
-        return -1.0
+        // MiniMax
+        val newBoard: Board = if (turnType == TurnType.EMPTY) board else simulation!!.second.first
+        val newPlayerList: MutableList<Player> = player.toMutableList()
+        if(turnType != TurnType.EMPTY)
+        {
+            newPlayerList.remove(player[playerIndex])
+            newPlayerList.add(simulation!!.second.second)
+        }
+        val newPlayerIndex: Int = (playerIndex + 1) % player.size
+        if(maximizing) {
+            var maxEval = Double.MIN_VALUE
+            for(i in 0..(node.getChildren().size - 1))
+            {
+                val elem = node.getChildren()[i]
+                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i];
+                val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
+                maxEval = maxOf(maxEval, eval)
+                alpha = maxOf(alpha, eval)
+                if(beta <= alpha)
+                    break
+            }
+            return maxEval
+        } else {
+            var minEval = Double.MAX_VALUE
+            for(i in 0..(node.getChildren().size - 1))
+            {
+                val elem = node.getChildren()[i]
+                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i];
+                val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
+                minEval = minOf(minEval, eval)
+                beta = minOf(beta, eval)
+                if(beta <= alpha)
+                    break
+            }
+            return minEval
+        }
     }
 
     /**
@@ -47,7 +86,8 @@ class DecisionTree(var rootService: RootService) {
         val newBoard = board.cloneForSimulation()
         val newPlayer = player.clone()
         // No cards on the board
-        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0)
+        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0
+            || turnType == TurnType.EMPTY)
             return null
         val bestDevCards: Map<DevCard, Double> = rootService.aiService
             .calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)

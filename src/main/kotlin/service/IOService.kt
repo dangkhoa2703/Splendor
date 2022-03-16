@@ -206,7 +206,6 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             indexCurrentGame++
         }
 
-
         //create new file and save game state
         while(toSaveGameState.hasNext()){
             val fileName = "$path/gameState${totalGameState}.txt"
@@ -259,6 +258,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         file.writeText(saveContent)
     }
+
 
     /** saves a highscore to a file including highscores of different games; maximum 10*/
     fun saveHighscore(score : Highscore) {

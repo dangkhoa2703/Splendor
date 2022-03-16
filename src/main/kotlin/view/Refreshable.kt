@@ -5,31 +5,31 @@ import entity.NobleTile
 import entity.Player
 
 interface Refreshable {
-    fun refreshAfterStartNewGame() : Unit {}
+    fun refreshAfterStartNewGame() {}
 
-    fun refreshAfterEndGame() : Unit {}
+    fun refreshAfterEndGame() {}
 
-    fun refreshAfterPopup(currentPlayer: Player): Unit {}
+    fun refreshAfterPopup(currentPlayer: Player){}
 
-    fun refreshAfterShowHighscores() : Unit {}
+    fun refreshAfterShowHighscores() {}
 
-    fun refreshAfterEndTurn() : Unit {}
+    fun refreshAfterEndTurn()  {}
 
-    fun refreshAfterTakeGems() : Unit {}
+    fun refreshAfterTakeGems()  {}
 
-    fun refreshAfterBuyCard(devCard: DevCard) : Unit {}
+    fun refreshAfterBuyCard(devCard: DevCard){}
 
-    fun refreshAfterReserveCard(devCard: DevCard) : Unit {}
+    fun refreshAfterReserveCard(devCard: DevCard) {}
 
-    fun refreshAfterLoadGame() : Unit {}
+    fun refreshAfterLoadGame()  {}
 
-    fun refreshAfterUndoRedo() : Unit {}
+    fun refreshAfterUndoRedo()  {}
 
-    fun refreshScore() : Unit {}
+    fun refreshScore() {}
 
-    fun refreshAfterSelectNobleTile(nobleTile: NobleTile) : Unit {}
+    fun refreshAfterSelectNobleTile(nobleTile: NobleTile)  {}
 
-    fun refreshAfterShowHint() : Unit {}
+    fun refreshAfterShowHint()  {}
 
-    fun refreshAfterReturnGems(): Unit {}
+    fun refreshAfterReturnGems(){}
 }

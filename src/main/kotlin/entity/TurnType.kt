@@ -9,7 +9,7 @@ package entity
  */
 enum class TurnType {
     TAKE_GEMS,
-    RESERVE_CARD,
     BUY_CARD,
+    RESERVE_CARD,
     EMPTY
 }

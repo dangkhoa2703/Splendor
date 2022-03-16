@@ -4,16 +4,13 @@ import service.RootService
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
-import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.Highscore
-import entity.Player
 import entity.SplendorImageLoader
 import tools.aqua.bgw.core.Alignment
-import tools.aqua.bgw.util.Font.FontStyle
 import java.awt.Color
 
-/**[MenuScene] that is used for looking at highscores of previous games. Navigable when clicking the load Highscores button in [StartScene].
+/**[MenuScene] that is used for visualizing highscores of previous games. Navigable when clicking the load Highscores button in [StartScene].
  */
 class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
 
@@ -31,6 +28,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	)
     private var highscoreLabels: MutableList<Label> = mutableListOf()
 
+	/**[backButton] : Button that visually represents the back button of HighScorescene. */
     val backButton = Button(
 	width = 200, height = 100,
 	posX = 50, posY = 930,
@@ -38,6 +36,7 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 	font = Font(size = 28), visual = image
     )
 
+	/** Method that loads the highscores of the various players*/
     private fun loadHighscores(highscoreList: MutableList<Highscore>) {
 		highscoreLabels.forEach { it.removeFromParent() }
 		highscoreLabels.clear()
@@ -63,30 +62,30 @@ class HighscoreScene(private val rootService: RootService): MenuScene(1920, 1080
 
 	}
 
-	/**[rank0] : Label to display winner */
+	/**[rank0] : Label to display player with the topmost prestige points */
 	val rank0 = Label(
 		420, 100, 1000, 500, "",
 		font = Font(size = 40, color = Color.ORANGE, fontStyle = Font.FontStyle.ITALIC)
 	)
 
-	/**[rank1] : Label to display runner up */
+	/**[rank1] : Label to display runner up with topmost points */
 	val rank1 = Label(
 		420, 200, 1000, 500, "",
 		font = Font(size = 36, color = Color.PINK, fontStyle = Font.FontStyle.ITALIC)
 	)
 
-	/**[rank2] : Label to display second player */
+	/**[rank2] : Label to display third player with most points */
 	val rank2 = Label(
 		420, 300, 1000, 500, "",
 		font = Font(size = 32, color = Color.GREEN, fontStyle = Font.FontStyle.ITALIC)
 	)
 
-	/**[rank3] : Label to third player */
+	/**[rank3] : Label to display fourth player with most points */
 	val rank3 = Label(
 		420, 400, 1000, 500, "",
 		font = Font(size = 28, color = Color.WHITE, fontStyle = Font.FontStyle.ITALIC)
 	)
-	/**[rank4] : Label to display loser */
+	/**[rank4] : Label to display loser of the winners */
 	val rank4 = Label(
 		420, 500, 1000, 500, "",
 		font = Font(size = 24, color = Color.MAGENTA, fontStyle = Font.FontStyle.ITALIC)

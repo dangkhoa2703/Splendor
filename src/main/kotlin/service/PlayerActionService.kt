@@ -8,7 +8,7 @@ import entity.*
 class PlayerActionService(private val rootService: RootService): AbstractRefreshingService() {
 
     fun showPlayers(currentPlayer: Player) {
-	onAllRefreshables{ refreshAfterPopup(currentPlayer) }
+	    onAllRefreshables{ refreshAfterPopup(currentPlayer) }
     }
 
     /**
@@ -21,7 +21,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             game.currentGameState = game.currentGameState.previous
             game.validGame = false }
         else throw IllegalStateException("a previous state does not exist")
-	onAllRefreshables { refreshAfterEndTurn() }
+	    onAllRefreshables { refreshAfterEndTurn() }
     }
 
     /**
@@ -34,14 +34,14 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             game.currentGameState = game.currentGameState.next
             game.validGame = false }
         else throw IllegalStateException("a following state does not exist")
-	onAllRefreshables { refreshAfterEndTurn() }
+	    onAllRefreshables { refreshAfterEndTurn() }
     }
 
     /**
      * @return a hint for the best next move for the current player and current situation
      */
     fun showHint(turn:Turn): String{
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
         val hint :String
         val board = rootService.currentGame!!.currentGameState.board
         val player = rootService.currentGame!!.currentGameState.currentPlayer
@@ -95,9 +95,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         }
         else{hint = "there is no help for you"}
         return hint
-        }else{
-            throw IllegalArgumentException ("NOT UR TURN")
-        }
+        } else { throw IllegalArgumentException ("NOT UR TURN") }
     }
 
     //player-game-action
@@ -107,8 +105,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun takeGems(types : MutableList<GemType>, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
         val game = rootService.currentGame!!
+        if(!game.currentGameState.currentPlayer.hasDoneTurn){
         val currentGameState = game.currentGameState
         val board = currentGameState.board
         if(currentGameState.isInitialState){
@@ -138,10 +136,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             // rootService.gameService.endTurn()
         } else { throw IllegalArgumentException("not your turn") }
        // rootService.gameService.nextPlayer()
-            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn=true
-        }else{
-            throw IllegalArgumentException ("NOT UR TURN")
-        }
+            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
+        } else { throw IllegalArgumentException ("NOT UR TURN") }
     }
 
     /**
@@ -202,10 +198,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             }
             //rootService.gameService.nextPlayer()
             onAllRefreshables { refreshAfterBuyCard(card) }
-            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn=true
-        }else{
-            throw IllegalArgumentException("NOT UR TURN")
-        }
+            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
+        } else { throw IllegalArgumentException("NOT UR TURN") }
     }
 
     /**
@@ -214,8 +208,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      * @throws IllegalArgumentException if the player already has three reserved cards
      */
-    fun reserveCard(card: DevCard, index:Int, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
+    fun reserveCard(card: DevCard, user : Player){
+        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
             if(rootService.currentGame!!.currentGameState.isInitialState){
                 rootService.gameService.createNewGameState(false)
             }
@@ -258,10 +252,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         } else { throw IllegalArgumentException("not your turn") }
         onAllRefreshables{ refreshAfterReserveCard(card)}
         //rootService.gameService.nextPlayer()
-            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn=true
-        }else{
-            throw IllegalArgumentException("Not Ur Turn")
-        }
+            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
+        } else { throw IllegalArgumentException("Not Ur Turn") }
     }
 
     /**
@@ -270,8 +262,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun selectNobleTile(card: NobleTile, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
-            val game = rootService.currentGame!!
+        val game = rootService.currentGame!!
+        if(!game.currentGameState.currentPlayer.hasDoneTurn) {
             val board = game.currentGameState.board
             val availableCards = rootService.gameService.checkNobleTiles()
             // if(user == game.currentGameState.currentPlayer)
@@ -288,10 +280,8 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
             onAllRefreshables { refreshAfterSelectNobleTile(card) }
             //rootService.gameService.nextPlayer()
-            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn=true
-        }else{
-            throw IllegalArgumentException("NOT UR TURN")
-        }
+            rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
+        } else { throw IllegalArgumentException("NOT UR TURN") }
     }
 
     /**
@@ -300,19 +290,13 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @param user is the CurrentPlayer to check if the right player is doing the turn
      */
     fun returnGems(gems: List<GemType>, user : Player){
-        if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
-            val game = rootService.currentGame!!
+        val game = rootService.currentGame!!
+        if(!game.currentGameState.currentPlayer.hasDoneTurn) {
             val board = game.currentGameState.board
-            // if(user == game.currentGameState.currentPlayer)
-            // {
             gems.forEach { gemType ->
                 user.gems[gemType] = user.gems.getValue(gemType) - 1
                 board.gems[gemType] = board.gems.getValue(gemType) + 1
             }
-            // } else { throw IllegalArgumentException("not your turn") }
-
-        }else{
-            throw IllegalArgumentException("Not Ur Turn")
-        }
+        } else { throw IllegalArgumentException("Not Ur Turn") }
     }
 }
