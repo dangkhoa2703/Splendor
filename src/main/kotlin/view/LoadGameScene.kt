@@ -8,6 +8,9 @@ import tools.aqua.bgw.components.uicomponents.Button
 import javafx.stage.FileChooser
 import java.io.File
 import entity.SplendorImageLoader
+import javafx.stage.DirectoryChooser
+import org.intellij.lang.annotations.JdkConstants.FontStyle
+import java.awt.Color
 
 
 /** [LoadGameScene] : [MenuScene] that is displayed after the game ends depending on condition
@@ -24,21 +27,14 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	private val image = imageLoader.button()
 	private val backgroundImage = imageLoader.highscoreBackground()
 	private val load = imageLoader.loadGame()
-    private val fileChooser = FileChooser()
+    private val fileChooser = DirectoryChooser()
     private var openedFileChooser: Boolean = false
+	private var file: File? = null
 
     private val fileName = Label(
-	width = 200, height = 50,
-	posX = width/2 - 150, posY = 215,
-	text = "", font = Font(size=18)
-    )
-
-    private val headLineLabel = Label(
-	width = 600, height = 200,
-	posX = width/2 - 300, posY = 50,
-	text = "Press below to Load",
-	font = Font(size = 40),
-
+	width = 400, height = 100,
+	posX = width/2 - 200, posY = 215,
+	text = "", font = Font(size=40, color = Color.WHITE, fontStyle=Font.FontStyle.ITALIC),
     )
 
 	/**[chooseFileButton] : Button that facilitates selection of a saved game. */
@@ -51,11 +47,12 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	onMouseClicked = {
 	    if(!openedFileChooser) {
 		openedFileChooser = true
-		val file: File? = fileChooser.showOpenDialog(null)
+		val tempFile: File? = fileChooser.showDialog(null)
 		openedFileChooser = false
-		if(file!=null) {
-		    println(file.name)
-		    fileName.text = file.name
+		if(tempFile!=null) {
+		    file = tempFile
+		    fileName.text = tempFile.name
+			startButton.isDisabled = false
 		}
 	    }
 	}
@@ -67,7 +64,14 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	posX = 1650, posY = 930,
 	text = "Start", font = Font(size=18),
 	visual = image
-    )
+    ).apply {
+		isDisabled = true
+		onMouseClicked = {
+			val ioService = rootService.ioService
+			checkNotNull(file) { "No file found. "}
+			ioService.loadGame((file as File).absolutePath)
+		}
+	}
 
 	/**[backButton] : Button that visually represents the back button of loadGameScene. */
     val backButton = Button(
@@ -84,7 +88,6 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	startButton.isDisabled = true
 
 	addComponents(
-	    headLineLabel,
 	    backButton,
 	    startButton,
 	    chooseFileButton,
