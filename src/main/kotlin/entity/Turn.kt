@@ -13,7 +13,7 @@ class Turn (
     private val takeThreeDifferentGems: Boolean = false) {
 
     /** Variable to temporarily save calculated score for turn */
-    var evaluation: Double = -1.0
+    var evaluation: Double? = null
 
     /** Equals implementation */
     override fun equals(other: Any?): Boolean {

@@ -9,8 +9,19 @@ class DecisionTree(var rootService: RootService) {
      */
     fun computeDecisionTree(turns: Int, board: Board, players: List<Player>) : Turn {
         val root: TreeNode<Turn> = TreeNode.createEmptyTree(turns * players.size, 3)
-        miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0, TurnType.EMPTY,
+        miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0,
             board.cloneForSimulation(), players.clone().toMutableList())
+
+
+        for(i in 0..2) {
+            val childrenData = root.getChildren()[i].data
+            if(childrenData != null)
+                println("\t> root-children score: " + root.getChildren()[i].data!!.evaluation)
+            else
+                println("\t> root-children score: null")
+        }
+
+
         return root.getChildren().sortedBy { treeNode -> if (treeNode.data == null) -1.0
             else treeNode.data!!.evaluation }[0].data!!
     }
@@ -19,60 +30,77 @@ class DecisionTree(var rootService: RootService) {
      * Executes miniMax-algorithm on [node]
      * @param player: Important: Simulated player has to be at first index of the list, followed by enemies in order
      */
-    private fun miniMax(node: TreeNode<Turn>, alpha_: Double, beta_: Double, playerIndex: Int, turnType: TurnType,
-                        board: Board, player: MutableList<Player>): Double {
+    private fun miniMax(node: TreeNode<Turn>, alpha_: Double, beta_: Double, playerIndex: Int,
+                        board: Board, player: MutableList<Player>): Double? {
         var alpha = alpha_
         var beta = beta_
         val maximizing = playerIndex == 0
-        // Simulate the current Turn
-        val enemies: List<Player> = player.minus(player[playerIndex])
-        var simulation: Pair<Turn, Pair<Board, Player>>? = null
-        if(turnType != TurnType.EMPTY) {
-            simulation = simulateMove(turnType, board, player[playerIndex], enemies)
-            if(simulation == null) {
-                return -1.0 // Invalid move
-            }
-            node.data = simulation.first
-        }
         // Leaf
+        val currentPlayer: Player = player[playerIndex]
+        val enemies: List<Player> = player.minus(currentPlayer)
         if(node.getChildren().isEmpty()) {
-            node.data!!.evaluation = rootService.aiService.computeTurnEvaluationScore(simulation!!.second.second, enemies)
-            return node.data!!.evaluation
+            return rootService.aiService.computeTurnEvaluationScore(currentPlayer, enemies)
         }
         // MiniMax
-        val newBoard: Board = if (turnType == TurnType.EMPTY) board else simulation!!.second.first
-        val newPlayerList: MutableList<Player> = player.toMutableList()
-        if(turnType != TurnType.EMPTY)
-        {
-            newPlayerList.remove(player[playerIndex])
-            newPlayerList.add(simulation!!.second.second)
-        }
+        var simulation: Pair<Turn, Pair<Board, Player>>? = null
         val newPlayerIndex: Int = (playerIndex + 1) % player.size
         if(maximizing) {
-            var maxEval = Double.MIN_VALUE
+            var maxEval: Double = Double.MIN_VALUE
+            var maxEvalTurn: Turn? = null
             for(i in 0 until node.getChildren().size)
             {
-                val elem = node.getChildren()[i]
+                val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
-                val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
-                maxEval = maxOf(maxEval, eval)
+                // Simulate new board and player
+                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                if(simulation == null) // Children not simulatable
+                    continue
+                val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
+                var newPlayerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
+                newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
+                newPlayerlist = newPlayerlist.clone().toMutableList()
+                val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                if(eval == null)
+                    continue
+                if(eval > maxEval) {
+                    maxEval = eval
+                    maxEvalTurn = simulation.first
+                }
                 alpha = maxOf(alpha, eval)
                 if(beta <= alpha)
                     break
             }
+            maxEvalTurn!!.evaluation = maxEval
+            node.data = maxEvalTurn
             return maxEval
         } else {
             var minEval = Double.MAX_VALUE
+            var minEvalTurn: Turn? = null
             for(i in 0 until node.getChildren().size)
             {
-                val elem = node.getChildren()[i]
+                val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
-                val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
-                minEval = minOf(minEval, eval)
+                // Simulate new board and player
+                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                if(simulation == null) // Children not simulatable
+                    continue
+                val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
+                var newPlayerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
+                newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
+                newPlayerlist = newPlayerlist.clone().toMutableList()
+                val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                if(eval == null)
+                    continue
+                if(eval < minEval) {
+                    minEval = eval
+                    minEvalTurn = simulation.first
+                }
                 beta = minOf(beta, eval)
                 if(beta <= alpha)
                     break
             }
+            minEvalTurn!!.evaluation = minEval
+            node.data = minEvalTurn
             return minEval
         }
     }
