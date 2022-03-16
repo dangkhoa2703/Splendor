@@ -184,4 +184,12 @@ class EntityTests
         assertEquals(TurnType.RESERVE_CARD, turnFour.turnType)
     }
 
+    /**
+     * ImageLoader Test
+     */
+    @Test
+    fun loadImage(){
+       // val Image = Ima
+    }
+
 }

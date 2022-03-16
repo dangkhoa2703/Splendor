@@ -58,6 +58,22 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
     private var saved: List<DevCard> = listOf()
 
+	val hint=Label(
+		width/2+300,
+		height/2-200,
+		400,
+		500,
+		"Peter", font = Font(size = 26, color = Color.WHITE)
+	)
+
+	val errorLabel=Label(
+		width/2 - 500,
+		1000,
+		1000,
+		100,
+		"Error", font = Font(size = 20, color = Color.WHITE)
+	)
+
     //BUTTONS
 	/**[nextPlayersButton] : Button to display items the other players have in hand*/
     val nextPlayersButton = Button(
@@ -356,25 +372,31 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	 * [tryToSelect] : Method to enable selection of game Items like Noble tiles
 	 */
     private fun tryToSelect(dragEvent: DragEvent): Boolean {
-	val cardView = dragEvent.draggedComponent as CardView
+		val cardView = dragEvent.draggedComponent as CardView
 
-	val id = devCardMap.backward(cardView)
-	val game = rootService.currentGame
-	checkNotNull(game) { "No game found. "}
+		val id = devCardMap.backward(cardView)
+		val game = rootService.currentGame
+		checkNotNull(game) { "No game found. " }
 
-	var nobleTile: NobleTile? = null
-	for(tile in game.currentGameState.board.nobleTiles) {
-	    if(tile.id == id) nobleTile = tile
-	}
+		var nobleTile: NobleTile? = null
+		for (tile in game.currentGameState.board.nobleTiles) {
+			if (tile.id == id) nobleTile = tile
+		}
 
-	if(nobleTile==null) return false
-	
-	checkNotNull(currentPlayer) { "No Player found. "}
+		if (nobleTile == null) return false
 
-	val playerActionService = rootService.playerActionService
-	val player = currentPlayer as Player
-	
-	playerActionService.selectNobleTile(nobleTile, player)
+		checkNotNull(currentPlayer) { "No Player found. " }
+
+		val playerActionService = rootService.playerActionService
+		val player = currentPlayer as Player
+
+		try {
+		 playerActionService . selectNobleTile (nobleTile, player)
+		}catch (e:Exception){
+			errorLabel.text = e.toString()
+			println(e)
+			return false
+		}
 	return true
     }
 
