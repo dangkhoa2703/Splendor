@@ -84,7 +84,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         currentPlayerIndex = 0
 
         rootService.currentGame = splendor
-        createNewGameState(false)
+        //createNewGameState(false)
         onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
     }
@@ -142,8 +142,14 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         var newGameState = rootService.currentGame!!.currentGameState
         val newBoard = newGameState.board
 
+        val player = rootService.currentGame!!.currentGameState.currentPlayer
+        var numberPlayerGems = 0
+        for (gemType in GemType.values()){numberPlayerGems+=(player.gems.getValue(gemType))}
+        if (numberPlayerGems>=10){
+            throw IllegalArgumentException("DISCARD GEMS")
+        }
         // if current player reach 15 or above -> end game
-        if(newGameState.currentPlayer.score >= 2){
+        if(newGameState.currentPlayer.score >= 15){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
             println(newGameState.playerList.toString())
             saveHighscoresAfterEndGame()

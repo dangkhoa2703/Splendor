@@ -126,9 +126,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 throw IllegalArgumentException("no valid gem/type number") }
             else if ( types.size == 2 && numDiffGemTypesInTypes == 1 && board.gems.getValue(types[0]) < 4) {
                 throw IllegalArgumentException("two same gems can only be chosen if four gems of their type are left") }
-            else if (types.size+countGems()>=10){
-                throw IllegalArgumentException("DISCARD GEMS")
-            }
             // take gems
             else{ types.forEach{ gemType ->
                 user.gems[gemType] = user.gems.getValue(gemType) + 1
@@ -157,7 +154,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun buyCard(card: DevCard, boardGameCard: Boolean, payment: Map<GemType, Int>, index: Int, user : Player){
         if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false) {
-            if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
             val game = rootService.currentGame!!
             val board = game.currentGameState.board
             if (user == game.currentGameState.currentPlayer) {
@@ -184,7 +180,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                         user.reservedCards.remove(card)
                     }
                     //move the gems in payment from player's hand back to board
-                    card.price.forEach { (gemType, value) ->
+                    payment.forEach { (gemType, value) ->
                         user.gems[gemType] = user.gems.getValue(gemType) - value
                         board.gems[gemType] = board.gems.getValue(gemType) + value
                     }
@@ -217,7 +213,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun reserveCard(card: DevCard, index:Int, user : Player){
         if(rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn==false){
-            if(countGems()>=10) throw IllegalArgumentException("DISCARD GEMS")
         val board = rootService.currentGame!!.currentGameState.board
         if(user == rootService.currentGame!!.currentGameState.currentPlayer){
             if(user.reservedCards.size < 3){
