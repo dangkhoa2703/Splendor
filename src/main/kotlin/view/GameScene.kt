@@ -502,7 +502,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val playerList = game.currentGameState.playerList
 	for(i in playerList.indices) {
 	    val player = playerList[i]
-	    fillDevCardLayout(playerDevCards[i], player.devCards)
+	    fillDevCardLayout(playerDevCards[i], player.devCards,false)
 	    fillDevCardLayout(playerSaveCards[i], player.reservedCards)
 	    fillNobleTilesLayout(playerNobleTiles[i], player.nobleTiles, false)
 	}
@@ -521,7 +521,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 	for(gem in allGems) {
 	    val icon = Label(
-		posX = 100.0 - 12.5, width=25.0, height=25.0,
+		posX = 100.0 - 25, width=50.0, height=50.0,
                 visual = imageLoader.tokenImage(gem),
 	    ).apply{
 		onMouseClicked = { event ->
@@ -531,13 +531,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    }
 
 	    val infoLabel = Label(
-		posX = 100.0 + 12.5, width=25.0, height=25.0,
-                text = "", font = Font(size = 20, color = Color.BLACK)
+		posX = 100.0 + 25, width=50.0, height=50.0,
+                text = "", font = Font(size = 40, color = Color.BLACK)
 	    )
 
 	    val selectLabel = Label(
-		posX = 100.0 - 50.0, width=25.0, height=25.0,
-                text = "", font = Font(size = 20, color = Color.BLACK)
+		posX = 100.0 - 75.0, width=50.0, height=50.0,
+                text = "", font = Font(size = 40, color = Color.BLACK)
 	    )
 
 	    playerGems.add(icon)

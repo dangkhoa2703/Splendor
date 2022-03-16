@@ -1,10 +1,14 @@
 package view
 
 import entity.DevCard
+import entity.GemType
 import entity.NobleTile
 import entity.Player
 
 interface Refreshable {
+
+    fun refreshAfterTakeGems(gems: Map<GemType, Int>){}
+
     fun refreshAfterStartNewGame() {}
 
     fun refreshAfterEndGame() {}
