@@ -31,93 +31,65 @@ class PopupScene(
 	)
     }
 
-    private fun drawPlayer(
-	index: Int,
-	player: Player,
-	devCardsLayout: List<CardView>,
-	saveCardsLayout: List<CardView>,
-	nobleTilesLayout: List<CardView>,
-    ){
-	val nameLabel = Label(
-	    posX =index*500+25+75, posY = 100,
-	    height = 100, width = 200,
-	    text = player.name, font = Font(size = 24)
-	)
+    private fun drawPlayer(index: Int, player: Player, devCardsLayout: List<CardView>, saveCardsLayout: List<CardView>,
+		nobleTilesLayout: List<CardView>) {
 
-	val typeLabel = Label(
-	    posX =index*500+25+75, posY = 150,
-	    height = 100, width = 200,
-	    text = player.playerType.toString(), font = Font(size = 24)
-	)
+		val nameLabel = Label(posX =index*500+25+75, posY = 100,
+			height = 100, width = 200,
+			text = player.name, font = Font(size = 24))
 
-	val pointsLabel = Label(
-	    posX = index*500, posY = 125,
-	    text = player.score.toString(),
-	    font = Font(size = 40, fontWeight = Font.FontWeight.BOLD)
-	)
+		val typeLabel = Label(posX =index*500+25+75, posY = 150,
+			height = 100, width = 200,
+			text = player.playerType.toString(), font = Font(size = 24))
 
-	val devCards: MutableList<DevCard> = player.devCards
+		val pointsLabel = Label(posX = index*500, posY = 125,
+			text = player.score.toString(),
+			font = Font(size = 40, fontWeight = Font.FontWeight.BOLD))
+
+		val devCards: MutableList<DevCard> = player.devCards
 	
-	for(i in 0 until devCards.size) {
-	    val devCardLabel = Label(
-		width = 95, height = 150,
-		visual = devCardsLayout[i].frontVisual,
-		posX = index*500+25, posY = 225+i*40
-	    )
+		for(i in 0 until devCards.size) {
+			val devCardLabel = Label(
+				width = 95, height = 150,
+				visual = devCardsLayout[i].frontVisual,
+				posX = index*500+25, posY = 225+i*40)
+			addComponents(devCardLabel) }
 
-	    addComponents(devCardLabel)
-	}
+		val saveCards: MutableList<DevCard> = player.reservedCards
 
-	val saveCards: MutableList<DevCard> = player.reservedCards
+		for(i in 0 until saveCards.size) {
+	    	val saveCardLabel = Label(
+				width = 95, height = 150,
+				visual = saveCardsLayout[i].frontVisual,
+				posX = index*500+25+120, posY = 225+i*150)
+			addComponents(saveCardLabel) }
 
-	for(i in 0 until saveCards.size) {
-	    val saveCardLabel = Label(
-		width = 95, height = 150,
-		visual = saveCardsLayout[i].frontVisual,
-		posX = index*500+25+120, posY = 225+i*150
-	    )
+		val nobleTiles: MutableList<NobleTile> = player.nobleTiles
+		for(i in 0 until nobleTiles.size) {
+	    	val tileLabel = Label(
+				width = 95, height = 150,
+				visual = nobleTilesLayout[i].frontVisual,
+				posX = index*500+25+240, posY = 225+i*150)
+				addComponents(tileLabel) }
 
-	    addComponents(saveCardLabel)
-	}
+		val gems = player.gems.entries
+		var j = 0
+		for(gem in gems) {
+	    	if(gem.value==0) continue
+			val gemLabel = Label(
+				posX = index*500+25+120, posY = 980 - j*50,
+				width = 25, height = 25,
+				visual = imageLoader.tokenImage(gem.key))
 
-	val nobleTiles: MutableList<NobleTile> = player.nobleTiles
-
-	for(i in 0 until nobleTiles.size) {
-	    val tileLabel = Label(
-		width = 95, height = 150,
-		visual = nobleTilesLayout[i].frontVisual,
-		posX = index*500+25+240, posY = 225+i*150
-	    )
-
-	    addComponents(tileLabel)
-	}
-
-	val gems = player.gems.entries
-
-	var j = 0
-	for(gem in gems) {
-	    if(gem.value==0) continue
-	    val gemLabel = Label(
-		posX = index*500+25+120, posY = 980 - j*50,
-		width = 25, height = 25,
-		visual = imageLoader.tokenImage(gem.key)
-	    )
-
-	    val gemInfoLabel = Label(
-		posX = index*500+25+120+25, posY = 980 - j*50,
-		width = 25, height = 25,
-		text = gem.value.toString(),
-		font = Font(size = 20)
-	    )
-	    j++
-	    addComponents(gemLabel, gemInfoLabel)
-	}
+	    	val gemInfoLabel = Label(
+				posX = index*500+25+120+25, posY = 980 - j*50,
+				width = 25, height = 25,
+				text = gem.value.toString(),
+				font = Font(size = 20))
+	    	j++
+	    	addComponents(gemLabel, gemInfoLabel) }
 	
-	addComponents(
-	    nameLabel,
-	    typeLabel,
-	    pointsLabel,
-	)
+		addComponents(nameLabel, typeLabel, pointsLabel)
     }
 
     override fun refreshAfterPopup(currentPlayer: Player) {

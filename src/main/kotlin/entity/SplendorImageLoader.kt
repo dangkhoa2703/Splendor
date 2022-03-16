@@ -11,7 +11,7 @@ private const val BUTTON_IMAGE = "/button.jpg"
 private const val REDO_IMAGE = "/redo.png"
 private const val UNDO_IMAGE = "/Undo.png"
 private const val HINT_IMAGE = "/hint.png"
-private const val TABLE_IMAGE = "/Table2.jpg"
+private const val TABLE_IMAGE = "/Background.png"
 private const val CARD_BACK = "/card_back.jpg"
 private const val BACK_IMAGE = "/Back.png"
 private const val CONFIG_BACKGROUND = "/configScene.jpg"
@@ -184,7 +184,7 @@ class SplendorImageLoader {
 		return ImageVisual(
 			ImageIO.read(
 				SplendorImageLoader::class.java.getResource(
-					"/carbon.jpg"
+					"/carbon.png"
 				)
 			)
 		)

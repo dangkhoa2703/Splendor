@@ -46,6 +46,10 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
             this@SplendorApplication.hideMenuScene()
             this@SplendorApplication.showMenuScene(startScene)
         }
+        startButton.onMousePressed = {
+            this@SplendorApplication.hideMenuScene()
+            this@SplendorApplication.showGameScene(gameScene)
+        }
     }
 
 	/**[configScene] : Of type MenuScene; applied to the ConfigScene. By clicking the
@@ -73,6 +77,7 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
 	scene. */
     private val highscoreScene: MenuScene = HighscoreScene(rootService).apply {
         backButton.onMouseClicked = {
+            rootService.playerActionService.onAllRefreshables{ refreshAfterShowHighscores() }
             this@SplendorApplication.hideMenuScene()
             this@SplendorApplication.showMenuScene(startScene)
         }

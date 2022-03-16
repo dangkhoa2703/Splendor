@@ -122,12 +122,19 @@ class EntityTests
         /** test if gem got initialized correctly */
         val gemRed = Gem(GemType.RED)
         assertEquals(GemType.RED, gemRed.gemType)
-        assertEquals(GemType.RED.toString(), gemRed.gemType.toString())
-        assertEquals(GemType.GREEN.toString(), Gem(GemType.GREEN).gemType.toString())
-        assertEquals(GemType.BLUE.toString(), Gem(GemType.BLUE).gemType.toString())
-        assertEquals(GemType.WHITE.toString(), Gem(GemType.WHITE).gemType.toString())
-        assertEquals(GemType.BLACK.toString(), Gem(GemType.BLACK).gemType.toString())
-        assertEquals(GemType.YELLOW.toString(), Gem(GemType.YELLOW).gemType.toString())
+        assertEquals(4, gemRed.gemType.toInt())
+        assertEquals(3, Gem(GemType.GREEN).gemType.toInt())
+        assertEquals(2, Gem(GemType.BLUE).gemType.toInt())
+        assertEquals(1, Gem(GemType.WHITE).gemType.toInt())
+        assertEquals(5, Gem(GemType.BLACK).gemType.toInt())
+        assertEquals(6, Gem(GemType.YELLOW).gemType.toInt())
+        assertEquals(GemType.WHITE, gemRed.gemType.gemType(1))
+        assertEquals(GemType.BLUE, gemRed.gemType.gemType(2))
+        assertEquals(GemType.GREEN, gemRed.gemType.gemType(3))
+        assertEquals(GemType.RED, gemRed.gemType.gemType(4))
+        assertEquals(GemType.BLACK, gemRed.gemType.gemType(5))
+        assertEquals(GemType.YELLOW, gemRed.gemType.gemType(6))
+        assertEquals(null, gemRed.gemType.gemType(7))
     }
 
     /** tests if Card objects can be created correctly */
@@ -175,6 +182,14 @@ class EntityTests
         assertEquals(mapOf(), turnFour.gems)
         assertEquals(turnCard, turnFour.card)
         assertEquals(TurnType.RESERVE_CARD, turnFour.turnType)
+    }
+
+    /**
+     * ImageLoader Test
+     */
+    @Test
+    fun loadImage(){
+       // val Image = Ima
     }
 
 }

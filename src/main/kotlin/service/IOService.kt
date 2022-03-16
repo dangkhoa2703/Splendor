@@ -11,19 +11,20 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * loads a game from the given file path
      */
-    fun loadGame(path:String):Splendor{
+    fun loadGame(path:String){
         //get information for splendor
-        val gameSettingFile = File("$path/gameSetting")
+        val gameSettingFile = File("$path/gameSetting.txt")
         val gameSettings = gameSettingFile.readLines()
         val totalGameStates = gameSettings[0].trim().toInt()
         val indexCurrentGameState = gameSettings[1].trim().toInt()
         val simulationSpeed = gameSettings[2].trim().toInt()
         val playerCount = gameSettings[3].trim().toInt()
-        val validGame = when (gameSettings[5].trim()) {
+        val validGame = when (gameSettings[4].trim()) {
             "true" -> true
             "false" -> false
             else -> { throw IllegalStateException("no valid game parameter") }
         }
+        val turnCount = gameSettings[3].trim().toInt()
 
         //create gameStates and link them
         val gameStates = mutableListOf<GameState>()
@@ -40,33 +41,45 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         //create splendor
         val currentGameState = gameStates[indexCurrentGameState-1] //muss geprüft werden!!!!
-        val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame)
-        rootService.gameService.consecutiveNoAction = gameSettings[6].trim().toInt()
-        return splendor
+        val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame,turnCount)
+
+        rootService.currentGame = splendor
+
+        onAllRefreshables { refreshAfterEndTurn() }
     }
 
 
     /** loads a game state */
     fun loadGameState(file: File,numberPlayers:Int):GameState{
         val lines = file.readLines()
+        val players = mutableListOf<Player>()
+        var nextLineAt = 0
+
+        for(i in 0 until numberPlayers){
+            val line = lines.subList(i*10, i*10+8)
+            players.add(createPlayerFromLines(line))
+            nextLineAt += 10
+        }
+
+
 
         //create Players
-        val players = mutableListOf<Player>()
-        var nextLineAt = 20
-        val playerOneLines = lines.subList(0,8)
-        players.add(createPlayerFromLines(playerOneLines))
-        val playerTwoLines = lines.subList(10,18)
-        players.add(createPlayerFromLines(playerTwoLines))
-        if (numberPlayers>2){
-            val playerThreeLines = lines.subList(20,28)
-            players.add(createPlayerFromLines(playerThreeLines))
-            nextLineAt = 30
-            if(numberPlayers==4){
-                val playerFourLines = lines.subList(30,38)
-                players.add(createPlayerFromLines(playerFourLines))
-                nextLineAt = 40
-            }
-        }
+//        val players = mutableListOf<Player>()
+//        var nextLineAt = 20
+//        val playerOneLines = lines.subList(0,8)
+//        players.add(createPlayerFromLines(playerOneLines))
+//        val playerTwoLines = lines.subList(10,18)
+//        players.add(createPlayerFromLines(playerTwoLines))
+//        if (numberPlayers>2){
+//            val playerThreeLines = lines.subList(20,28)
+//            players.add(createPlayerFromLines(playerThreeLines))
+//            nextLineAt = 30
+//            if(numberPlayers==4){
+//                val playerFourLines = lines.subList(30,38)
+//                players.add(createPlayerFromLines(playerFourLines))
+//                nextLineAt = 40
+//            }
+//        }
 
         //create board
         val boardFileLines = lines.subList(nextLineAt,nextLineAt+9)
@@ -92,7 +105,10 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         //create gameState
         val currentPlayer = players[lines[nextLineAt+10].toInt()]
-        return GameState(currentPlayer, players, board)
+        val game = GameState(currentPlayer, players, board)
+        game.currentPlayerIndex = lines[nextLineAt+10].toInt()
+        game.consecutiveNoAction = lines[nextLineAt+11].toInt()
+        return game
     }
 
     /**
@@ -210,56 +226,62 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         while(toSaveGameState.hasNext()){
             val fileName = "$path/gameState${totalGameState}.txt"
             val saveFile = File(fileName)
-            saveFile.writeText("")
             saveGameState(toSaveGameState,saveFile)
             totalGameState++
             toSaveGameState = toSaveGameState.next
         }
 
-        val gameSettingName = "$path/gameSetting"
+        val gameSettingName = "$path/gameSetting.txt"
         val gameFile = File(gameSettingName)
-        gameFile.bufferedWriter().use{ out ->
-            out.write((totalGameState-1).toString()+"\n")
-            out.write(indexCurrentGame.toString() + "\n")
-            out.write(game.simulationSpeed.toString() + "\n" )
-            out.write(game.currentGameState.playerList.size.toString() + "\n")
-            out.write(rootService.gameService.currentPlayerIndex.toString() +"\n")
-            out.write(rootService.currentGame!!.validGame.toString() + "\n")
-            out.write(rootService.gameService.consecutiveNoAction.toString() + "\n")
-        }
+        gameFile.writeText(
+            ((totalGameState-1).toString()+"\n") +
+            (indexCurrentGame.toString() + "\n") +
+            (game.simulationSpeed.toString() + "\n" ) +
+            (game.currentGameState.playerList.size.toString() + "\n") +
+            (rootService.currentGame!!.validGame.toString() + "\n") +
+            (rootService.currentGame!!.turnCount.toString() + "\n")
+        )
+//        gameFile.bufferedWriter().use{ out ->
+//            out.write((totalGameState-1).toString()+"\n")
+//            out.write(indexCurrentGame.toString() + "\n")
+//            out.write(game.simulationSpeed.toString() + "\n" )
+//            out.write(game.currentGameState.playerList.size.toString() + "\n")
+//            out.write(rootService.currentGame!!.validGame.toString() + "\n")
+//            out.write(rootService.currentGame!!.turnCount.toString() + "\n")
+//        }
     }
 
-    /**
-     * saves a gameState to a file
-     */
     private fun saveGameState(gameState: GameState, file: File){
 
         val players = gameState.playerList
         val board = gameState.board
+        var saveContent = ""
 
-            file.bufferedWriter().use { out ->
-                for (player in players) {
-                    out.write(player.name + "\n")
-                    out.write(player.playerType.toString() + "\n")
-                    out.write(player.gems.toString() + "\n")
-                    out.write(player.bonus.toString() + "\n")
-                    out.write(cardToString(player.reservedCards, isDevCard = true) + "\n")
-                    out.write(cardToString(nobleTileList = player.nobleTiles, isDevCard = false) + "\n")
-                    out.write(player.score.toString() + "\n")
-                    out.write(player.devCards.toString() + "\n" + "\n" + "\n")
-                }
-                //save current board infos
-                out.write(cardToString(nobleTileList = board.nobleTiles, isDevCard = false) + "\n")
-                out.write(cardToString(board.levelOneCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelOneOpen, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelTwoCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelTwoOpen, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelThreeCards, isDevCard = true) + "\n")
-                out.write(cardToString(board.levelThreeOpen, isDevCard = true) + "\n")
-                out.write(board.gems.toString() + "\n"+ "\n"+ "\n")
-                out.write(players.indexOf(gameState.currentPlayer).toString())
-            }
+        for (player in players) {
+            saveContent += "${player.name}\n" +
+                    "${player.playerType}\n" +
+                    "${player.gems}\n" +
+                    "${player.bonus}\n" +
+                    "${cardToString(player.reservedCards, isDevCard = true)}\n" +
+                    "${cardToString(nobleTileList = player.nobleTiles, isDevCard = false)}\n" +
+                    "${player.score}\n" +
+                    "${player.devCards}\n\n\n"
+        }
 
+        //save current board infos
+        saveContent += "${cardToString(nobleTileList = board.nobleTiles, isDevCard = false)}\n" +
+                "${cardToString(board.levelOneCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelOneOpen, isDevCard = true)}\n" +
+                "${cardToString(board.levelTwoCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelTwoOpen, isDevCard = true)}\n" +
+                "${cardToString(board.levelThreeCards, isDevCard = true)}\n" +
+                "${cardToString(board.levelThreeOpen, isDevCard = true)}\n" +
+                "${board.gems}\n\n\n" +
+                //currentPlayerIndex and consecutiveNoAction
+                "${rootService.currentGame!!.currentGameState.currentPlayerIndex}\n" +
+                "${rootService.currentGame!!.currentGameState.consecutiveNoAction}\n"
+
+        file.writeText(saveContent)
     }
 
 
@@ -290,8 +312,10 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val highscoreList = mutableListOf<Highscore>()
         var content:List<String>
         for(line in highscoreFileList){
-            content = line.split(",")
-            highscoreList.add(Highscore(content[0],content[1].toDouble()))
+            if(line != "") {
+                content = line.split(",")
+                highscoreList.add(Highscore(content[0], content[1].toDouble()))
+            }
         }
         return highscoreList
     }

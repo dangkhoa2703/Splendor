@@ -1,8 +1,10 @@
 package service
 
+import entity.GemType
 import entity.Highscore
 import entity.PlayerType
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -26,17 +28,32 @@ class IOServiceTest {
         root.gameService.startNewGame(playerList, false, 1)
         val game = root.currentGame
         checkNotNull(game)
+
+        game.currentGameState.playerList[3].score = 32
         root.gameService.nextPlayer()
+        game.currentGameState.currentPlayer.gems[GemType.RED] = 10
         root.gameService.nextPlayer()
+
+        root.ioService.saveGame("src/test/resources/testSaveFile")
 
         //test save file
-        root.ioService.saveGame("src/test/resources/testSaveFile")
-        root.ioService.loadGame("src/test/resources/testSaveFile")
+        val gameState2 = File("src/test/resources/testSaveFile/gameState2.txt").readLines()
+        val gameSetting = File("src/test/resources/testSaveFile/gameSetting").readLines()
 
-//        //test Gems exception
-//        assertThrows<IllegalArgumentException> {
-//
-//        }
+        assertEquals("32",gameState2[36])
+        assertEquals(10,gameState2[12].slice(5..6).toInt())
+        assertEquals("true", gameSetting[4])
+
+        root.ioService.loadGame("src/test/resources/testSaveFile")
+        val loadGame = root.currentGame
+        checkNotNull(loadGame)
+        assertEquals(2,root.currentGame!!.currentGameState.currentPlayerIndex)
+        assertEquals(32,loadGame.currentGameState.playerList[3].score)
+
+        //test Gems exception
+        assertThrows<IllegalArgumentException> {
+            root.ioService.loadGame("src/test/resources/testFail")
+        }
     }
 
     /** tests if saving and loading highscores works correctly */

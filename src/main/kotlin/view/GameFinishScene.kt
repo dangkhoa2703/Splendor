@@ -7,12 +7,14 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.SplendorImageLoader
 import java.awt.Color
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 /** [GameFinishScene] : [MenuScene] that is displayed after the game ends depending on condition
  *  [imageLoader] : Facilitates loading of various images needed for the [GameFinishScene] using SplendorImageLoader
  *  [image] : Facilitates loading of various buttons needed for the [GameFinishScene] using SplendorImageLoader
  *  [backgroundImage] : Facilitates loading of background needed for the [GameFinishScene] using SplendorImageLoader
- *  [headLineLabel] :   Label indicating endscene
+ *  [headLineLabel] :   Label indicating endScene
  */
 
 class GameFinishScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable{
@@ -67,14 +69,14 @@ class GameFinishScene(private val rootService: RootService): MenuScene(1920, 108
      * */
     private fun ranking (){
         val game = rootService.currentGame!!
+//        val turnScore = game.turnCount.toDouble() / game.currentGameState.playerList.size.toDouble()
         val rankings = game.currentGameState.playerList.sortedByDescending { it.score }
-            labelList.add(rank0)
-            labelList.add(rank1)
-            labelList.add(rank2)
-            labelList.add(rank3)
-            for(i in rankings.indices) {
-                labelList[i].text = rankings[i].name + " has reached " + rankings[i].score.toString() + " Points"
-            }
+        labelList.add(rank0)
+        labelList.add(rank1)
+        labelList.add(rank2)
+        labelList.add(rank3)
+        for(i in rankings.indices) { labelList[i].text = rankings[i].name + " has reached " +
+                rankings[i].score + " Points" }
     }
 
     /** [refreshAfterEndGame] : override function of refreshAfterEndGame, various rank texts are refreshed */

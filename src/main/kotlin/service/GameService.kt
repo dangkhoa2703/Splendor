@@ -2,14 +2,15 @@ package service
 
 import entity.*
 import java.io.File
+import java.math.RoundingMode
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  *  class for basic game functionalities
  * */
 class GameService(private val rootService: RootService): AbstractRefreshingService() {
 
-    var consecutiveNoAction = 0
-    var currentPlayerIndex = 0
 
     /** initializes a new game and connects it to the rootService */
     fun startNewGame(
@@ -20,21 +21,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         // create players
         val playerList = mutableListOf<Player>()
-        for(player in players) {
-            playerList.add(Player(player.first,player.second)) }
+        for(player in players) { playerList.add(Player(player.first,player.second)) }
+
         // check if order should be randomized
-        if (randomizedTurns) {
-            playerList.shuffle()
-        }
-        for((index, player) in playerList.withIndex()){
-            player.id = index
-        }
+        if (randomizedTurns) { playerList.shuffle() }
+
+        for((index, player) in playerList.withIndex()) { player.id = index }
+
         val levelOneStack = createCardStack(1)
         levelOneStack.shuffle()
-
         val levelTwoStack = createCardStack(2)
         levelTwoStack.shuffle()
-
         val levelThreeStack = createCardStack(3)
         levelThreeStack.shuffle()
 
@@ -50,42 +47,19 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 	    val levelThreeOpen = tempList
 	    for(card in tempList) levelThreeStack.remove(card)
 
-
-//	    playerList[0].gems.put(GemType.GREEN, 99)
-//	    playerList[0].gems.put(GemType.RED, 99)
-//	    playerList[0].gems.put(GemType.BLUE, 99)
-//	    playerList[0].gems.put(GemType.WHITE, 99)
-//	    playerList[0].gems.put(GemType.YELLOW, 99)
-//	    playerList[0].gems.put(GemType.BLACK, 99)
-
         // create Board
-        val board = Board(
-            createNobleTiles(players.size),
-            levelOneStack,
-            levelOneOpen,
-            levelTwoStack,
-            levelTwoOpen,
-            levelThreeStack,
-            levelThreeOpen)
-
+        val board = Board(createNobleTiles(players.size), levelOneStack, levelOneOpen, levelTwoStack, levelTwoOpen,
+            levelThreeStack, levelThreeOpen)
         //create GameState
-        val gameState = GameState(
-            playerList[0],
-            playerList,
-            board)
+        val gameState = GameState(playerList[0], playerList, board)
         gameState.isInitialState = true
-
         //create Splendor(current game)
-        val splendor = Splendor(
-            simulationSpeed,
-            gameState,
-            mutableListOf())
-
-        consecutiveNoAction = 0
-        currentPlayerIndex = 0
+        val splendor = Splendor(simulationSpeed, gameState, mutableListOf())
 
         rootService.currentGame = splendor
         //createNewGameState(false)
+        rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
+        rootService.currentGame!!.currentGameState.currentPlayerIndex = 0
 
         onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
@@ -122,14 +96,17 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             )
         }
 
+        var nextPlayerIndex = 0
         if(notFirstGameState){
-            currentPlayerIndex = (currentPlayerIndex + 1) % newPlayerList.size
+            nextPlayerIndex =
+                (rootService.currentGame!!.currentGameState.currentPlayerIndex + 1) % newPlayerList.size
         }
         val newGameState = GameState(
-            newPlayerList[currentPlayerIndex],
+            newPlayerList[nextPlayerIndex],
             newPlayerList,
             tempBoard)
         if(notFirstGameState) {
+            newGameState.currentPlayerIndex = nextPlayerIndex
             //bind new gameState to chain and set pointer to the newGameState
             newGameState.previous = currentGameState
             currentGameState.next = newGameState
@@ -164,20 +141,20 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
             return
         }
 
+        rootService.currentGame!!.turnCount++
         newGameState = createNewGameState(true)
 
-        //update currentPlayerIndex and check if the next player can make a valid move
+        //check if the next player can make a valid move
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
         val affordableCards = acquirableCards().size
         val reservedCards = newGameState.currentPlayer.reservedCards.size
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
 //            onAllRefreshables { refreshIfNoValidAction() }
-            consecutiveNoAction++
-            println("plus one")
+            newGameState.consecutiveNoAction++
         }
 
         // if no player can make any move, end game with tie result
-        if(consecutiveNoAction == newGameState.playerList.size){
+        if(rootService.currentGame!!.currentGameState.consecutiveNoAction == newGameState.playerList.size){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
             saveHighscoresAfterEndGame()
 //            onAllRefreshables { refreshAfterEndGame(true) }
@@ -195,7 +172,11 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         checkNotNull(game)
         if(game.validGame){
             for (player in game.currentGameState.playerList){
-                rootService.ioService.saveHighscore(Highscore(player.name,player.score.toDouble()))
+                var score: Double =
+                    ((player.score).toDouble() + (1 / rootService.currentGame!!.turnCount)).
+                    toBigDecimal().setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                score *= 100
+                rootService.ioService.saveHighscore(Highscore(player.name, score))
             }
         }
     }
