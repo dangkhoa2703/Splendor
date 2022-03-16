@@ -13,7 +13,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
      */
     fun loadGame(path:String){
         //get information for splendor
-        val gameSettingFile = File("$path/gameSetting")
+        val gameSettingFile = File("$path/gameSetting.txt")
         val gameSettings = gameSettingFile.readLines()
         val totalGameStates = gameSettings[0].trim().toInt()
         val indexCurrentGameState = gameSettings[1].trim().toInt()
@@ -44,6 +44,8 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame,turnCount)
 
         rootService.currentGame = splendor
+
+        onAllRefreshables { refreshAfterEndTurn() }
     }
 
 
@@ -229,7 +231,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             toSaveGameState = toSaveGameState.next
         }
 
-        val gameSettingName = "$path/gameSetting"
+        val gameSettingName = "$path/gameSetting.txt"
         val gameFile = File(gameSettingName)
         gameFile.writeText(
             ((totalGameState-1).toString()+"\n") +
