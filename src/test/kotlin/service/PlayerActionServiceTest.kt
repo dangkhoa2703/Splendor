@@ -102,12 +102,10 @@ class PlayerActionServiceTest {
         assertFalse(root.currentGame!!.currentGameState.board.levelThreeCards.contains(devCard3))
         assertTrue(player.reservedCards.contains(devCard3))
         assertTrue { root.currentGame!!.currentGameState.board.gems.getValue(GemType.YELLOW) == 0 }
-//        assertTrue { player.gems.getValue(GemType.YELLOW)  == 1 }
 
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
         root.playerActionService.reserveCard(root.currentGame!!.currentGameState.board.levelOneOpen[0], player)
-        //assertThrows<IllegalArgumentException> { root.playerActionService.reserveCard(root.currentGame!!. currentGameState.board.levelOneOpen[0], 0, player) }
     }
 
     /**
@@ -271,8 +269,8 @@ class PlayerActionServiceTest {
         val gameStateTwo = GameState(playerTwo, listOf(playerOne, playerTwo), Board())
         root.gameService.startNewGame(playerList, false, 1)
         //exceptions if there are no next or previous gameStates
-        //assertThrows<IllegalStateException> { root.playerActionService.redo() }
-        //assertThrows<IllegalStateException> { root.playerActionService.undo() }
+        assertThrows<IllegalStateException> { root.playerActionService.redo() }
+        assertThrows<IllegalStateException> { root.playerActionService.undo() }
         assertTrue { root.currentGame!!.validGame }
         root.currentGame!!.currentGameState.next = gameStateTwo
         root.currentGame!!.currentGameState.previous = gameStateOne

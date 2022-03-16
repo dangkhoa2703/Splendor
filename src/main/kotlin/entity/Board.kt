@@ -46,13 +46,12 @@ class Board (
         if (other !is Board)
             return false
         val otherBoard: Board = other
-        return otherBoard.nobleTiles.equals(nobleTiles)
-                && otherBoard.levelOneOpen.equals(levelOneOpen)
-                && otherBoard.levelOneCards.equals(levelOneCards)
-                && otherBoard.levelTwoOpen.equals(levelTwoOpen)
-                && otherBoard.levelTwoCards.equals(levelTwoCards)
-                && otherBoard.levelThreeOpen.equals(levelThreeOpen)
-                && otherBoard.levelThreeCards.equals(levelThreeCards)
+        return otherBoard.nobleTiles == nobleTiles
+                && otherBoard.levelOneOpen == levelOneOpen
+                && otherBoard.levelOneCards == levelOneCards
+                && otherBoard.levelTwoOpen == levelTwoOpen
+                && otherBoard.levelTwoCards == levelTwoCards
+                && otherBoard.levelThreeOpen == levelThreeOpen
+                && otherBoard.levelThreeCards == levelThreeCards
     }
-
 }

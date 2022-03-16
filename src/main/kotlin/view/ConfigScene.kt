@@ -101,7 +101,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
     )
 
 	/**[refreshStartButton] : Function for refreshing/enabling/disabling the start button
-	 * the startbutton is disable when a given [textFields] is left blank
+	 * the startbutton is disabled when a given [textFields] is left blank
 	 * */
     private fun refreshStartButton() {
 	var startDisabled = false
@@ -145,7 +145,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    it.isVisible = false
 	    it.opacity = 0.2
 	}
-	for(i in 0..difficultyTexts.size-1) {
+	for(i in difficultyTexts.indices) {
 	    val but: Button = difficultyTexts[i]
 	    var absIndex: Int = selection[i*2+1]
 	    if(absIndex<0) absIndex*=-1
@@ -154,7 +154,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	    but.text = difficulties[absIndex]
 	}
 
-	var speedVisible: Boolean = true
+	var speedVisible = true
 	for(i in 0..size) {
 	    textFields[i].isVisible = true
 	    icons[i].isVisible = true
@@ -190,10 +190,11 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	}
     }
 
-	/** [start] : used before the start of the game to assign the player types. We initially have an empty tuple List with the name and type of a
-	 * "to be assigned" player. Using the for loop we assign the types to each player, with HUMAN being the base case.
-	 *  Else we have a selection of three difficulties to select from. The various player names (from textfields[i])
-	 *  and player types are then accordingly assigned from namePair to players as a tuple.
+	/** [start] : used before the start of the game to assign the player types. We initially have an empty tuple List
+	 * 	with the name and type of a "to be assigned" player. Using the for loop we assign the types to each player,
+	 * 	with HUMAN being the base case. Else we have a selection of three difficulties to select from. The various
+	 * 	player names (from textfields i) and player types are then accordingly assigned from namePair to players
+	 * 	as a tuple.
 	 * */
     private fun start() {
 	var players: List<Pair<String, PlayerType>> = listOf()
@@ -213,7 +214,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 		}
 	    }
 	    val namePair: Pair<String, PlayerType> = Pair(textFields[i].text, type)
-	    players+=namePair
+	    players = players + namePair
 	}
 	
 	rootService.gameService.startNewGame(
@@ -283,7 +284,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 			refresh()
 		    }
 		}
-		speedButtons+=speedButton
+			speedButtons = speedButtons + speedButton
 	    }
 
 	    if(i<2) {
@@ -296,12 +297,12 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 			refresh()
 		    }
 		}
-		shuffleButtons+=shuffleButton
+			shuffleButtons = shuffleButtons + shuffleButton
 	    }
 
-	    textFields+=textField
-	    icons+=icon
-	    difficultyTexts+=difficultyText
+		textFields = textFields + textField
+		icons = icons + icon
+		difficultyTexts = difficultyTexts + difficultyText
 	    
 	}
 

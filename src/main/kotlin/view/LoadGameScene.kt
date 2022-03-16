@@ -20,10 +20,10 @@ import entity.SplendorImageLoader
 
 class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
 
-	val imageLoader = SplendorImageLoader()
-	val image = imageLoader.button()
-	val backgroundImage = imageLoader.highscoreBackground()
-	val load = imageLoader.loadGame()
+	private val imageLoader = SplendorImageLoader()
+	private val image = imageLoader.button()
+	private val backgroundImage = imageLoader.highscoreBackground()
+	private val load = imageLoader.loadGame()
     private val fileChooser = FileChooser()
     private var openedFileChooser: Boolean = false
 
@@ -54,8 +54,8 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 		val file: File? = fileChooser.showOpenDialog(null)
 		openedFileChooser = false
 		if(file!=null) {
-		    println(file.getName())
-		    fileName.text = file.getName()
+		    println(file.name)
+		    fileName.text = file.name
 		}
 	    }
 	}

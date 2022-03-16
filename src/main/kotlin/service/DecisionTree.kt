@@ -17,7 +17,7 @@ class DecisionTree(var rootService: RootService) {
 
     /**
      * Executes miniMax-algorithm on [node]
-     * @param player: Important: Simulated player has to be at the first index of the list, followed by enemies in order
+     * @param player: Important: Simulated player has to be at first index of the list, followed by enemies in order
      */
     private fun miniMax(node: TreeNode<Turn>, alpha_: Double, beta_: Double, playerIndex: Int, turnType: TurnType,
                         board: Board, player: MutableList<Player>): Double {
@@ -50,10 +50,10 @@ class DecisionTree(var rootService: RootService) {
         val newPlayerIndex: Int = (playerIndex + 1) % player.size
         if(maximizing) {
             var maxEval = Double.MIN_VALUE
-            for(i in 0..(node.getChildren().size - 1))
+            for(i in 0 until node.getChildren().size)
             {
                 val elem = node.getChildren()[i]
-                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i];
+                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
                 maxEval = maxOf(maxEval, eval)
                 alpha = maxOf(alpha, eval)
@@ -63,10 +63,10 @@ class DecisionTree(var rootService: RootService) {
             return maxEval
         } else {
             var minEval = Double.MAX_VALUE
-            for(i in 0..(node.getChildren().size - 1))
+            for(i in 0 until node.getChildren().size)
             {
                 val elem = node.getChildren()[i]
-                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i];
+                val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 val eval = miniMax(elem, alpha, beta, newPlayerIndex, newTurnType, newBoard, newPlayerList)
                 minEval = minOf(minEval, eval)
                 beta = minOf(beta, eval)

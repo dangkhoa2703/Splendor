@@ -46,15 +46,15 @@ class Player (
         if (other !is Player)
             return false
         val otherPlayer: Player = other
-        return otherPlayer.name.equals(name)
-                && otherPlayer.playerType.equals(playerType)
-                && otherPlayer.gems.equals(gems)
-                && otherPlayer.bonus.equals(bonus)
-                && otherPlayer.reservedCards.equals(reservedCards)
-                && otherPlayer.nobleTiles.equals(nobleTiles)
-                && otherPlayer.score.equals(score)
-                && otherPlayer.devCards.equals(devCards)
-                && otherPlayer.id.equals(id)
+        return otherPlayer.name == name
+                && otherPlayer.playerType == playerType
+                && otherPlayer.gems == gems
+                && otherPlayer.bonus == bonus
+                && otherPlayer.reservedCards == reservedCards
+                && otherPlayer.nobleTiles == nobleTiles
+                && otherPlayer.score == score
+                && otherPlayer.devCards == devCards
+                && otherPlayer.id == id
     }
 
 }
