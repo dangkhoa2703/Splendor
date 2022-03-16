@@ -363,9 +363,9 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             playerMinusEnemyAmountOfGems.add(playerAmountOfGems - enemyAmountOfGems)
             playerMinusEnemyAmountOfBoni.add(amountOfBoni - it.devCards.size.toDouble())
         }
-        winningProbability = 0.5 * playerMinusEnemyPrestige.average()
-        +0.2 * playerMinusEnemyAmountOfGems.average()
-        +0.3 * playerMinusEnemyAmountOfBoni.average()
+        winningProbability = 0.5 * playerMinusEnemyPrestige.average() +
+                0.2 * playerMinusEnemyAmountOfGems.average() +
+                0.3 * playerMinusEnemyAmountOfBoni.average()
         //Calculate and return heuristic
         return 0.3 * playersPrestigePoints + 0.2 * amountOfBoni + 0.5 * winningProbability
     }

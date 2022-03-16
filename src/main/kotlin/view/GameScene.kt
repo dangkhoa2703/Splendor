@@ -63,7 +63,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		height/2-200,
 		400,
 		500,
-		"Peter", font = Font(size = 26, color = Color.WHITE)
+		"", font = Font(size = 26, color = Color.WHITE)
 	)
 
 	val errorLabel=Label(
@@ -71,7 +71,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		1000,
 		1000,
 		100,
-		"Error", font = Font(size = 20, color = Color.WHITE)
+		"", font = Font(size = 20, color = Color.WHITE)
 	)
 
     //BUTTONS
@@ -98,7 +98,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 			playerActionService.undo()
 	    }
 	    catch(e: Exception) {
-			errorLabel.text = e.toString()
+			val errText: String? = e.message
+			checkNotNull(errText)
+			errorLabel.text = errText
 			println(e)
 	    }
 	}
@@ -118,7 +120,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		playerActionService.redo()
 	    }
 	    catch(e: Exception) {
-			errorLabel.text = e.toString()
+			val errText: String? = e.message
+			checkNotNull(errText)
+			errorLabel.text = errText
 		println(e)
 	    }
 	}
@@ -150,8 +154,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    val playerActionService = rootService.playerActionService
 		val gameState = rootService.currentGame!!.currentGameState
 		val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
-	    var output = playerActionService.showHint(turn)
-		output = "Note that the char sequence passed to the transform function is ephemeral and is valid only inside that function. You should not store it or allow it to escape in some way, unless you made a snapshot of it. The last char sequence may have fewer characters than the given size."
+	    var output:String = ""
+		try {
+			output = playerActionService.showHint(turn)
+		}
+		catch(e: Exception) {
+			val errText: String? = e.message
+			checkNotNull(errText)
+			errorLabel.text = errText
+			println(e)
+		}
+		hint.text = ""
 		val lines = output.chunked(20)
 		var i = lines.size
 		for(line in lines) {
@@ -246,7 +259,10 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 				}
 			}
             	catch(e: Exception) {
-                println(e)
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+               		println(e)
             }
 
 			for(gem in allGems) {
@@ -290,7 +306,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 				playerActionService.returnGems(gemList, currentPlayer as Player)
 			}
 			catch(e: Exception) {
-				errorLabel.text = e.toString()
+				val errText: String? = e.message
+				checkNotNull(errText)
+				errorLabel.text = errText
 				println(e)
 			}
 
@@ -403,7 +421,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		try {
 		 playerActionService . selectNobleTile (nobleTile, player)
 		}catch (e:Exception){
-			errorLabel.text = e.toString()
+			val errText: String? = e.message
+			checkNotNull(errText)
+			errorLabel.text = errText
 			println(e)
 			return false
 		}
@@ -427,7 +447,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
-		errorLabel.text = e.toString()
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
 	    println(e)
 	}
 
@@ -450,7 +472,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
-		errorLabel.text = e.toString()
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
 	    println(e)
 	}
 	return false
@@ -524,6 +548,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	/**[fillLayouts] : Method, filling all layouts on the table */
     private fun fillLayouts() {
+		errorLabel.text = ""
+				hint.text = ""
 	devCardsMap.clear()
 	
 	val game = rootService.currentGame
@@ -758,8 +784,9 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
-
-	scoreLabel.text = (player.score+nobleTile.prestigePoints).toString()
+		println(scoreLabel.text)
+	scoreLabel.text = (player.score).toString()
+		println(scoreLabel.text)
     }
 
 	/**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */
@@ -891,7 +918,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	cardView.isDraggable = false
 	//moveCardView(cardView, playerDevCards[currentPlayerIndex])
 
-	scoreLabel.text = (player.score+devCard.prestigePoints).toString()
+	scoreLabel.text = (player.score).toString()
 	
 	fillLayouts()
 

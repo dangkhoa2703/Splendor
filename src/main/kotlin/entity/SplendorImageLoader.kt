@@ -29,7 +29,7 @@ class SplendorImageLoader {
 
     private var images: List<ImageVisual> = listOf()
 
-    private fun image(path: String): ImageVisual {
+    fun image(path: String): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
@@ -146,14 +146,6 @@ class SplendorImageLoader {
 	)
     }
 
-    fun backButton(): ImageVisual {
-	return ImageVisual(
-	    ImageIO.read(
-		SplendorImageLoader::class.java.getResource(BACK_IMAGE)
-	    )
-	)
-    }
-
     fun configBackground(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -170,7 +162,7 @@ class SplendorImageLoader {
 	)
     }
 
-    private fun tokenImage(int: Int): ImageVisual {
+    fun tokenImage(int: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
@@ -216,7 +208,7 @@ class SplendorImageLoader {
 	}
     }
 
-    private fun imageFor(id: Int): ImageVisual {
+    fun imageFor(id: Int): ImageVisual {
 	val idString = (id).toString()
 	return ImageVisual(
 	    ImageIO.read(

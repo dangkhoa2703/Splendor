@@ -218,7 +218,7 @@ class ConfigScene(private val rootService: RootService): MenuScene(1920, 1080), 
 	}
 	
 	rootService.gameService.startNewGame(
-	    players, selection[9]==0, selection[8]
+	    players, selection[9]!=0, selection[8]
 	)
     }
 	/**[startButton] : Button to start game after successful configuration using [start]*/
