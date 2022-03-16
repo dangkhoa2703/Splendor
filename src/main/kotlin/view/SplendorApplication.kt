@@ -4,6 +4,7 @@ import entity.Player
 import service.RootService
 import tools.aqua.bgw.core.BoardGameApplication
 import tools.aqua.bgw.core.MenuScene
+import java.io.File
 
 /**
  * Implementation of the Splendor [BoardGameApplication] for the game Splendor.
@@ -46,8 +47,9 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
             this@SplendorApplication.hideMenuScene()
             this@SplendorApplication.showMenuScene(startScene)
         }
-        startButton.onMousePressed = {
+        startButton.onMouseClicked = {
             this@SplendorApplication.hideMenuScene()
+            loadGame()
             this@SplendorApplication.showGameScene(gameScene)
         }
     }

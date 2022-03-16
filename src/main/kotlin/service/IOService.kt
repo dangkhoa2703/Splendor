@@ -24,27 +24,30 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             "false" -> false
             else -> { throw IllegalStateException("no valid game parameter") }
         }
-        val turnCount = gameSettings[3].trim().toInt()
+        val turnCount = gameSettings[5].trim().toInt()
 
         //create gameStates and link them
         val gameStates = mutableListOf<GameState>()
-        for (i in 1..totalGameStates){
+        for (i in 1 .. totalGameStates){
             val file = File("$path/gameState${i}.txt")
             gameStates.add(loadGameState(file,playerCount))
         }
-        gameStates[0].next = gameStates[1]
-        gameStates[gameStates.size-1].previous = gameStates[gameStates.size-2]
-        for ( i in 1..gameStates.size-2){
-            gameStates[i].previous = gameStates[i-1]
-            gameStates[i].next = gameStates[i+1]
+        if(gameStates.size > 2) {
+            gameStates[0].next = gameStates[1]
+            gameStates[gameStates.size - 1].previous = gameStates[gameStates.size - 2]
+            for (i in 1..gameStates.size - 2) {
+                gameStates[i].previous = gameStates[i - 1]
+                gameStates[i].next = gameStates[i + 1]
+            }
         }
 
         //create splendor
-        val currentGameState = gameStates[indexCurrentGameState-1] //muss geprüft werden!!!!
+        val currentGameState = gameStates[indexCurrentGameState - 1] //muss geprüft werden!!!!
         val splendor = Splendor(simulationSpeed, currentGameState, mutableListOf(), validGame,turnCount)
 
         rootService.currentGame = splendor
 
+//        onAllRefreshables { refreshAfterStartNewGame() }
         onAllRefreshables { refreshAfterEndTurn() }
     }
 
@@ -57,6 +60,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         for(i in 0 until numberPlayers){
             val line = lines.subList(i*10, i*10+8)
+            print(createPlayerFromLines(line).id.toString())
             players.add(createPlayerFromLines(line))
             nextLineAt += 10
         }
@@ -278,8 +282,8 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
                 "${cardToString(board.levelThreeOpen, isDevCard = true)}\n" +
                 "${board.gems}\n\n\n" +
                 //currentPlayerIndex and consecutiveNoAction
-                "${rootService.currentGame!!.currentGameState.currentPlayerIndex}\n" +
-                "${rootService.currentGame!!.currentGameState.consecutiveNoAction}\n"
+                "${gameState.currentPlayerIndex}\n" +
+                "${gameState.consecutiveNoAction}\n"
 
         file.writeText(saveContent)
     }

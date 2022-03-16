@@ -116,7 +116,6 @@ class GameServiceTest {
         }
 
         root.gameService.nextPlayer()
-        println(game.currentGameState.board.gems.toString())
         assertEquals(0,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(1,root.currentGame!!.currentGameState.consecutiveNoAction)
 

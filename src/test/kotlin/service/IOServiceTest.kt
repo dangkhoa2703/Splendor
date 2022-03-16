@@ -38,7 +38,7 @@ class IOServiceTest {
 
         //test save file
         val gameState2 = File("src/test/resources/testSaveFile/gameState2.txt").readLines()
-        val gameSetting = File("src/test/resources/testSaveFile/gameSetting").readLines()
+        val gameSetting = File("src/test/resources/testSaveFile/gameSetting.txt").readLines()
 
         assertEquals("32",gameState2[36])
         assertEquals(10,gameState2[12].slice(5..6).toInt())
@@ -49,6 +49,7 @@ class IOServiceTest {
         checkNotNull(loadGame)
         assertEquals(2,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(32,loadGame.currentGameState.playerList[3].score)
+        assertEquals(4,loadGame.currentGameState.board.levelOneOpen.size)
 
         //test Gems exception
         assertThrows<IllegalArgumentException> {

@@ -22,12 +22,12 @@ class Player (
         GemType.BLUE to 0,
         GemType.YELLOW to 0),
     val bonus : MutableMap<GemType,Int> = mutableMapOf(
-        GemType.RED to 99,
-        GemType.GREEN to 99,
-        GemType.WHITE to 99,
-        GemType.BLACK to 99,
-        GemType.BLUE to 99,
-        GemType.YELLOW to 99
+        GemType.RED to 0,
+        GemType.GREEN to 0,
+        GemType.WHITE to 0,
+        GemType.BLACK to 0,
+        GemType.BLUE to 0,
+        GemType.YELLOW to 0
     ),
     val reservedCards : MutableList<DevCard> = mutableListOf(),
     val nobleTiles : MutableList<NobleTile> = mutableListOf(),
