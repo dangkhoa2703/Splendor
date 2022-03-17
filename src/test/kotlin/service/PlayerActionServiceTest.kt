@@ -355,9 +355,13 @@ class PlayerActionServiceTest {
         assertEquals(hint, root.playerActionService.showHint(turn))
         val gemsMap = mutableMapOf(Pair(GemType.RED, 1), Pair(GemType.GREEN, 1), Pair(GemType.BLUE, 1))
         turn = Turn(gemsMap, listOf(), TurnType.TAKE_GEMS)
-        hint = "You should take three gems of the colours RED, GREEN and BLUE "
+        hint = "You should take three gems of the colours RED, GREEN and BLUE"
         assertEquals(hint, root.playerActionService.showHint(turn))
 
         //best turn is to take and to discard gems
+        turn = Turn(mapOf(Pair(GemType.RED, 2)), listOf(), TurnType.TAKE_GEMS_AND_DISCARD)
+        turn.gemsToDiscard = mapOf(GemType.RED to 1, GemType.BLACK to 1)
+        hint = "You should take two RED gems and discard gems of the colours RED BLACK "
+        assertEquals(hint, root.playerActionService.showHint(turn))
     }
 }

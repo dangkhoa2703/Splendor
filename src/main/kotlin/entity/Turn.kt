@@ -11,7 +11,7 @@ class Turn (
     val card: List<DevCard>,
     val turnType: TurnType,
     private val takeThreeDifferentGems: Boolean = false,
-    val gemsToDiscard: Map<GemType, Int> = mapOf()) {
+    var gemsToDiscard: Map<GemType, Int> = mapOf()) {
 
     /** Variable to temporarily save calculated score for turn */
     var evaluation: Double? = null
