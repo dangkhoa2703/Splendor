@@ -100,14 +100,12 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if(notFirstGameState){
             nextPlayerIndex =
                 (rootService.currentGame!!.currentGameState.currentPlayerIndex + 1) % newPlayerList.size
-            println(nextPlayerIndex.toString())
         }
         val newGameState = GameState(
             newPlayerList[nextPlayerIndex],
             newPlayerList,
             tempBoard)
         if(notFirstGameState) {
-            print("notfirstgameState ${nextPlayerIndex}")
             newGameState.currentPlayerIndex = nextPlayerIndex
             //bind new gameState to chain and set pointer to the newGameState
             newGameState.previous = currentGameState

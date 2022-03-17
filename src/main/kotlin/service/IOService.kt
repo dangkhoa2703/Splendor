@@ -60,7 +60,6 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         for(i in 0 until numberPlayers){
             val line = lines.subList(i*10, i*10+8)
-            print(createPlayerFromLines(line).id.toString())
             players.add(createPlayerFromLines(line))
             nextLineAt += 10
         }

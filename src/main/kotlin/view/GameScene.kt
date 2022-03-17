@@ -784,9 +784,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
-		println(scoreLabel.text)
 	scoreLabel.text = (player.score).toString()
-		println(scoreLabel.text)
     }
 
 	/**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */
@@ -795,7 +793,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
 
-	game.turnCount++
+//	game.turnCount++
 
 	currentPlayer = game.currentGameState.currentPlayer
 	currentPlayerIndex = game.currentGameState.playerList.indexOf(currentPlayer)
@@ -929,6 +927,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 		for(gem in allGems) {
 			playerGemSelection[gem]=0
+			gameGemSelection[gem] = 0
 		}
 
 		for(gem in gems) {
@@ -936,6 +935,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		}
 
 		renderPlayerGems()
+
 	}
 
     init {
