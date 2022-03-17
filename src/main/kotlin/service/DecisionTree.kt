@@ -50,7 +50,8 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(),
+                    enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -81,7 +82,8 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(),
+                    enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -165,7 +167,8 @@ class DecisionTree(var rootService: RootService) {
                 val totalGemsOfPlayer: Map<GemType, Int> = player.gems.combine(player.bonus)
 
                 for(card in cardsSortedAfterScore) {
-                    //reserve a card if you cannot buy it, but if you cannot take gems because there are not enough left
+                    //reserve a card if you cannot buy it, but if you cannot take gems because there are not
+                    // enough left
                     if(!isCardAcquirable(card, totalGemsOfPlayer) && board.gems.isEmpty()) {
                         if (player.reservedCards.size < 3) {
                             reservedCards.add(card)

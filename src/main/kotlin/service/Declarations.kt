@@ -27,7 +27,8 @@ fun List<Player>.clone(): List<Player> {
 /**
  * Combines two maps by adding or subtracting the respective int-values
  */
-fun <T> Map<T, Int>.combine(secondMap: Map<T, Int>, subtract: Boolean = false, allowNegativeValues: Boolean = false) : MutableMap<T, Int> {
+fun <T> Map<T, Int>.combine(secondMap: Map<T, Int>, subtract: Boolean = false,
+                            allowNegativeValues: Boolean = false) : MutableMap<T, Int> {
     val result: MutableMap<T, Int> = toMutableMap()
     secondMap.forEach {
         val oldValue: Int? = get(it.key)

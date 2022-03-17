@@ -46,63 +46,49 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      * @return a hint for the best next move for the current player and current situation
      */
     fun showHint(turn:Turn): String{
-        if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
-            var hint :String
-            val board = rootService.currentGame!!.currentGameState.board
-            val player = rootService.currentGame!!.currentGameState.currentPlayer
-            if(turn.turnType == TurnType.RESERVE_CARD){
-                val card = turn.card[0]
-                val placement = when(card.level){
-                    1 -> board.levelOneOpen.indexOf(card)+1
-                    2 -> board.levelTwoOpen.indexOf(card)+1
-                    3 -> board.levelThreeOpen.indexOf(card)+1
-                    else -> {throw IllegalStateException("this should not happen")}
-                }
-                hint = "You should reserve the level-${card.level}-card at position $placement."
+        var hint :String
+        val board = rootService.currentGame!!.currentGameState.board
+        val player = rootService.currentGame!!.currentGameState.currentPlayer
+        if(turn.turnType == TurnType.RESERVE_CARD){
+            val card = turn.card[0]
+            val placement = when(card.level){
+                1 -> board.levelOneOpen.indexOf(card) + 1
+                2 -> board.levelTwoOpen.indexOf(card) + 1
+                3 -> board.levelThreeOpen.indexOf(card) + 1
+                else -> { throw IllegalStateException("this should not happen") } }
+            hint = "You should reserve the level-${card.level}-card at position $placement."
+        }
+        else if(turn.turnType == TurnType.BUY_CARD){
+            val card = turn.card[0]
+            val placement :Int
+            if(player.reservedCards.contains(card)){
+                placement = player.reservedCards.indexOf(card) + 1
+                hint = "You should buy your reserved card at position $placement."
             }
-            else if(turn.turnType == TurnType.BUY_CARD){
-                val card = turn.card[0]
-                val placement :Int
-                if(player.reservedCards.contains(card)){
-                    placement = player.reservedCards.indexOf(card)+1
-                    hint = "You should buy your reserved card at position $placement."
+            else {
+                placement = when (card.level) {
+                    1 -> board.levelOneOpen.indexOf(card) + 1
+                    2 -> board.levelTwoOpen.indexOf(card) + 1
+                    3 -> board.levelThreeOpen.indexOf(card) + 1
+                    else -> { throw IllegalStateException("this should not happen") }
                 }
-                else {
-                    placement = when (card.level) {
-                        1 -> board.levelOneOpen.indexOf(card) + 1
-                        2 -> board.levelTwoOpen.indexOf(card) + 1
-                        3 -> board.levelThreeOpen.indexOf(card) + 1
-                        else -> {
-                            throw IllegalStateException("this should not happen")
-                        }
-                    }
-                    hint = "You should buy the level-${card.level}-card at position $placement."
-                }
+                hint = "You should buy the level-${card.level}-card at position $placement."
             }
-            else if ((turn.turnType == TurnType.TAKE_GEMS)||(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD)){
-                var gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
-                hint = when (gemTypes.size) {
-                    1 -> {
-                        "You should take two ${gemTypes[0]} gems "
-                    }
-                    3 -> {
-                        "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]} "
-                    }
-                    else -> {
-                        throw IllegalStateException("tip is wrong")
-                    }
-                }
-                if(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD){
+        }
+        else if ((turn.turnType == TurnType.TAKE_GEMS)||(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD)) {
+            var gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
+            hint = when (gemTypes.size) {
+                1 -> { "You should take two ${gemTypes[0]} gems " }
+                3 -> { "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}" }
+                else -> { throw IllegalStateException("tip is wrong") } }
+                if(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD) {
                     gemTypes = turn.gemsToDiscard.filter { it.value > 0 }.keys.toMutableList()
                     hint += "and discard gems of the colours "
-                    for (gemType in gemTypes){
-                        hint += "$gemType "
-                    }
-                }
+                    for (gemType in gemTypes) {
+                        hint += "$gemType " } }
             }
-            else{ hint = "there is no help for you" }
-            return hint
-        } else { throw IllegalArgumentException ("NOT UR TURN") }
+        else{ hint = "there is no help for you" }
+        return hint
     }
 
     //player-game-action

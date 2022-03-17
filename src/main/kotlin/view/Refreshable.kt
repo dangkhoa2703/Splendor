@@ -29,10 +29,12 @@ interface Refreshable {
     /**[refreshAfterTakeGems] : Refreshable method, refreshes the game / scene after a current player takes Gems.*/
     fun refreshAfterTakeGems()  {}
 
-    /**[refreshAfterBuyCard] : Refreshable method, refreshes the game / scene after a dev card is purchased from a player.*/
+    /**[refreshAfterBuyCard] : Refreshable method, refreshes the game / scene after a dev card is purchased from a
+     * player.*/
     fun refreshAfterBuyCard(devCard: DevCard){}
 
-    /**[refreshAfterReserveCard] : Refreshable method, refreshes the game / scene after a card is reserved by a player.*/
+    /**[refreshAfterReserveCard] : Refreshable method, refreshes the game / scene after a card is reserved
+     * by a player.*/
     fun refreshAfterReserveCard(devCard: DevCard) {}
 
     //fun refreshAfterLoadGame()  {}
@@ -40,7 +42,8 @@ interface Refreshable {
     // fun refreshAfterUndoRedo()  {}
 
     //fun refreshScore() {}
-    /**[refreshAfterSelectNobleTile] : Refreshable method, refreshes the game / scene after a player selects desired Gems in his turn.*/
+    /**[refreshAfterSelectNobleTile] : Refreshable method, refreshes the game / scene after a player selects desired
+     * Gems in his turn.*/
     fun refreshAfterSelectNobleTile(nobleTile: NobleTile)  {}
 
     // fun refreshAfterShowHint()  {}
