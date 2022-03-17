@@ -9,5 +9,6 @@ package entity
 enum class TurnType {
     TAKE_GEMS,
     BUY_CARD,
-    RESERVE_CARD
+    RESERVE_CARD,
+    TAKE_GEMS_AND_DISCARD
 }
