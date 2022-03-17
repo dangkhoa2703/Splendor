@@ -100,6 +100,7 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	)
     }
 
+	/**[loadGame] : Method facilitatin loading of a previously "existing" saved game.*/
 	fun loadGame(){
 		val ioService = rootService.ioService
 		try {
