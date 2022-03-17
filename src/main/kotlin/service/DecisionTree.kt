@@ -20,17 +20,17 @@ class DecisionTree(var rootService: RootService) {
             else
                 println("\t> root-children score: null")
         }
-        return root.data ?: null
+        return root.data
     }
 
     /**
      * Executes miniMax-algorithm on [node]
      * @param player: Important: Simulated player has to be at first index of the list, followed by enemies in order
      */
-    private fun miniMax(node: TreeNode<Turn>, alpha_: Double, beta_: Double, playerIndex: Int,
+    private fun miniMax(node: TreeNode<Turn>, alphaMiniMax: Double, betaMiniMax: Double, playerIndex: Int,
                         board: Board, player: MutableList<Player>): Double? {
-        var alpha = alpha_
-        var beta = beta_
+        var alpha = alphaMiniMax
+        var beta = betaMiniMax
         val maximizing = playerIndex == 0
         // Leaf
         val currentPlayer: Player = player[playerIndex]
@@ -40,7 +40,7 @@ class DecisionTree(var rootService: RootService) {
         }
         // MiniMax
         var simulation: Pair<Turn, Pair<Board, Player>>? = null
-        val newPlayerIndex: Int = (playerIndex + 1) % player.size
+        val playerIndex: Int = (playerIndex + 1) % player.size
         if(maximizing) {
             var maxEval: Double = Double.MIN_VALUE
             var maxEvalTurn: Turn? = null
@@ -53,10 +53,10 @@ class DecisionTree(var rootService: RootService) {
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
-                var newPlayerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
-                newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
-                newPlayerlist = newPlayerlist.clone().toMutableList()
-                val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                var playerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
+                playerlist.add(indexOfCurrentPlayer, simulation.second.second)
+                playerlist = playerlist.clone().toMutableList()
+                val eval = miniMax(child, alpha, beta, playerIndex, simulation.second.first, playerlist)
                 if(eval == null)
                     continue
                 if(eval > maxEval) {
@@ -84,10 +84,10 @@ class DecisionTree(var rootService: RootService) {
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
-                var newPlayerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
-                newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
-                newPlayerlist = newPlayerlist.clone().toMutableList()
-                val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                var playerlist: MutableList<Player> = player.minus(currentPlayer).toMutableList()
+                playerlist.add(indexOfCurrentPlayer, simulation.second.second)
+                playerlist = playerlist.clone().toMutableList()
+                val eval = miniMax(child, alpha, beta, playerIndex, simulation.second.first, playerlist)
                 if(eval == null)
                     continue
                 if(eval < minEval) {
@@ -112,14 +112,12 @@ class DecisionTree(var rootService: RootService) {
      */
     fun simulateMove(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>):
             Pair<Turn, Pair<Board, Player>>? {
-        val newBoard = board.cloneForSimulation()
-        val newPlayer = player.clone()
         // No cards on the board
-        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0)
+        if((board.levelOneOpen.size + board.levelTwoOpen.size + board.levelThreeOpen.size) <= 0)
             return null
         val bestDevCards: Map<DevCard, Double> = rootService.aiService
-            .calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)
-        return when (turnType) {
+            .calculateGeneralDevCardScore(board, player, enemyPlayer)
+        when (turnType) {
             TurnType.TAKE_GEMS -> {
                 val chosenGems: Pair<Map<GemType, Int>, Boolean> = rootService.aiService
                     .chooseGems(bestDevCards, player, board)
@@ -129,11 +127,11 @@ class DecisionTree(var rootService: RootService) {
                 }
                 val turn = Turn(mapOfChosenGems, listOf(), TurnType.TAKE_GEMS, chosenGems.second)
                 // Update Board and Player
-                newBoard.gems = newBoard.gems.combine(mapOfChosenGems, subtract = true)
+                board.gems = board.gems.combine(mapOfChosenGems, subtract = true)
                 mapOfChosenGems.forEach {
-                    newPlayer.gems[it.key] = (newPlayer.gems[it.key] ?: 0) + it.value
+                    player.gems[it.key] = (player.gems[it.key] ?: 0) + it.value
                 }
-                return Pair(turn, Pair(newBoard, newPlayer))
+                return Pair(turn, Pair(board, player))
             }
             TurnType.BUY_CARD -> {
                 val cardsSortedAfterScore = bestDevCards.keys.sortedBy { bestDevCards[it] }
@@ -150,17 +148,44 @@ class DecisionTree(var rootService: RootService) {
                 }
                 // Update Board and player
                 val turn = Turn(mapOf(), listOf(affordableCards[0]), TurnType.BUY_CARD)
-                newBoard.levelOneOpen.remove(affordableCards[0])
-                newBoard.levelTwoOpen.remove(affordableCards[0])
-                newBoard.levelThreeOpen.remove(affordableCards[0])
-                newPlayer.devCards.add(affordableCards[0])
-                newPlayer.gems.clear()
-                newPlayer.gems.putAll(newPlayer.gems.combine(affordableCards[0].price, subtract = true))
-                newPlayer.bonus[affordableCards[0].bonus] = (newPlayer.bonus[affordableCards[0].bonus]?: 0) + 1
-                newPlayer.score += affordableCards[0].prestigePoints
-                return Pair(turn, Pair(newBoard, newPlayer))
+                board.levelOneOpen.remove(affordableCards[0])
+                board.levelTwoOpen.remove(affordableCards[0])
+                board.levelThreeOpen.remove(affordableCards[0])
+                player.devCards.add(affordableCards[0])
+                player.gems.clear()
+                player.gems.putAll(player.gems.combine(affordableCards[0].price, subtract = true))
+                player.bonus[affordableCards[0].bonus] = (player.bonus[affordableCards[0].bonus]?: 0) + 1
+                player.score += affordableCards[0].prestigePoints
+                return Pair(turn, Pair(board, player))
             }
-            else -> null
+            TurnType.RESERVE_CARD -> {
+                val cardsSortedAfterScore = bestDevCards.keys.sortedBy { bestDevCards[it] }
+                val reservedCards: MutableList<DevCard> = mutableListOf()
+                val totalGemsOfPlayer: Map<GemType, Int> = player.gems.combine(player.bonus)
+
+                for(card in cardsSortedAfterScore) {
+                    //reserve a card if you cannot buy it, but if you cannot take gems because there are not enough left
+                    if(!isCardAcquirable(card, totalGemsOfPlayer) && board.gems.isEmpty()) {
+                        if (player.reservedCards.size < 3) {
+                            reservedCards.add(card)
+                            break
+                        }
+                    }
+                }
+                if(player.reservedCards.size == 3 || board.gems.isNotEmpty()) {
+                    return null
+                }
+                // Update Board and player
+                val turn = Turn(mapOf(), listOf(reservedCards[0]), TurnType.RESERVE_CARD)
+                board.levelOneOpen.remove(reservedCards[0])
+                board.levelTwoOpen.remove(reservedCards[0])
+                board.levelThreeOpen.remove(reservedCards[0])
+                player.reservedCards.add(reservedCards[0])
+                if (board.gems[GemType.YELLOW] != 0) {
+                    player.gems[GemType.YELLOW]?.plus(1)
+                }
+                return Pair(turn, Pair(board, player))
+            }
         }
     }
 
