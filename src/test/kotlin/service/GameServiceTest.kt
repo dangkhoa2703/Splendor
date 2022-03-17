@@ -91,8 +91,9 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
-//        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
-
+        val root = RootService()
+        val testRefreshable = TestRefreshable()
+        root.addRefreshable(testRefreshable)
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
@@ -116,12 +117,13 @@ class GameServiceTest {
         assertEquals(0,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(1,root.currentGame!!.currentGameState.consecutiveNoAction)
 
-        game.currentGameState.playerList[0].score = 15
+        game.currentGameState.currentPlayer.score = 16
         root.gameService.nextPlayer()
         assertEquals("p1",game.currentGameState.playerList[0].name)
+//        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
         // test if game state are correctly create
-        root.currentGame!!.currentGameState.consecutiveNoAction = 0
+        game.currentGameState.consecutiveNoAction = 0
         root.gameService.nextPlayer()
         val newGame = root.currentGame
         checkNotNull(newGame)
@@ -131,14 +133,21 @@ class GameServiceTest {
         assertEquals(game.currentGameState.board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
         assertEquals("p1",newPlayerList[0].name)
 
+        testRefreshable.reset()
         // test if no player can make any move
         val tempSortedList = game.currentGameState.playerList.sortedByDescending { player -> player.score }
         root.currentGame!!.currentGameState.consecutiveNoAction = game.currentGameState.playerList.size
         root.gameService.nextPlayer()
         assertEquals(tempSortedList, game.currentGameState.playerList)
+//        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
-//        root.currentGame = null
-//        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
+        //players have more than 10 gems
+        assertThrows<IllegalArgumentException> {
+            root.currentGame!!.currentGameState.playerList.forEach {
+                it.gems[GemType.RED] = 12
+            }
+            root.gameService.nextPlayer()
+        }
     }
 
     /** tests if acquirableCards works correctly */
