@@ -173,7 +173,9 @@ class DecisionTree(var rootService: RootService) {
                 }
                 //remove eventually yellow gems of the player
                 val yellowGems = isCardAcquirable(affordableCards[0], totalGemsOfPlayer).second
-                player.gems[GemType.YELLOW] = player.gems[GemType.YELLOW]!!.minus(yellowGems)
+                if (player.gems.containsKey(GemType.YELLOW)) {
+                    player.gems[GemType.YELLOW] = player.gems[GemType.YELLOW]!!.minus(yellowGems)
+                }
                 //add yellow gems to the board
                 board.gems[GemType.YELLOW] = board.gems[GemType.YELLOW]!!.plus(yellowGems)
                 player.bonus[affordableCards[0].bonus] = (player.bonus[affordableCards[0].bonus]?: 0) + 1
