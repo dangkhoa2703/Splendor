@@ -29,7 +29,8 @@ class SplendorImageLoader {
 
     private var images: List<ImageVisual> = listOf()
 
-    fun image(path: String): ImageVisual {
+	/**[image] : method facilitating loading of various images */
+	fun image(path: String): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(

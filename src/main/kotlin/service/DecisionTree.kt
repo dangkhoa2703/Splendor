@@ -2,6 +2,7 @@ package service
 
 import entity.*
 
+/**[DecisionTree] : AI Service class implementing mini_max-algorithm with a decision tree */
 class DecisionTree(var rootService: RootService) {
 
     /**
