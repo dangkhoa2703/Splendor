@@ -79,10 +79,10 @@ class DecisionTreeTest {
     @Test
     fun testSimulateMove_cards() {
         player.gems[GemType.RED] = 2
-        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
-            .simulateMove(TurnType.BUY_CARD, board, player, enemies)
-        assertNotNull(test)
         val boughtCard = board.levelOneOpen[0]
+        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+            .simulateMove(TurnType.BUY_CARD, board.cloneForSimulation(), player.clone(), enemies)
+        assertNotNull(test)
         assertEquals(Turn(mutableMapOf(), listOf(boughtCard), TurnType.BUY_CARD), test.first)
         val compareBoard = board.cloneForSimulation()
         compareBoard.levelOneOpen.remove(boughtCard)
