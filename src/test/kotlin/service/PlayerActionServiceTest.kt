@@ -3,6 +3,7 @@ package service
 import entity.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import view.Refreshable
 import kotlin.test.*
 
 /**
@@ -11,6 +12,7 @@ import kotlin.test.*
 class PlayerActionServiceTest {
 
     /** initialize objects */
+    private val testRefreshable = TestRefreshable()
     private val root = RootService()
     private val playerOne = Player(name = "Olaf", playerType = PlayerType.HUMAN)
     private val playerTwo = Player(name = "Mirco", playerType = PlayerType.EASY)
@@ -19,10 +21,36 @@ class PlayerActionServiceTest {
         GemType.BLUE to 3, GemType.YELLOW to 1)
 
     /**
+     * starts a game with a static order of cards that can be used
+     * in other tests to deterministically validate the outcome
+     * of turns.
+     * @return the root service holding the started game as [RootService.currentGame]
+     */
+    private fun setUpGame(vararg refreshables: Refreshable): RootService {
+        val mc = RootService()
+        refreshables.forEach { mc.addRefreshable(it) }
+
+        mc.gameService.startNewGame(playerList,false,1)
+        return mc
+    }
+
+    @Test
+    fun showPlayerTest(){
+        val testRefreshable = TestRefreshable()
+        val root = setUpGame(testRefreshable)
+        root.playerActionService.showPlayers(
+            root.currentGame!!.currentGameState.currentPlayer
+        )
+        assertTrue(testRefreshable.refreshAfterPopUpCalled)
+    }
+
+    /**
      * tests if takeGems(types) works correct
      */
     @Test
     fun takeGemsTest() {
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         root.gameService.startNewGame(playerList, false, 1)
         assertNotNull(root.currentGame)
         val types = mutableListOf(GemType.RED, GemType.BLUE, GemType.BLACK, GemType.GREEN)
@@ -49,6 +77,7 @@ class PlayerActionServiceTest {
         root.currentGame!!.currentGameState.board.gems[GemType.RED] = 4
         val playersGemCountRed = root.currentGame!!.currentGameState.currentPlayer.gems.getValue(GemType.RED)
         root.playerActionService.takeGems(types, user)
+        assertTrue(testRefreshable.refreshAfterTakeGemsCalled)
         assertEquals(2, root.currentGame!!.currentGameState.board.gems[GemType.RED])
         assertEquals(playersGemCountRed + 2, user.gems[GemType.RED])
         //take three different gems
@@ -113,6 +142,8 @@ class PlayerActionServiceTest {
      */
     @Test
     fun reserveCardFromOpenCardsTest(){
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         root.gameService.startNewGame(playerList, false, 1)
         var player = root.currentGame!!.currentGameState.currentPlayer
         player.gems[GemType.YELLOW] = 0
@@ -129,6 +160,7 @@ class PlayerActionServiceTest {
         board.gems[GemType.YELLOW] = 2
         //reserveCard:
         root.playerActionService.reserveCard(devCard1, player)
+        assertTrue(testRefreshable.refreshAfterReserveCardCalled)
         assertNotEquals(devCard1, root.currentGame!!.currentGameState.board.levelOneOpen[0])
         assertTrue(player.reservedCards.contains(devCard1))
         assertTrue { root.currentGame!!.currentGameState.board.levelOneOpen.size == 4 }
@@ -161,6 +193,8 @@ class PlayerActionServiceTest {
      */
     @Test
     fun buyCardTest() {
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         root.gameService.startNewGame(playerList, false, 1)
         assertNotNull(root.currentGame)
         gemMap = mutableMapOf(GemType.RED to 2, GemType.GREEN to 3)
@@ -191,6 +225,7 @@ class PlayerActionServiceTest {
         assertEquals(3, board.gems[GemType.GREEN])
         assertEquals(0, player.gems[GemType.RED])
         assertEquals(0, player.gems[GemType.GREEN])
+        assertTrue(testRefreshable.refreshAfterBuyCardCalled)
 
         //buy card from other levels or reserved cards
         root.gameService.nextPlayer()
@@ -221,6 +256,8 @@ class PlayerActionServiceTest {
      */
     @Test
     fun selectNobleTileTest() {
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         root.gameService.startNewGame(playerList, false, 1)
         assertNotNull(root.currentGame)
         val emptyGemMap = mutableMapOf(GemType.RED to 0, GemType.GREEN to 0, GemType.WHITE to 0, GemType.BLACK to 0,
@@ -241,6 +278,8 @@ class PlayerActionServiceTest {
      */
     @Test
     fun returnGemTest() {
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         root.gameService.startNewGame(playerList, false, 1)
         assertNotNull(root.currentGame)
         val gemTypeList = listOf(GemType.RED, GemType.BLUE)
@@ -258,6 +297,7 @@ class PlayerActionServiceTest {
         assertEquals(numberBlueGemsOnBoard + 1, root.currentGame!!.currentGameState.board.gems[GemType.BLUE])
         assertEquals(8, player.gems[GemType.RED])
         assertEquals(2, player.gems[GemType.BLUE])
+        assertTrue(testRefreshable.refreshAfterEndTurnCalled)
     }
 
     /**
@@ -265,6 +305,8 @@ class PlayerActionServiceTest {
      */
     @Test
     fun undoRedoTest() {
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         val gameStateOne = GameState(playerTwo, listOf(playerOne, playerTwo), Board())
         val gameStateTwo = GameState(playerTwo, listOf(playerOne, playerTwo), Board())
         root.gameService.startNewGame(playerList, false, 1)
@@ -277,11 +319,14 @@ class PlayerActionServiceTest {
         gameStateOne.next = root.currentGame!!.currentGameState
         //test for undo
         root.playerActionService.undo()
+        assertTrue(testRefreshable.refreshAfterEndTurnCalled)
+        testRefreshable.reset()
         assertEquals(gameStateOne, root.currentGame!!.currentGameState)
         assertFalse { root.currentGame!!.validGame }
         //test for redo
         root.currentGame!!.validGame = true
         root.playerActionService.redo()
+        assertTrue(testRefreshable.refreshAfterEndTurnCalled)
         root.playerActionService.redo()
         assertEquals(gameStateTwo, root.currentGame!!.currentGameState)
         assertFalse { root.currentGame!!.validGame }

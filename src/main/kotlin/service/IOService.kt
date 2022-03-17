@@ -32,7 +32,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
             val file = File("$path/gameState${i}.txt")
             gameStates.add(loadGameState(file,playerCount))
         }
-        if(gameStates.size > 2) {
+        if(gameStates.size >= 2) {
             gameStates[0].next = gameStates[1]
             gameStates[gameStates.size - 1].previous = gameStates[gameStates.size - 2]
             for (i in 1..gameStates.size - 2) {
@@ -47,8 +47,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
         rootService.currentGame = splendor
 
-//        onAllRefreshables { refreshAfterStartNewGame() }
-        onAllRefreshables { refreshAfterEndTurn() }
+//        onAllRefreshables { refreshAfterEndTurn() }
     }
 
 
@@ -117,7 +116,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * creates a player from strings
      */
-    private fun createPlayerFromLines(fileLines:List<String>):Player{
+    fun createPlayerFromLines(fileLines:List<String>):Player{
         val name = fileLines[0].trim()
         val playerType = when (fileLines[1].trim()) {
             "HUMAN" -> PlayerType.HUMAN
@@ -138,7 +137,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * creates devCards from strings
      */
-    private fun readDevCards(list :List<String>): MutableList<DevCard>{
+    fun readDevCards(list :List<String>): MutableList<DevCard>{
         val devCards = mutableListOf<DevCard>()
         val cardConfigFile = File("src/main/resources/splendor-entwicklungskarten.csv")
         val cardConfigStringList = cardConfigFile.readLines()
@@ -180,7 +179,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * creates noble tiles from strings
      */
-    private fun readNobleTiles( list :List<String>):MutableList<NobleTile> {
+    fun readNobleTiles( list :List<String>):MutableList<NobleTile> {
         val nobleTiles = mutableListOf<NobleTile>()
         val cardConfigFile = File("src/main/resources/splendor-adligenkarten.csv")
         val cardConfigStringList = cardConfigFile.readLines()
@@ -293,7 +292,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         val currentHighscores = loadHighscore()
         currentHighscores.add(score)
         currentHighscores.sortByDescending { highscore -> highscore.score }
-        //es werden nur die 10 besten scores gespeichert
+        //just 10 best player are saved
         if(currentHighscores.size>10){
             currentHighscores.removeAt(10)
         }
