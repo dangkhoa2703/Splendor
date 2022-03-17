@@ -58,24 +58,26 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
     private var saved: List<DevCard> = listOf()
 
-	val hint=Label(
-		width/2+300,
-		height/2-200,
-		400,
-		500,
-		"", font = Font(size = 26, color = Color.WHITE)
-	)
+    val hint=Label(
+	width/2+300,
+	height/2-200,
+	400,
+	500,
+	"", font = Font(size = 26, color = Color.WHITE)
+    )
 
-	val errorLabel=Label(
-		width/2 - 500,
-		1000,
-		1000,
-		100,
-		"", font = Font(size = 20, color = Color.WHITE)
-	)
+    val errorLabel=Label(
+	width/2 - 500,
+	1000,
+	1000,
+	100,
+	"", font = Font(size = 20, color = Color.WHITE)
+    )
+
+    private val drawStacks: MutableList<LabeledStackView> = mutableListOf()
 
     //BUTTONS
-	/**[nextPlayersButton] : Button to display items the other players have in hand*/
+    /**[nextPlayersButton] : Button to display items the other players have in hand*/
     val nextPlayersButton = Button(
 	width = 50, height = 50,
         posX = 1250, posY = 25,
@@ -84,7 +86,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = imageLoader.nextPlayersImage(),
     )
 
-	/**[undoButton] : Button to end undo an action, if there is one to be undone */
+    /**[undoButton] : Button to end undo an action, if there is one to be undone */
     private val undoButton = Button(
         width = 50, height = 50,
         posX = 50, posY = 25,
@@ -95,18 +97,18 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	onMouseClicked = {
 	    val playerActionService = rootService.playerActionService
 	    try{
-			playerActionService.undo()
+		playerActionService.undo()
 	    }
 	    catch(e: Exception) {
-			val errText: String? = e.message
-			checkNotNull(errText)
-			errorLabel.text = errText
-			println(e)
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
+		println(e)
 	    }
 	}
     }
 
-	/**[redoButton] : Button to end redo an action, if there is one to be redone */
+    /**[redoButton] : Button to end redo an action, if there is one to be redone */
     private val redoButton = Button(
         width = 50, height = 50,
         posX = 200, posY = 25,
@@ -120,29 +122,29 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		playerActionService.redo()
 	    }
 	    catch(e: Exception) {
-			val errText: String? = e.message
-			checkNotNull(errText)
-			errorLabel.text = errText
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
 		println(e)
 	    }
 	}
     }
 
-	/**[reservedCardsLabel] : Label for reserved cards placeholder */
+    /**[reservedCardsLabel] : Label for reserved cards placeholder */
     private val reservedCardsLabel = Label(
 	posX = 280, posY = 200,
 	width = 140, height = 100,
 	text = "Saved", font = Font(size = 20, fontStyle=Font.FontStyle.ITALIC )
     )
 
-	/**[devCardsLabel] : Label for development cards placeholder */
+    /**[devCardsLabel] : Label for development cards placeholder */
     private val devCardsLabel = Label(
 	posX = 480, posY = 200,
 	width = 140, height = 100,
 	text = "Dev Cards", font = Font(size = 20, fontStyle=Font.FontStyle.ITALIC )
     )
 
-	/**[hintButton] : Button, when triggered gives a player a hint on what move to make */
+    /**[hintButton] : Button, when triggered gives a player a hint on what move to make */
     private val hintButton = Button(
         width = 50, height = 50,
         posX = 50, posY = 125,
@@ -152,30 +154,30 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     ).apply {
 	onMouseClicked = {
 	    val playerActionService = rootService.playerActionService
-		val gameState = rootService.currentGame!!.currentGameState
-		val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
+	    val gameState = rootService.currentGame!!.currentGameState
+	    val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
 	    var output:String = ""
-		try {
-			output = playerActionService.showHint(turn)
-		}
-		catch(e: Exception) {
-			val errText: String? = e.message
-			checkNotNull(errText)
-			errorLabel.text = errText
-			println(e)
-		}
-		hint.text = ""
-		val lines = output.chunked(20)
-		var i = lines.size
-		for(line in lines) {
-			hint.text+=line
-			if(i!=1) hint.text+="\n"
-			i--
-		}
+	    try {
+		output = playerActionService.showHint(turn)
+	    }
+	    catch(e: Exception) {
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
+		println(e)
+	    }
+	    hint.text = ""
+	    val lines = output.chunked(20)
+	    var i = lines.size
+	    for(line in lines) {
+		hint.text+=line
+		if(i!=1) hint.text+="\n"
+		i--
+	    }
 	}
     }
 
-	/**[saveGameButton] : Button, when triggered saves current game state */
+    /**[saveGameButton] : Button, when triggered saves current game state */
     private val saveGameButton = Button(
         width = 50, height = 50,
         posX = 200, posY = 125,
@@ -183,17 +185,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         font = Font(size = 17),
         visual = imageLoader.saveGameImage()
     ).apply{
-		onMouseClicked = {
-			val directoryChooser: DirectoryChooser = DirectoryChooser()
-			val file: File? = directoryChooser.showDialog(null)
-			if(file!=null) {
-				val ioService = rootService.ioService
-				ioService.saveGame(file.absolutePath)
-			}
-		}
+	onMouseClicked = {
+	    val directoryChooser: DirectoryChooser = DirectoryChooser()
+	    val file: File? = directoryChooser.showDialog(null)
+	    if(file!=null) {
+		val ioService = rootService.ioService
+		ioService.saveGame(file.absolutePath)
+	    }
 	}
+    }
 
-	/**[quitButton] : Button, when triggered ends current game  */
+    /**[quitButton] : Button, when triggered ends current game  */
     val quitButton = Button(
         width = 25, height = 25,
         posX = 0, posY = 0,
@@ -202,7 +204,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = ColorVisual(255, 0, 0)
     )
 
-	/**[currentPlayerLabel] : Label for the current Player playing  */
+    /**[currentPlayerLabel] : Label for the current Player playing  */
     private val currentPlayerLabel = Label(
         posX = width / 2 - 150,
         posY = 25,
@@ -213,8 +215,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = buttonImage
     )
 
-	/**[nextPlayersButton] : Button to end one's turn and move to the next player*/
-	private val nextPlayerButton = Button(
+    /**[nextPlayersButton] : Button to end one's turn and move to the next player*/
+    private val nextPlayerButton = Button(
         width = 200, height = 100,
         posX = 1680, posY = 930,
         text = "Next Player",
@@ -223,11 +225,11 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     ).apply{
 	onMouseClicked = {
 	    rootService.gameService.nextPlayer()
-		refreshAfterEndTurn()
+	    refreshAfterEndTurn()
 	}
     }
 
-	/**[takeGemsButton] : Button ,when triggered enables a player to take selected gems*/
+    /**[takeGemsButton] : Button ,when triggered enables a player to take selected gems*/
     private val takeGemsButton = Button(
         width = 200, height = 100,
         posX = 1680, posY = 650,
@@ -239,40 +241,40 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    
             val playerActionService = rootService.playerActionService
 
-	    	checkNotNull(currentPlayer) { "No player found. "}
-	    	val player = currentPlayer as Player
+	    checkNotNull(currentPlayer) { "No player found. "}
+	    val player = currentPlayer as Player
 
-	    	val gemList: MutableList<GemType> = mutableListOf()
+	    val gemList: MutableList<GemType> = mutableListOf()
 
-	    	for(gem in gameGemSelection.entries) {
-			var amount = gem.value
-				while(amount>0) {
-		   	 		gemList.add(gem.key)
-		    		amount--
-				}
-			}
+	    for(gem in gameGemSelection.entries) {
+		var amount = gem.value
+		while(amount>0) {
+		    gemList.add(gem.key)
+		    amount--
+		}
+	    }
 
-	    	try {
-				playerActionService.takeGems(gemList, player)
-				for (gem in gameGemSelection.entries) {
-					gameGemSelection[gem.key] = 0
-				}
-			}
-            	catch(e: Exception) {
-					val errText: String? = e.message
-					checkNotNull(errText)
-					errorLabel.text = errText
-               		println(e)
+	    try {
+		playerActionService.takeGems(gemList, player)
+		for (gem in gameGemSelection.entries) {
+		    gameGemSelection[gem.key] = 0
+		}
+	    }
+            catch(e: Exception) {
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
+               	println(e)
             }
 
-			for(gem in allGems) {
-				gameGemSelection[gem] = 0
-			}
-			renderGameGems()
+	    for(gem in allGems) {
+		gameGemSelection[gem] = 0
+	    }
+	    renderGameGems()
         }
     }
 
-	/**[scoreLabel] : Label displaying player score */
+    /**[scoreLabel] : Label displaying player score */
     private val scoreLabel = Label(
 	width= 100, height = 50,
 	posX = 650, posY=25,
@@ -280,7 +282,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	font = Font(size = 40, fontWeight = Font.FontWeight.BOLD)
     )
 
-	/**[discardGems] : Button, when triggered enables discarding of selected Gems */
+    /**[discardGems] : Button, when triggered enables discarding of selected Gems */
     private val discardGems = Button(
 	width = 100, height = 50,
         posX = 50, posY = 450,
@@ -288,35 +290,35 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         font = Font(size = 12),
         visual = buttonImage
     ).apply {
-		onMouseClicked = {
-			val playerActionService = rootService.playerActionService
+	onMouseClicked = {
+	    val playerActionService = rootService.playerActionService
 
-			val gemList: MutableList<GemType> = mutableListOf()
+	    val gemList: MutableList<GemType> = mutableListOf()
 
-			for(gem in playerGemSelection.entries) {
-				var amount = gem.value
-				while(amount>0) {
-					gemList.add(gem.key)
-					amount--
-				}
-			}
-
-			checkNotNull(currentPlayer) { "No Player found. "}
-			try {
-				playerActionService.returnGems(gemList, currentPlayer as Player)
-			}
-			catch(e: Exception) {
-				val errText: String? = e.message
-				checkNotNull(errText)
-				errorLabel.text = errText
-				println(e)
-			}
-
-			renderPlayerGems()
+	    for(gem in playerGemSelection.entries) {
+		var amount = gem.value
+		while(amount>0) {
+		    gemList.add(gem.key)
+		    amount--
 		}
-	}
+	    }
 
-	/**[stack] : devCard stack */
+	    checkNotNull(currentPlayer) { "No Player found. "}
+	    try {
+		playerActionService.returnGems(gemList, currentPlayer as Player)
+	    }
+	    catch(e: Exception) {
+		val errText: String? = e.message
+		checkNotNull(errText)
+		errorLabel.text = errText
+		println(e)
+	    }
+
+	    renderPlayerGems()
+	}
+    }
+
+    /**[stack] : devCard stack */
     private val stack: LabeledStackView = LabeledStackView(
 	posX = 0, posY = 0,  "stack"
     ).apply{
@@ -341,48 +343,48 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     private val playerGemMax: MutableMap<GemType, Int> = mutableMapOf()
 
 
-	/**[nobleTiles] : Visual Layout for the noble Tiles*/
+    /**[nobleTiles] : Visual Layout for the noble Tiles*/
     private val nobleTiles: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 330, posY = 100, width = 660, height = 180, spacing = 30,
         alignment = Alignment.CENTER,
 	//visual = ColorVisual(136, 221, 221)
     )
 
-	/**[levelOneCards] : Visual Layout for the level One Cards*/
+    /**[levelOneCards] : Visual Layout for the level One Cards*/
     private val levelOneCards: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 220, posY = 650, width = 440, height = 180, spacing = 30,
         alignment = Alignment.CENTER,
 	//visual = ColorVisual(221, 136, 136),
     )
 
-	/**[levelTwoCards] : Visual Layout for level two cards*/
+    /**[levelTwoCards] : Visual Layout for level two cards*/
     private val levelTwoCards: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 220, posY = 470, width = 440, height = 180, spacing = 30,
         alignment = Alignment.CENTER,
 	//visual = ColorVisual(221, 136, 136)
     )
 
-	/**[levelThreeCards] : Visual Layout for level three cards*/
+    /**[levelThreeCards] : Visual Layout for level three cards*/
     private val levelThreeCards: LinearLayout<CardView> = LinearLayout(
 	posX = width / 2 - 220, posY = 290, width = 440, height = 180, spacing = 30,
         alignment = Alignment.CENTER,
 	//visual = ColorVisual(221, 136, 136)	
     )
 
-	/**[playerDevCards] : Mutable Linear Layout list of player DevCards.
-	 [playerSaveCards] : Mutable Linear Layout list of player reserved cards.
-	 [playerNobleTiles] : Mutable Linear Layout list of player noble tiles.* */
+    /**[playerDevCards] : Mutable Linear Layout list of player DevCards.
+     [playerSaveCards] : Mutable Linear Layout list of player reserved cards.
+     [playerNobleTiles] : Mutable Linear Layout list of player noble tiles.* */
 
     var playerDevCards: MutableList<LinearLayout<CardView>> = mutableListOf()
     var playerSaveCards: MutableList<LinearLayout<CardView>> = mutableListOf()
     var playerNobleTiles: MutableList<LinearLayout<CardView>> = mutableListOf()
 
 
-	/**
-	 * [toCardView] : Method to show front of the card
-	 * @param id : id of the card
-	 * @param draggable : Boolean to check if the card can be dragged
-	 */
+    /**
+     * [toCardView] : Method to show front of the card
+     * @param id : id of the card
+     * @param draggable : Boolean to check if the card can be dragged
+     */
     private fun toCardView(id: Int, draggable: Boolean = false): CardView {
 	val cardView = CardView(
 	    height = 150, width = 95,
@@ -396,41 +398,41 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	return cardView
     }
 
-	/**
-	 * [tryToSelect] : Method to enable selection of game Items like Noble tiles
-	 */
+    /**
+     * [tryToSelect] : Method to enable selection of game Items like Noble tiles
+     */
     private fun tryToSelect(dragEvent: DragEvent): Boolean {
-		val cardView = dragEvent.draggedComponent as CardView
+	val cardView = dragEvent.draggedComponent as CardView
 
-		val id = devCardMap.backward(cardView)
-		val game = rootService.currentGame
-		checkNotNull(game) { "No game found. " }
+	val id = devCardMap.backward(cardView)
+	val game = rootService.currentGame
+	checkNotNull(game) { "No game found. " }
 
-		var nobleTile: NobleTile? = null
-		for (tile in game.currentGameState.board.nobleTiles) {
-			if (tile.id == id) nobleTile = tile
-		}
+	var nobleTile: NobleTile? = null
+	for (tile in game.currentGameState.board.nobleTiles) {
+	    if (tile.id == id) nobleTile = tile
+	}
 
-		if (nobleTile == null) return false
+	if (nobleTile == null) return false
 
-		checkNotNull(currentPlayer) { "No Player found. " }
+	checkNotNull(currentPlayer) { "No Player found. " }
 
-		val playerActionService = rootService.playerActionService
-		val player = currentPlayer as Player
+	val playerActionService = rootService.playerActionService
+	val player = currentPlayer as Player
 
-		try {
-		 playerActionService . selectNobleTile (nobleTile, player)
-		}catch (e:Exception){
-			val errText: String? = e.message
-			checkNotNull(errText)
-			errorLabel.text = errText
-			println(e)
-			return false
-		}
+	try {
+	    playerActionService . selectNobleTile (nobleTile, player)
+	}catch (e:Exception){
+	    val errText: String? = e.message
+	    checkNotNull(errText)
+	    errorLabel.text = errText
+	    println(e)
+	    return false
+	}
 	return true
     }
 
-	/**[tryToBuy] : Method, giving a player the chance to purchase a devCard */
+    /**[tryToBuy] : Method, giving a player the chance to purchase a devCard */
     private fun tryToBuy(dragEvent: DragEvent): Boolean {
 	val playerActionService = rootService.playerActionService
 	val cardView: CardView = dragEvent.draggedComponent as CardView
@@ -447,16 +449,16 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
-		val errText: String? = e.message
-		checkNotNull(errText)
-		errorLabel.text = errText
+	    val errText: String? = e.message
+	    checkNotNull(errText)
+	    errorLabel.text = errText
 	    println(e)
 	}
 
 	return false
     }
 
-	/**[tryToBuy] : Method, giving a player the chance to reserve a devCard */
+    /**[tryToBuy] : Method, giving a player the chance to reserve a devCard */
     private fun tryToSave(dragEvent: DragEvent): Boolean {
 	val playerActionService = rootService.playerActionService
 	val cardView: CardView = dragEvent.draggedComponent as CardView
@@ -472,17 +474,17 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    return true
 	}
 	catch(e: Exception) {
-		val errText: String? = e.message
-		checkNotNull(errText)
-		errorLabel.text = errText
+	    val errText: String? = e.message
+	    checkNotNull(errText)
+	    errorLabel.text = errText
 	    println(e)
 	}
 	return false
     }
 
-	/**[moveCardView] : Method to switch a card view */
+    /**[moveCardView] : Method to switch a card view */
     private fun moveCardView(cardView: CardView, targetContainer: GameComponentContainer<CardView>,
-							 flip: Boolean = false) {
+			     flip: Boolean = false) {
 	if (flip) {
 	    when (cardView.currentSide) {
 	        CardView.CardSide.BACK -> cardView.showFront()
@@ -496,7 +498,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     var currentPlayer: Player? = null
     private var currentPlayerIndex: Int = -1
 
-	/**[fillNobleTilesLayout] : Method, filling the nobleTiles layout on the table */
+    /**[fillNobleTilesLayout] : Method, filling the nobleTiles layout on the table */
     private fun fillNobleTilesLayout(
 	layout: LinearLayout<CardView>,
 	source: MutableList<NobleTile>,
@@ -515,12 +517,12 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	for(card in source) {
 	    if(temp.contains(card.id)) continue
 	    val cardView: CardView = devCardMap.forward(card.id)
-		cardView.isDraggable = draggable
+	    cardView.isDraggable = draggable
 	    moveCardView(cardView, layout)
 	}
     }
 
-	/**[fillDevCardLayout] : Method, filling the dev card layout on the table */
+    /**[fillDevCardLayout] : Method, filling the dev card layout on the table */
     private fun fillDevCardLayout(
 	layout: LinearLayout<CardView>,
 	source: MutableList<DevCard>,
@@ -540,17 +542,27 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	for(card in source) {
 	    if(temp.contains(card.id)) continue
 	    val cardView: CardView = devCardMap.forward(card.id)
-		cardView.isDraggable = draggable
+	    cardView.isDraggable = draggable
 	    devCardsMap.add(card to cardView)
 	    moveCardView(cardView, layout)
 	}
     }
 
-	/**[fillLayouts] : Method, filling all layouts on the table */
+    /**[fillLayouts] : Method, filling all layouts on the table */
     private fun fillLayouts() {
-		errorLabel.text = ""
-				hint.text = ""
+	errorLabel.text = ""
+	hint.text = ""
 	devCardsMap.clear()
+
+
+	var temp: List<CardView> = listOf()
+	drawStacks.forEach{
+	    it.forEach{
+		cardView -> temp+=cardView
+	    }
+	}
+
+	temp.forEach{ moveCardView(it, stack)}
 	
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found."}
@@ -576,12 +588,37 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
 
 	for(gem in allGems) {
-		playerGemSelection[gem] = 0
-		gameGemSelection[gem] = 0
+	    playerGemSelection[gem] = 0
+	    gameGemSelection[gem] = 0
+	}
+
+	val levelOneStackSize = Math.min(game.currentGameState.board.levelOneCards.size, 2)
+	val levelTwoStackSize = Math.min(game.currentGameState.board.levelTwoCards.size, 2)
+	val levelThreeStackSize = Math.min(game.currentGameState.board.levelThreeCards.size, 2)
+
+	for(i in 0..levelOneStackSize-1) {
+	    val cardView: CardView? = devCardMap.forward(200+i)
+	    checkNotNull(cardView)
+	    cardView.isDraggable = true
+	    moveCardView(cardView, drawStacks[2])
+	}
+
+	for(i in 0..levelTwoStackSize-1) {
+	    val cardView: CardView? = devCardMap.forward(202+i)
+	    checkNotNull(cardView)
+	    cardView.isDraggable = true
+	    moveCardView(cardView, drawStacks[1])
+	}
+
+	for(i in 0..levelThreeStackSize-1) {
+	    val cardView: CardView? = devCardMap.forward(204+i)
+	    checkNotNull(cardView)
+	    cardView.isDraggable = true
+	    moveCardView(cardView, drawStacks[0])
 	}
     }
 
-	/** [initializePlayerGems] : Method,visually initializing Gems selected from a player */
+    /** [initializePlayerGems] : Method,visually initializing Gems selected from a player */
     private fun initializePlayerGems() {
 	playerGems.clear()
 	playerGemsInfo.clear()
@@ -618,8 +655,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	playerGemsSelected.forEach{ addComponents(it) }
     }
 
-	/**[selectPlayerGem] : Method,to enable selection of a player Gem for discarding them or
-	 * purchasing a dev card */
+    /**[selectPlayerGem] : Method,to enable selection of a player Gem for discarding them or
+     * purchasing a dev card */
     private fun selectPlayerGem(gem: GemType, event: MouseEvent) {
 	
 	val current: Int? = playerGemSelection[gem]
@@ -627,14 +664,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	checkNotNull(max) { "No max value found for gem."}
 	checkNotNull(current) { "No value found for gem."}
 	if(event.button==MouseButtonType.RIGHT_BUTTON) {
-		playerGemSelection[gem] = max(0, current-1)
+	    playerGemSelection[gem] = max(0, current-1)
 	}
 	else {
-		playerGemSelection[gem] = min(max, current + 1)
+	    playerGemSelection[gem] = min(max, current + 1)
 	}
     }
 
-	/**[selectGameGem] : Method,to enable selection of a table Gem during a player turn */
+    /**[selectGameGem] : Method,to enable selection of a table Gem during a player turn */
     private fun selectGameGem(gem: GemType, event: MouseEvent) {
 	
 	val current: Int? = gameGemSelection[gem]
@@ -642,14 +679,14 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	checkNotNull(max) { "No max value found for gem."}
 	checkNotNull(current) { "No value found for gem."}
 	if(event.button==MouseButtonType.RIGHT_BUTTON) {
-		gameGemSelection[gem] = max(0, current-1)
+	    gameGemSelection[gem] = max(0, current-1)
 	}
 	else {
-		gameGemSelection[gem] = min(max, current+1)
+	    gameGemSelection[gem] = min(max, current+1)
 	}
     }
 
-	/**[initializeGameGems] : Method,visually initializing Game Gems */
+    /**[initializeGameGems] : Method,visually initializing Game Gems */
     private fun initializeGameGems() {
 	gameGems.clear()
 	gameGemsInfo.clear()
@@ -686,7 +723,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	gameGemsSelected.forEach{ addComponents(it) }
     }
 
-	/**[renderGameGems] : Method,visually rendering Game Gems */
+    /**[renderGameGems] : Method,visually rendering Game Gems */
     private fun renderGameGems() {
 	var j = 0
 	for(gem in gameGemSelection.entries) {
@@ -719,7 +756,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
     }
 
-	/**[renderPlayerGems] : Method,visually rendering Player Gems */
+    /**[renderPlayerGems] : Method,visually rendering Player Gems */
     private fun renderPlayerGems() {
 	var j = 0
 	for(gem in playerGemSelection.entries) {
@@ -753,8 +790,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
     }
 
-	/**[refreshAfterTakeGems] : Override Method,refreshing the game scene after a player
-	 * takes gems */
+    /**[refreshAfterTakeGems] : Override Method,refreshing the game scene after a player
+     * takes gems */
     override fun refreshAfterTakeGems() {
         val game = rootService.currentGame
         checkNotNull(game) { "No game found." }
@@ -763,19 +800,19 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val player = currentPlayer as Player
 
 	for(gem in game.currentGameState.board.gems.entries) {
-		gameGemMax[gem.key] = gem.value
+	    gameGemMax[gem.key] = gem.value
 	}
 
 	for(gem in player.gems.entries) {
-		playerGemMax[gem.key] = gem.value
+	    playerGemMax[gem.key] = gem.value
 	}
 
 	renderGameGems()
 	renderPlayerGems()
     }
 
-	/**[refreshAfterSelectNobleTile] : Override Method,refreshing the game scene after
-	 * noble tiles selection */
+    /**[refreshAfterSelectNobleTile] : Override Method,refreshing the game scene after
+     * noble tiles selection */
     override fun refreshAfterSelectNobleTile(nobleTile: NobleTile) {
 	val cardView: CardView = devCardMap.forward(nobleTile.id)
 	cardView.isDraggable = false
@@ -787,13 +824,13 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	scoreLabel.text = (player.score).toString()
     }
 
-	/**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */
+    /**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */
     override fun refreshAfterEndTurn() {
 	
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
 
-//	game.turnCount++
+	//	game.turnCount++
 
 	currentPlayer = game.currentGameState.currentPlayer
 	currentPlayerIndex = game.currentGameState.playerList.indexOf(currentPlayer)
@@ -817,20 +854,46 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	
 
 	for(gem in game.currentGameState.board.gems.entries) {
-		gameGemMax[gem.key] = gem.value
+	    gameGemMax[gem.key] = gem.value
 	}
 
 	for(gem in player.gems.entries) {
-		playerGemMax[gem.key] = gem.value
+	    playerGemMax[gem.key] = gem.value
 	}
 
 	renderGameGems()
 	renderPlayerGems()
     }
 
-	/**[loadAllComponents] : Method to load all view components to GameScene */
+    /**[loadAllComponents] : Method to load all view components to GameScene */
     fun loadAllComponents() {
 	clearComponents()
+
+	for(i in 0..2) {
+	    val drawStack = LabeledStackView(
+		posX = width/2 + 240, posY = 305+i*180,
+		label = "",
+	    )
+
+	    val cardView1 = CardView(
+		width = 95, height = 150,
+		back = imageLoader.cardBack(),
+		front = ColorVisual(0, 0, 0)
+	    )
+
+	    val cardView2 = CardView(
+		width = 95, height = 150,
+		back = imageLoader.cardBack(),
+		front = ColorVisual(0, 0, 0)
+	    )
+
+	    devCardMap.add((200+i*2+0) to cardView1)
+	    devCardMap.add((200+i*2+1) to cardView2)
+	    
+	    drawStacks.add(drawStack)
+	}
+
+	drawStacks.forEach{ addComponents(it)}
 	
 	for(i in 0..3) {
 	    val devCards: LinearLayout<CardView> = LinearLayout(
@@ -856,6 +919,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		spacing = 30,
 		orientation = Orientation.HORIZONTAL, alignment = Alignment.CENTER
 	    )
+
+	    
 
 	    devCards.isVisible = false
 	    devCards.dropAcceptor = {
@@ -889,16 +954,18 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    devCardMap.add(i to cardView)
 	}
 
+	
+
 	initializePlayerGems()
 	initializeGameGems()
     }
 
-	/**[refreshAfterReserveCard] : Override Method,refreshing after reserving a card */
+    /**[refreshAfterReserveCard] : Override Method,refreshing after reserving a card */
     override fun refreshAfterReserveCard(devCard: DevCard) {
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game  found." }
 
-		saved = saved + devCard
+	saved = saved + devCard
 	//moveCardView(cardView, playerSaveCards[currentPlayerIndex])
 	
 	fillLayouts()
@@ -906,7 +973,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	refreshAfterTakeGems()
     }
 
-	/**[refreshAfterBuyCard] : Override Method,refreshing after buying a card */
+    /**[refreshAfterBuyCard] : Override Method,refreshing after buying a card */
     override fun refreshAfterBuyCard(devCard: DevCard) {
 	val cardView: CardView = devCardsMap.forward(devCard)
 	
@@ -923,25 +990,52 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	refreshAfterTakeGems()
     }
 
-	override fun refreshAfterTakeGems(gems: Map<GemType, Int>) {
+    override fun refreshAfterTakeGems(gems: Map<GemType, Int>) {
 
-		for(gem in allGems) {
-			playerGemSelection[gem]=0
-			gameGemSelection[gem] = 0
-		}
-
-		for(gem in gems) {
-			playerGemMax[gem.key]=gem.value
-		}
-
-		renderPlayerGems()
-
+	for(gem in allGems) {
+	    playerGemSelection[gem]=0
+	    gameGemSelection[gem] = 0
 	}
 
-    init {
+	for(gem in gems) {
+	    playerGemMax[gem.key]=gem.value
+	}
+
+	renderPlayerGems()
+
+    }
+	/**
+	 * Checks if current Player is AI(if yes it returns true)
+	 */
+	fun AIcheck(): Boolean{
+		return !rootService.currentGame!!.currentGameState.currentPlayer.playerType.equals(PlayerType.HUMAN)
+	}
+
+	fun AITurn(){
+		if(AIcheck()){
+			val gamestate= rootService.currentGame!!.currentGameState
+			val turn = rootService.aiService.calculateBestTurn(gamestate.currentPlayer,gamestate)
+			if(turn.turnType.equals(TurnType.BUY_CARD)){
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS)){
+
+			}
+
+			if(turn.turnType.equals(TurnType.RESERVE_CARD)){
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS_AND_DISCARD)){
+
+			}
+		}
+	}
+
+
+	init {
 	loadAllComponents()
-	
-	
+
+
 	background = imageLoader.table()
 
 	addComponents(
@@ -963,8 +1057,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    scoreLabel,
 	    reservedCardsLabel,
 	    devCardsLabel,
-		hint,
-		errorLabel,
+	    hint,
+	    errorLabel,
 	)
     }
 }

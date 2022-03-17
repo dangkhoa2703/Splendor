@@ -10,7 +10,7 @@ class AIServiceTest {
 
     /** RootService reference */
     private var root = RootService()
-
+    private val ai = root.aiService
     //Example cards
     private val devCardOne = DevCard(id = 1, price = mutableMapOf(GemType.GREEN to 2, GemType.RED to 3),1,
         bonus = GemType.BLACK, prestigePoints = 0)
@@ -240,32 +240,27 @@ class AIServiceTest {
             GemType.BLUE to 1))
 
         // 1. Board has 3 red gems left, so we want to choose two red gems
-        assertEquals(Pair(mutableMapOf(GemType.RED to 2),false),
-            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard1))
+        assertEquals(Pair(mutableMapOf(GemType.RED to 2),false), ai.chooseGems(bestDevCards,testPlayer,exampleBoard1))
         // 2. Board has only 1 red gem left, so we want to choose two green gems
-        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),
-            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard2))
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),ai.chooseGems(bestDevCards,testPlayer,exampleBoard2))
         // 3. Board has no red gems left, so we want to choose two green gems
-        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),
-            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard3))
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),ai.chooseGems(bestDevCards,testPlayer,exampleBoard3))
         // 4. Board has no gems
-        assertEquals(Pair(mutableMapOf(),false),
-            root.aiService.chooseGems(bestDevCards,testPlayer,exampleBoard4))
+        assertEquals(Pair(mutableMapOf(),false), ai.chooseGems(bestDevCards,testPlayer,exampleBoard4))
         // 5. All cards have no missing gems (take one gem for each of the first board gem-colours)
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
-            root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard5))
+            ai.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard5))
         // 6. The board has only two gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1),true),
-            root.aiService.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard6))
+            ai.chooseGems(bestDevCardsTwo,testPlayer,exampleBoard6))
         // 7. Player can buy no card after taking some gems; the player chooses "take three gems with the first
         // three missing colours; player has two red gems; Board has 1 red gem, 1 white gem, 1 green and 2 black gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.GREEN to 1, GemType.BLACK to 1),true),
-            root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard7))
+            ai.chooseGems(bestDevCards,testPlayer2,exampleBoard7))
         // 8. Player needs 2 red gems, but there is only 1 red gem on the board left (all other colours are also empty)
-        assertEquals(Pair(mutableMapOf(GemType.RED to 1),false),
-            root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard8))
+        assertEquals(Pair(mutableMapOf(GemType.RED to 1),false), ai.chooseGems(bestDevCards,testPlayer2,exampleBoard8))
         // 9. There are only two gems on the board left
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),true),
-            root.aiService.chooseGems(bestDevCards,testPlayer2,exampleBoard9))
+            ai.chooseGems(bestDevCards,testPlayer2,exampleBoard9))
     }
 }

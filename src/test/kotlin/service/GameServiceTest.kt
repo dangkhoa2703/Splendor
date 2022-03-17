@@ -16,11 +16,6 @@ class GameServiceTest {
     /** tests if games start correctly */
     @Test
     fun testCreateNewGame() {
-//        // set rootService.currentGame!!.currentGameState.currentPlayerIndex
-//        root.currentGame!!.currentGameState.currentPlayerIndex = 1
-//        assertEquals(1, root.currentGame!!.currentGameState.currentPlayerIndex)
-//        root.currentGame!!.currentGameState.currentPlayerIndex = 0
-
         val playerList1 = listOf(Pair("p1",PlayerType.HUMAN))
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.EASY))
         val playerList3 = listOf(
@@ -48,6 +43,7 @@ class GameServiceTest {
         assertEquals(4,currentGame.board.levelThreeOpen.size)
         assertEquals(3,currentGame.board.nobleTiles.size)
         assertEquals(1,game.simulationSpeed)
+        assertEquals(25, currentGame.board.gems.values.sum())
 
         root.gameService.startNewGame(playerList3,false,1)
         val newGame = root.currentGame
@@ -56,11 +52,12 @@ class GameServiceTest {
         assertEquals("p1", newGame.currentGameState.playerList[0].name)
 
         assertThrows<IllegalArgumentException> {
-            root.gameService.startNewGame(playerList1,false,1)
-        }
+            root.gameService.startNewGame(playerList1,false,1) }
         assertThrows<IllegalArgumentException> {
-            root.gameService.startNewGame(playerList5,false,1)
-        }
+            root.gameService.startNewGame(playerList5,false,1) }
+
+        root.gameService.startNewGame(playerList3,true,1)
+        assertEquals(30, root.currentGame!!.currentGameState.board.gems.values.sum())
     }
 
     /** tests if isCardAcquirable works correctly */
@@ -94,8 +91,9 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
-//        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
-
+        val testRefreshable = TestRefreshable()
+        root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
@@ -119,12 +117,13 @@ class GameServiceTest {
         assertEquals(0,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(1,root.currentGame!!.currentGameState.consecutiveNoAction)
 
-        game.currentGameState.playerList[0].score = 15
+        game.currentGameState.currentPlayer.score = 16
         root.gameService.nextPlayer()
         assertEquals("p1",game.currentGameState.playerList[0].name)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
         // test if game state are correctly create
-        root.currentGame!!.currentGameState.consecutiveNoAction = 0
+        game.currentGameState.consecutiveNoAction = 0
         root.gameService.nextPlayer()
         val newGame = root.currentGame
         checkNotNull(newGame)
@@ -134,14 +133,21 @@ class GameServiceTest {
         assertEquals(game.currentGameState.board.levelOneCards[0].id,newBoard.levelOneCards[0].id)
         assertEquals("p1",newPlayerList[0].name)
 
+        testRefreshable.reset()
         // test if no player can make any move
         val tempSortedList = game.currentGameState.playerList.sortedByDescending { player -> player.score }
         root.currentGame!!.currentGameState.consecutiveNoAction = game.currentGameState.playerList.size
         root.gameService.nextPlayer()
         assertEquals(tempSortedList, game.currentGameState.playerList)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
-//        root.currentGame = null
-//        assertThrows<IllegalStateException> { root.gameService.nextPlayer() }
+        //players have more than 10 gems
+        assertThrows<IllegalArgumentException> {
+            root.currentGame!!.currentGameState.playerList.forEach {
+                it.gems[GemType.RED] = 12
+            }
+            root.gameService.nextPlayer()
+        }
     }
 
     /** tests if acquirableCards works correctly */
@@ -193,7 +199,7 @@ class GameServiceTest {
         game.currentGameState.currentPlayer.bonus[GemType.WHITE] = 3
 
 
-       val tempList =  root.gameService.checkNobleTiles()
+        val tempList =  root.gameService.checkNobleTiles()
         assertEquals( 1,tempList[0].id)
         assertEquals(3,tempList[0].prestigePoints)
     }

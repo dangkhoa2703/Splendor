@@ -206,6 +206,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
 
     /**
      * Help-function that calculates the amount of missing gems the player needs to buy the card
+     * We do not take notice of the yellow gems and calculate that later
      * @param player
      * @param costs the costs of a card
      * @return Map with each missing GemType and the amount of missing gems of this GemType
@@ -240,6 +241,23 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
         val missingGems: MutableMap<GemType, Int> = calculateMissingGems(player, card.price)
         if(missingGems.isEmpty())
             return Pair(0, 0)
+        //subtract gold-gems
+        var goldGemsPlayer = player.gems[GemType.YELLOW] ?: 0
+        while (goldGemsPlayer > 0) {
+            missingGems.keys.forEach {
+                if (goldGemsPlayer > 0) {
+                    if (missingGems[it]!! > goldGemsPlayer) {
+                        missingGems[it] = missingGems[it]!!.minus(goldGemsPlayer)
+                        goldGemsPlayer = 0
+                    }
+                    else {
+                        val chips = missingGems[it]
+                        missingGems.remove(it)
+                        goldGemsPlayer -= chips!!
+                    }
+                }
+            }
+        }
         missingGems.keys.forEach { it ->
             val value: Int = missingGems[it]!!
             if(value % 2 == 0) {

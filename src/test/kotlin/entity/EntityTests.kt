@@ -1,7 +1,6 @@
 package entity
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import tools.aqua.bgw.visual.ImageVisual
 import kotlin.test.*
 
 /**
@@ -115,6 +114,9 @@ class EntityTests
         assertEquals(3, splendor.simulationSpeed)
         assertEquals(gameStateTwo, splendor.currentGameState)
         assertEquals(false, splendor.validGame)
+
+        splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne, validGame = true)
+        assertEquals(mutableListOf(), splendor.highscores)
     }
 
     /** tests if Gem objects can be created correctly */
@@ -130,13 +132,13 @@ class EntityTests
         assertEquals(1, Gem(GemType.WHITE).gemType.toInt())
         assertEquals(5, Gem(GemType.BLACK).gemType.toInt())
         assertEquals(6, Gem(GemType.YELLOW).gemType.toInt())
-        assertEquals(GemType.WHITE, gemRed.gemType.gemType(1))
-        assertEquals(GemType.BLUE, gemRed.gemType.gemType(2))
-        assertEquals(GemType.GREEN, gemRed.gemType.gemType(3))
-        assertEquals(GemType.RED, gemRed.gemType.gemType(4))
-        assertEquals(GemType.BLACK, gemRed.gemType.gemType(5))
-        assertEquals(GemType.YELLOW, gemRed.gemType.gemType(6))
-        assertEquals(null, gemRed.gemType.gemType(7))
+        assertEquals(GemType.WHITE, gemRed.gemType.gemTypeFromInt(1))
+        assertEquals(GemType.BLUE, gemRed.gemType.gemTypeFromInt(2))
+        assertEquals(GemType.GREEN, gemRed.gemType.gemTypeFromInt(3))
+        assertEquals(GemType.RED, gemRed.gemType.gemTypeFromInt(4))
+        assertEquals(GemType.BLACK, gemRed.gemType.gemTypeFromInt(5))
+        assertEquals(GemType.YELLOW, gemRed.gemType.gemTypeFromInt(6))
+        assertEquals(null, gemRed.gemType.gemTypeFromInt(7))
     }
 
     /** tests if Card objects can be created correctly */

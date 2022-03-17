@@ -19,8 +19,8 @@ enum class GemType {
     YELLOW -> 6
     }
 
-    /**[gemType] : method to convert our Int Values to corresponding Gem Types. */
-    fun gemType (index: Int): GemType? = when(index) {
+    /**[gemTypeFromInt] : method to convert our Int Values to corresponding Gem Types. */
+    fun gemTypeFromInt (index: Int): GemType? = when(index) {
         1 -> WHITE
         2 -> BLUE
         3 -> GREEN

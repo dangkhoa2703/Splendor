@@ -2,6 +2,7 @@ package service
 
 import entity.*
 
+/**[DecisionTree] : AI Service class implementing mini_max-algorithm with a decision tree */
 class DecisionTree(var rootService: RootService) {
 
     /**
@@ -158,7 +159,7 @@ class DecisionTree(var rootService: RootService) {
                 val affordableCards: MutableList<DevCard> = mutableListOf()
                 val totalGemsOfPlayer: Map<GemType, Int> = player.gems.combine(player.bonus)
                 for(card in cardsSortedAfterScore) {
-                    if(isCardAcquirable(card, totalGemsOfPlayer)) {
+                    if(isCardAcquirable(card, totalGemsOfPlayer).first) {
                         affordableCards.add(card)
                         break
                     }
@@ -166,14 +167,35 @@ class DecisionTree(var rootService: RootService) {
                 if(affordableCards.isEmpty()) {
                     return null
                 }
-                // Update Board and player
+                //Update Board and player
                 val turn = Turn(mapOf(), listOf(affordableCards[0]), TurnType.BUY_CARD)
                 board.levelOneOpen.remove(affordableCards[0])
                 board.levelTwoOpen.remove(affordableCards[0])
                 board.levelThreeOpen.remove(affordableCards[0])
                 player.devCards.add(affordableCards[0])
                 player.gems.clear()
+                //subtract payment from the gem of the player
                 player.gems.putAll(player.gems.combine(affordableCards[0].price, subtract = true))
+                //add gems to the board
+                affordableCards[0].price.keys.forEach {
+                    //if the player did not use a yellow gem for this color
+                    if (player.gems[it]!! >= 0) {
+                        board.gems[it] = board.gems[it]!!.plus(affordableCards[0].price[it]!!)
+                    }
+                }
+                //if the value of the gems is smaller than zero the player used yellow gems to pay
+                player.gems.forEach {
+                    if (it.value < 0) {
+                        player.gems.remove(it.key)
+                    }
+                }
+                //remove eventually yellow gems of the player
+                val yellowGems = isCardAcquirable(affordableCards[0], totalGemsOfPlayer).second
+                if (player.gems.containsKey(GemType.YELLOW)) {
+                    player.gems[GemType.YELLOW] = player.gems[GemType.YELLOW]!!.minus(yellowGems)
+                }
+                //add yellow gems to the board
+                board.gems[GemType.YELLOW] = board.gems[GemType.YELLOW]!!.plus(yellowGems)
                 player.bonus[affordableCards[0].bonus] = (player.bonus[affordableCards[0].bonus]?: 0) + 1
                 player.score += affordableCards[0].prestigePoints
                 return Pair(turn, Pair(board, player))
@@ -184,8 +206,9 @@ class DecisionTree(var rootService: RootService) {
                 val totalGemsOfPlayer: Map<GemType, Int> = player.gems.combine(player.bonus)
 
                 for(card in cardsSortedAfterScore) {
-                    //reserve a card if you cannot buy it, but if you cannot take gems because there are not enough left
-                    if(!isCardAcquirable(card, totalGemsOfPlayer) && board.gems.isEmpty()) {
+                    //reserve a card if you cannot buy it, but if you cannot take gems because there are not
+                    // enough left
+                    if(!isCardAcquirable(card, totalGemsOfPlayer).first && board.gems.isEmpty()) {
                         if (player.reservedCards.size < 3) {
                             reservedCards.add(card)
                             break
@@ -215,9 +238,10 @@ class DecisionTree(var rootService: RootService) {
      *
      * @param card the card which the player chose
      * @param payment map of gems from player
-     * @return true if player can this card afford, else return false
+     * @return Pair (Boolean, Int) true if player can this card afford, else return false; Int number of yellow gems
+     * we need to use
      * */
-    private fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Boolean {
+    private fun isCardAcquirable(card: DevCard, payment: Map<GemType,Int>): Pair<Boolean,Int> {
 
         val tempGemMap = card.price.toMutableMap()
 
@@ -226,7 +250,7 @@ class DecisionTree(var rootService: RootService) {
         }
 
         val gemsNeeded = tempGemMap.filterValues { it >= 0 }.values.sum()
-        return (gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW))
+        return Pair((gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW)), gemsNeeded)
     }
 
     private fun subtractGemsFromMapWithSortedIndices(gemsOfPlayer: MutableMap<GemType, Int>, listOfSortedDevCard: List<DevCard>,  pAmount: Int) {

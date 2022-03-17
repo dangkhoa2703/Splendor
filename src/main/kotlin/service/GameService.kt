@@ -3,8 +3,6 @@ package service
 import entity.*
 import java.io.File
 import java.math.RoundingMode
-import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 /**
  *  class for basic game functionalities
@@ -50,6 +48,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // create Board
         val board = Board(createNobleTiles(players.size), levelOneStack, levelOneOpen, levelTwoStack, levelTwoOpen,
             levelThreeStack, levelThreeOpen)
+        if (playerList.size < 4) {
+            if (playerList.size == 2) {
+                board.gems = mutableMapOf(GemType.RED to 4, GemType.GREEN to 4, GemType.WHITE to 4, GemType.BLACK to 4,
+                    GemType.BLUE to 4, GemType.YELLOW to 5) }
+            else { board.gems = mutableMapOf(GemType.RED to 5, GemType.GREEN to 5, GemType.WHITE to 5,
+                GemType.BLACK to 5, GemType.BLUE to 5, GemType.YELLOW to 5) }
+        }
         //create GameState
         val gameState = GameState(playerList[0], playerList, board)
         gameState.isInitialState = true
@@ -148,7 +153,6 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         val affordableCards = acquirableCards().size
         val reservedCards = newGameState.currentPlayer.reservedCards.size
         if((totalGemsOnBoard == 0) && (affordableCards == 0) && (reservedCards == 3)){
-//            onAllRefreshables { refreshIfNoValidAction() }
             newGameState.consecutiveNoAction++
         }
 
@@ -156,10 +160,9 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         if(rootService.currentGame!!.currentGameState.consecutiveNoAction == newGameState.playerList.size){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
             saveHighscoresAfterEndGame()
-//            onAllRefreshables { refreshAfterEndGame(true) }
+            onAllRefreshables { refreshAfterEndGame() }
             return
         }
-//        onAllRefreshables { refreshAfterNextPlayer }
     }
 
     /**

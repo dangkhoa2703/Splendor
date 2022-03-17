@@ -34,28 +34,26 @@ class Player (
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf(),
     var id: Int = 0,
-    var hasDoneTurn: Boolean = false,
-    var validForRanking: Boolean = true
-    ) {
-
+    var hasDoneTurn: Boolean = false)
+{
     /** Clones a player */
     fun clone() : Player = Player(name, playerType, gems.toMutableMap(),
         bonus.toMutableMap(), reservedCards.toMutableList(), nobleTiles.toMutableList(),
         score, devCards.toMutableList())
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is Player)
-            return false
-        val otherPlayer: Player = other
-        return otherPlayer.name == name
-                && otherPlayer.playerType == playerType
-                && otherPlayer.gems == gems
-                && otherPlayer.bonus == bonus
-                && otherPlayer.reservedCards == reservedCards
-                && otherPlayer.nobleTiles == nobleTiles
-                && otherPlayer.score == score
-                && otherPlayer.devCards == devCards
-                && otherPlayer.id == id
-    }
+//    override fun equals(other: Any?): Boolean {
+//        if (other !is Player)
+//            return false
+//        val otherPlayer: Player = other
+//        return otherPlayer.name == name
+//                && otherPlayer.playerType == playerType
+//                && otherPlayer.gems == gems
+//                && otherPlayer.bonus == bonus
+//                && otherPlayer.reservedCards == reservedCards
+//                && otherPlayer.nobleTiles == nobleTiles
+//                && otherPlayer.score == score
+//                && otherPlayer.devCards == devCards
+//                && otherPlayer.id == id
+//    }
 
 }

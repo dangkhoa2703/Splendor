@@ -29,7 +29,8 @@ class SplendorImageLoader {
 
     private var images: List<ImageVisual> = listOf()
 
-    fun image(path: String): ImageVisual {
+	/**[image] : method facilitating loading of various images */
+	fun image(path: String): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
@@ -199,7 +200,7 @@ class SplendorImageLoader {
 		return ImageVisual(image)
 	}
 
-	/**[tokeImage] : Method applied to visualize corresponding tokens aka Gems.*/
+	/**[tokenImage] : Method applied to visualize corresponding tokens aka Gems.*/
     fun tokenImage(type: GemType): ImageVisual {
 	return tokenImages[type.toInt()-1]
     }
