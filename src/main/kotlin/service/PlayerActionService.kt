@@ -113,9 +113,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                 throw IllegalArgumentException("no valid gem/type number") }
             else if ( types.size == 2 && numDiffGemTypesInTypes == 1 && board.gems.getValue(types[0]) < 4) {
                 throw IllegalArgumentException("two same gems can only be chosen if four gems of their type are left") }
-            else if (types.size+countGems()>10){
-                throw IllegalArgumentException("If you do that, the amount of your Gems will exceed the limit")
-            }
+
             // take gems
             else{ types.forEach{ gemType ->
                 user.gems[gemType] = user.gems.getValue(gemType) + 1
@@ -254,15 +252,5 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             }
         }
         else { throw IllegalArgumentException("you don't have more than ten gems") }
-    }
-
-    fun countGems(): Int{
-        var counter: Int =0
-        val player =rootService.currentGame!!.currentGameState.currentPlayer
-        for (gem in player.gems){
-            counter+=gem.value
-        }
-        println(counter)
-        return counter
     }
 }

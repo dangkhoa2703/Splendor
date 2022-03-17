@@ -130,6 +130,75 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
     }
 
+	private val KIButton = Button(
+		width = 150, height = 50,
+		posX = 50, posY = 350,
+		text = "KI-TURN",
+		font = Font(size = 20),
+		visual = buttonImage
+	).apply {
+		onMouseClicked={
+		if(!rootService.currentGame!!.currentGameState.currentPlayer.playerType.equals(PlayerType.HUMAN)){
+			val gamestate= rootService.currentGame!!.currentGameState
+			val turn = rootService.aiService.calculateBestTurn(gamestate.currentPlayer,gamestate)
+			if(turn.turnType.equals(TurnType.BUY_CARD)){
+				val playerActionService = rootService.playerActionService
+				val devCard: DevCard = turn.card[0]
+				val cardView: CardView = devCardMap.forwardOrNull(devCard.id) as CardView
+
+				checkNotNull(currentPlayer) { "No player found."}
+				val player = currentPlayer as Player
+
+				val isSaved: Boolean = saved.contains(devCard)
+
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS)){
+				val playerActionService = rootService.playerActionService
+
+				checkNotNull(currentPlayer) { "No player found. "}
+				val player = currentPlayer as Player
+
+				val gemList: MutableList<GemType> = mutableListOf()
+
+				for(gem in turn.gems) {
+					var amount = gem.value
+					while(amount>0) {
+						gemList.add(gem.key)
+						amount--
+					}
+				}
+
+				try {
+					playerActionService.takeGems(gemList, player)
+					for (gem in turn.gems) {
+						gameGemSelection[gem.key] = 0
+					}
+				}
+				catch(e: Exception) {
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+					println(e)
+				}
+
+				for(gem in allGems) {
+					gameGemSelection[gem] = 0
+				}
+				renderGameGems()
+
+			}
+
+			if(turn.turnType.equals(TurnType.RESERVE_CARD)){
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS_AND_DISCARD)){
+
+			}
+		}
+		}
+	}
+
     /**[reservedCardsLabel] : Label for reserved cards placeholder */
     private val reservedCardsLabel = Label(
 	posX = 280, posY = 200,
@@ -224,8 +293,18 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = buttonImage
     ).apply{
 	onMouseClicked = {
-	    rootService.gameService.nextPlayer()
-	    refreshAfterEndTurn()
+		try {
+			rootService.gameService.nextPlayer()
+			refreshAfterEndTurn()
+		}
+		catch(e: Exception) {
+			val errText: String? = e.message
+			checkNotNull(errText)
+			errorLabel.text = errText
+			println(e)
+		}
+
+
 	}
     }
 
@@ -1012,23 +1091,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	}
 
 	fun AITurn(){
-		if(AIcheck()){
-			val gamestate= rootService.currentGame!!.currentGameState
-			val turn = rootService.aiService.calculateBestTurn(gamestate.currentPlayer,gamestate)
-			if(turn.turnType.equals(TurnType.BUY_CARD)){
 
-			}
-			if(turn.turnType.equals(TurnType.TAKE_GEMS)){
-
-			}
-
-			if(turn.turnType.equals(TurnType.RESERVE_CARD)){
-
-			}
-			if(turn.turnType.equals(TurnType.TAKE_GEMS_AND_DISCARD)){
-
-			}
-		}
 	}
 
 
@@ -1059,6 +1122,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    devCardsLabel,
 	    hint,
 	    errorLabel,
+		KIButton
 	)
     }
 }
