@@ -1,8 +1,6 @@
 package entity
 
-/**
- *  enum class for the different types a gem could have
- * */
+/** enum class for the different types a gem could have.*/
 enum class GemType {
     GREEN,
     RED,
@@ -11,6 +9,7 @@ enum class GemType {
     BLACK,
     YELLOW;
 
+    /**[toInt] : method to convert our Gem types from the enum class GemType to corresponding Int values/ "positions". */
     fun toInt(): Int = when(this) {
     GREEN -> 3
     RED -> 4
@@ -20,7 +19,8 @@ enum class GemType {
     YELLOW -> 6
     }
 
-    fun gemType (index: Int): GemType? = when(index) {
+    /**[gemTypeFromInt] : method to convert our Int Values to corresponding Gem Types. */
+    fun gemTypeFromInt (index: Int): GemType? = when(index) {
         1 -> WHITE
         2 -> BLUE
         3 -> GREEN

@@ -12,6 +12,8 @@ import tools.aqua.bgw.components.gamecomponentviews.CardView
 import tools.aqua.bgw.util.Font
 import entity.NobleTile
 
+/**[PopupScene] : Class , implements a pop up scene particularly for showPlayers.This scene is executed when
+ * the showPlayers button is triggered in the GameScene */
 class PopupScene(
     private val rootService: RootService,
     private val gameScene: GameScene
@@ -25,13 +27,15 @@ class PopupScene(
 	visual = imageLoader.nextPlayersImage()
     )
 
-    private fun standardComponents() {
+	/**[standardComponents] :Method adding components (actually just the quit button) to the popup scene*/
+	private fun standardComponents() {
 	addComponents(
 	    quitButton,
 	)
     }
 
-    private fun drawPlayer(index: Int, player: Player, devCardsLayout: List<CardView>, saveCardsLayout: List<CardView>,
+	/**[drawPlayer] :  method visualizing concurring players and elements they have in possesion. */
+	private fun drawPlayer(index: Int, player: Player, devCardsLayout: List<CardView>, saveCardsLayout: List<CardView>,
 		nobleTilesLayout: List<CardView>) {
 
 		val nameLabel = Label(posX =index*500+25+75, posY = 100,
@@ -92,7 +96,8 @@ class PopupScene(
 		addComponents(nameLabel, typeLabel, pointsLabel)
     }
 
-    override fun refreshAfterPopup(currentPlayer: Player) {
+	/**[refreshAfterPopup] : Override Refreshable method, refreshes the game / scene after a popup scene is triggered.*/
+	override fun refreshAfterPopup(currentPlayer: Player) {
 	clearComponents()
 	standardComponents()
 	

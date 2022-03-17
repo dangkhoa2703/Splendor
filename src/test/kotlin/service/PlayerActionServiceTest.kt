@@ -90,10 +90,10 @@ class PlayerActionServiceTest {
         assertEquals(1, root.currentGame!!.currentGameState.board.gems[GemType.RED])
         assertEquals(1, root.currentGame!!.currentGameState.board.gems[GemType.BLUE])
         assertEquals(1, root.currentGame!!.currentGameState.board.gems[GemType.GREEN])
-//        assertEquals(1, user.gems[GemType.RED])
-//        assertEquals(1, user.gems[GemType.BLUE])
-//        assertEquals(1, user.gems[GemType.GREEN])
-        //assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types, user) }
+        root.gameService.startNewGame(playerList, false, 1)
+        user = root.currentGame!!.currentGameState.currentPlayer
+        root.playerActionService.takeGems(types, user)
+        assertThrows<IllegalArgumentException> { root.playerActionService.takeGems(types, user) }
     }
 
     /**
@@ -186,6 +186,10 @@ class PlayerActionServiceTest {
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
         root.playerActionService.reserveCard(devCard5, player)
         assertEquals(0, player.gems[GemType.YELLOW])
+        root.gameService.startNewGame(playerList, false, 1)
+        assertThrows<NoSuchElementException> { root.playerActionService.buyCard(root.currentGame!!.currentGameState.
+            board.levelOneOpen[0], false, mutableMapOf(), root.currentGame!!.currentGameState.
+            currentPlayer) }
     }
 
     /**
@@ -242,13 +246,13 @@ class PlayerActionServiceTest {
         player = root.currentGame!!.currentGameState.currentPlayer
         root.playerActionService.buyCard(devCard1, false, gemMap, player)
         assertFalse { player.reservedCards.contains(devCard1) }
-
         root.gameService.startNewGame(playerList, false, 1)
         player = root.currentGame!!.currentGameState.currentPlayer
         player.gems[GemType.RED] = 10
         player.gems[GemType.GREEN] = 10
         root.playerActionService.buyCard(devCard1, false, gemMap, player)
-        board.levelOneOpen[0] = devCard1
+        assertThrows<IllegalArgumentException> { root.playerActionService.buyCard(board.levelOneOpen[0],
+            false, gemMap, player) }
     }
 
     /**
@@ -271,6 +275,10 @@ class PlayerActionServiceTest {
         assertTrue { player.nobleTiles.contains(nobleTileOne) }
         assertFalse { root.currentGame!!.currentGameState.board.nobleTiles.contains(nobleTileOne) }
         assertEquals(score + 1, player.score)
+
+        val nobleTileTwo = NobleTile(20, mutableMapOf(GemType.RED to 3, GemType.GREEN to 3, GemType.WHITE to 3,
+            GemType.BLACK to 0,  GemType.BLUE to 0, GemType.YELLOW to 0), 3)
+        assertThrows<IllegalArgumentException> { root.playerActionService.selectNobleTile(nobleTileTwo, player) }
     }
 
     /**
@@ -298,6 +306,7 @@ class PlayerActionServiceTest {
         assertEquals(8, player.gems[GemType.RED])
         assertEquals(2, player.gems[GemType.BLUE])
         assertTrue(testRefreshable.refreshAfterEndTurnCalled)
+        assertThrows<IllegalArgumentException> { root.playerActionService.returnGems(gemTypeList, player) }
     }
 
     /**
@@ -333,48 +342,74 @@ class PlayerActionServiceTest {
     }
 
     /**
-     * tests if showHint works
+     * tests if showHint works for buyCards and reserveCards
      */
     @Test
-    fun showHintTest(){
+    fun showHintTestCards(){
         root.gameService.startNewGame(playerList, false, 1)
         val board = root.currentGame!!.currentGameState.board
         val player = root.currentGame!!.currentGameState.currentPlayer
-        var turn:Turn
-        val testCard = DevCard(0,mapOf(),1,0,GemType.RED)
+        val testCard1 = DevCard(0,mapOf(),1,0,GemType.RED)
+        val testCard2 = DevCard(0,mapOf(),2,0,GemType.RED)
+        val testCard3 = DevCard(0,mapOf(),3,0,GemType.RED)
 
         //best turn is to reserve a card
-        turn = Turn(mapOf(),listOf(testCard),TurnType.RESERVE_CARD)
+        var turn = Turn(mapOf(),listOf(testCard1),TurnType.RESERVE_CARD)
         board.levelOneOpen.clear()
-        board.levelOneOpen.add(testCard)
+        board.levelOneOpen.add(testCard1)
         var hint = "You should reserve the level-1-card at position 1."
-        assertEquals(hint,root.playerActionService.showHint(turn))
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard2),TurnType.RESERVE_CARD)
+        board.levelTwoOpen.clear()
+        board.levelTwoOpen.add(testCard2)
+        hint = "You should reserve the level-2-card at position 1."
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard3),TurnType.RESERVE_CARD)
+        board.levelThreeOpen.clear()
+        board.levelThreeOpen.add(testCard3)
+        hint = "You should reserve the level-3-card at position 1."
+        assertEquals(hint, root.playerActionService.showHint(turn))
 
         //best turn is to buy a card
-        turn = Turn(mapOf(),listOf(testCard),TurnType.BUY_CARD)
+        turn = Turn(mapOf(),listOf(testCard1),TurnType.BUY_CARD)
         board.levelOneOpen.clear()
-        board.levelOneOpen.add(testCard)
+        board.levelOneOpen.add(testCard1)
         hint = "You should buy the level-1-card at position 1."
         assertEquals(hint,root.playerActionService.showHint(turn))
-        player.reservedCards.add(testCard)
+        player.reservedCards.add(testCard1)
         hint = "You should buy your reserved card at position 1."
         assertEquals(hint,root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard2),TurnType.BUY_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard2)
+        hint = "You should buy the level-2-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard3),TurnType.BUY_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard3)
+        hint = "You should buy the level-3-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+    }
 
+    /**
+     * tests if showHint works for takeGems and returnGems
+     */
+    @Test
+    fun showHintTestGems() {
         //best turn is to take gems
-        turn = Turn(mapOf(Pair(GemType.RED,2)),listOf(),TurnType.TAKE_GEMS)
-        hint = "You should take two RED gems."
-        assertEquals(hint,root.playerActionService.showHint(turn))
-        val gemsMap = mutableMapOf(Pair(GemType.RED,1),Pair(GemType.GREEN,1),Pair(GemType.BLUE,1))
-        turn  =Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
-        hint = "You should take three gems of the colours GREEN, RED and BLUE."
-        assertEquals(hint,root.playerActionService.showHint(turn))
+        root.gameService.startNewGame(playerList, false, 1)
+        var turn = Turn(mapOf(Pair(GemType.RED, 2)), listOf(), TurnType.TAKE_GEMS)
+        var hint = "You should take two RED gems "
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        val gemsMap = mutableMapOf(Pair(GemType.RED, 1), Pair(GemType.GREEN, 1), Pair(GemType.BLUE, 1))
+        turn = Turn(gemsMap, listOf(), TurnType.TAKE_GEMS)
+        hint = "You should take three gems of the colours RED, GREEN and BLUE"
+        assertEquals(hint, root.playerActionService.showHint(turn))
 
-//        //wrong turn
-//        turn = Turn(mapOf(), listOf(),TurnType.EMPTY)
-//        hint = "there is no help for you"
-//        assertEquals(hint,root.playerActionService.showHint(turn))
-//        gemsMap[GemType.BLACK] = 1
-//        turn = Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
-//        assertThrows<IllegalStateException> { root.playerActionService.showHint(turn) }
+        //best turn is to take and to discard gems
+        turn = Turn(mapOf(Pair(GemType.RED, 2)), listOf(), TurnType.TAKE_GEMS_AND_DISCARD)
+        turn.gemsToDiscard = mapOf(GemType.RED to 1, GemType.BLACK to 1)
+        hint = "You should take two RED gems and discard gems of the colours RED BLACK "
+        assertEquals(hint, root.playerActionService.showHint(turn))
     }
 }

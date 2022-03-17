@@ -5,7 +5,7 @@ import javax.imageio.ImageIO
 import tools.aqua.bgw.visual.ImageVisual
 
 private const val HUMAN_ICON = "/human.png"
-private const val DRAG_N_DROP_ICON = "/dragAndDrop.png"
+//private const val DRAG_N_DROP_ICON = "/dragAndDrop.png"
 private const val START_BACKGROUND = "/Splendor-background.jpg"
 private const val BUTTON_IMAGE = "/button.jpg"
 private const val REDO_IMAGE = "/redo.png"
@@ -13,12 +13,12 @@ private const val UNDO_IMAGE = "/Undo.png"
 private const val HINT_IMAGE = "/hint.png"
 private const val TABLE_IMAGE = "/Background.png"
 private const val CARD_BACK = "/card_back.jpg"
-private const val BACK_IMAGE = "/Back.png"
+//private const val BACK_IMAGE = "/Back.png"
 private const val CONFIG_BACKGROUND = "/configScene.jpg"
 private const val HIGHSCORE_BACKGROUND = "/BackgroundHighScore.png"
 private const val SAVEGAME_IMAGE = "/savegame.png"
-private const val LOAD_IMAGE = "savegame.png"
-private const val HIGHSCORES_IMAGE = "highscores.png"
+//private const val LOAD_IMAGE = "savegame.png"
+//private const val HIGHSCORES_IMAGE = "highscores.png"
 
 /**
  * Class to load Images from resources
@@ -29,7 +29,8 @@ class SplendorImageLoader {
 
     private var images: List<ImageVisual> = listOf()
 
-    fun image(path: String): ImageVisual {
+	/**[image] : method facilitating loading of various images */
+	fun image(path: String): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
 		SplendorImageLoader::class.java.getResource(
@@ -122,6 +123,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/** [cardBack] : Method, facilitating te visualisation of the back of a card.*/
     fun cardBack(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -130,6 +132,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[velocity] : Method applied to visualize velocity icon in configScene*/
     fun velocity(index: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -138,6 +141,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[shuffleImage] : Method applied to visualize shuffle visuals.*/
     fun shuffleImage(index: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -146,6 +150,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[configBackground] : Method applied to visualize configuration Background.*/
     fun configBackground(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -154,6 +159,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[highscoreBackground] : Method applied to visualize Highscore Background.*/
     fun highscoreBackground(): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -162,6 +168,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[tokenImage] : Method applied to visualize various Tokens aka Gems.*/
     fun tokenImage(int: Int): ImageVisual {
 	return ImageVisual(
 	    ImageIO.read(
@@ -172,6 +179,7 @@ class SplendorImageLoader {
 	)
     }
 
+	/**[carbon] : Method applied to visualize reserve card and buy card placeholders.*/
 	fun carbon(): ImageVisual {
 		return ImageVisual(
 			ImageIO.read(
@@ -182,6 +190,7 @@ class SplendorImageLoader {
 		)
 	}
 
+	/**[loadGame] : Method applied to visualize load Game icon in LoadGameScene.*/
 	fun loadGame(): ImageVisual {
 		val image: BufferedImage = ImageIO.read(
 			SplendorImageLoader::class.java.getResource(
@@ -191,23 +200,24 @@ class SplendorImageLoader {
 		return ImageVisual(image)
 	}
 
+	/**[tokenImage] : Method applied to visualize corresponding tokens aka Gems.*/
     fun tokenImage(type: GemType): ImageVisual {
 	return tokenImages[type.toInt()-1]
     }
 
-    /**
-     * function that returns Card Image
-     */
+    /** [frontImageFor] : function that returns Card Image Front with help of corresponding card id*/
     fun frontImageFor(id: Int): ImageVisual {
 	return images[id]
     }
 
+	/**[preload] : Method applied to preload the images of the various cards.*/
     fun preload() {
 	for(i in 1..100){
 		images = images + imageFor(i)
 	}
     }
 
+	/**[imageFor] : Method applied to load the images of a correspdoning card.*/
     fun imageFor(id: Int): ImageVisual {
 	val idString = (id).toString()
 	return ImageVisual(
