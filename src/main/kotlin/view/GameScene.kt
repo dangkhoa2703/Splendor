@@ -784,9 +784,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
-		println(scoreLabel.text)
 	scoreLabel.text = (player.score).toString()
-		println(scoreLabel.text)
     }
 
 	/**[refreshAfterEndTurn] : Override Method,refreshing after end of a turn */

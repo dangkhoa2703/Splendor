@@ -34,6 +34,7 @@ class IOServiceTest {
         game.currentGameState.currentPlayer.gems[GemType.RED] = 10
         root.gameService.nextPlayer()
 
+
         root.ioService.saveGame("src/test/resources/testSaveFile")
 
         //test save file
@@ -47,7 +48,7 @@ class IOServiceTest {
         root.ioService.loadGame("src/test/resources/testSaveFile")
         val loadGame = root.currentGame
         checkNotNull(loadGame)
-        assertEquals(2,root.currentGame!!.currentGameState.currentPlayerIndex)
+        assertEquals(1,root.currentGame!!.currentGameState.currentPlayerIndex)
         assertEquals(32,loadGame.currentGameState.playerList[3].score)
         assertEquals(4,loadGame.currentGameState.board.levelOneOpen.size)
 

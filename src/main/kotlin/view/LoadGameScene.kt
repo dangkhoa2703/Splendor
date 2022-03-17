@@ -66,17 +66,16 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 	visual = image
     ).apply {
 		isDisabled = true
-		onMouseClicked = {
-			val ioService = rootService.ioService
-			checkNotNull(file) { "No file found. "}
-			try {
-				ioService.loadGame((file as File).absolutePath)
-				println("game is loaded")
-			}
-			catch(e: Exception) {
-				println(e)
-			}
-		}
+//		onMouseClicked = {
+//			val ioService = rootService.ioService
+//			checkNotNull(file) { "No file found. "}
+//			try {
+//				ioService.loadGame((file as File).absolutePath)
+//			}
+//			catch(e: Exception) {
+//				println(e)
+//			}
+//		}
 	}
 
 	/**[backButton] : Button that visually represents the back button of loadGameScene. */
@@ -103,11 +102,8 @@ class LoadGameScene(private val rootService: RootService): MenuScene(1920, 1080)
 
 	fun loadGame(){
 		val ioService = rootService.ioService
-		checkNotNull(file) { "No file found. "}
 		try {
-			println("game is loaded")
 			ioService.loadGame((file as File).absolutePath)
-			println("game is loaded")
 		}
 		catch(e: Exception) {
 			println(e)
