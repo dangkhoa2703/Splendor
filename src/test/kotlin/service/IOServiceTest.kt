@@ -128,7 +128,7 @@ class IOServiceTest {
 
     @Test
     fun testCreatePlayerFromLines(){
-        val fileLines = listOf<String>(
+        val fileLines = listOf(
             "p4",
             "Nemo"
         )

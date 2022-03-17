@@ -16,7 +16,7 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
     private val rootService = RootService()
 
     /**[gameScene] : Of type GameScene; by clicking on the quit button the current game is
-    assigned to null and we jump back to the startScene. */
+    assigned to null, and we jump back to the startScene. */
     private val gameScene: GameScene = GameScene(rootService).apply {
         quitButton.onMouseClicked = {
             rootService.currentGame = null
@@ -88,7 +88,7 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
 
 	/**[startScene] : Of type MenuScene , applied to the StartScene. Various buttons to navigate
 	  through the different scenes. */
-    private val startScene: MenuScene = StartScene(rootService).apply {
+    private val startScene: MenuScene = StartScene().apply {
         //navigate to the configScene
 		startNewGameButton.onMouseClicked = {
             this@SplendorApplication.showMenuScene(configScene)

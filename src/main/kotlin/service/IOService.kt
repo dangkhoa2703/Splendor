@@ -1,7 +1,6 @@
 package service
 
 import entity.*
-import view.GameScene
 import java.io.File
 
 /**
@@ -55,7 +54,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
 
 
     /** loads a game state */
-    fun loadGameState(file: File,numberPlayers:Int):GameState{
+    private fun loadGameState(file: File,numberPlayers:Int):GameState{
         val lines = file.readLines()
         val players = mutableListOf<Player>()
         var nextLineAt = 0
@@ -182,7 +181,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
     /**
      * creates noble tiles from strings
      */
-    fun readNobleTiles( list :List<String>):MutableList<NobleTile> {
+    private fun readNobleTiles( list :List<String>):MutableList<NobleTile> {
         val nobleTiles = mutableListOf<NobleTile>()
         val cardConfigFile = File("src/main/resources/splendor-adligenkarten.csv")
         val cardConfigStringList = cardConfigFile.readLines()

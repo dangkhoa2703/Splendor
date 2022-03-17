@@ -96,7 +96,8 @@ class PopupScene(
 		addComponents(nameLabel, typeLabel, pointsLabel)
     }
 
-	/**[refreshAfterPopup] : Override Refreshable method, refreshes the game / scene after a popup scene is triggered.*/
+	/**[refreshAfterPopup] : Override Refreshable method, refreshes the game / scene after a popup scene
+	 * is triggered.*/
 	override fun refreshAfterPopup(currentPlayer: Player) {
 	clearComponents()
 	standardComponents()

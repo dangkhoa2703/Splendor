@@ -58,7 +58,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
     private var saved: List<DevCard> = listOf()
 
-    val hint=Label(
+    private val hint = Label(
 	width/2+300,
 	height/2-200,
 	400,
@@ -66,7 +66,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	"", font = Font(size = 26, color = Color.WHITE)
     )
 
-    val errorLabel=Label(
+    private val errorLabel = Label(
 	width/2 - 500,
 	1000,
 	1000,
@@ -138,10 +138,10 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		visual = buttonImage
 	).apply {
 		onMouseClicked={
-		if(!rootService.currentGame!!.currentGameState.currentPlayer.playerType.equals(PlayerType.HUMAN)){
+		if(rootService.currentGame!!.currentGameState.currentPlayer.playerType != PlayerType.HUMAN){
 			val gamestate= rootService.currentGame!!.currentGameState
 			val turn = rootService.aiService.calculateBestTurn(gamestate.currentPlayer,gamestate)
-			if(turn.turnType.equals(TurnType.BUY_CARD)){
+			if(turn.turnType == TurnType.BUY_CARD){
 				val playerActionService = rootService.playerActionService
 				val devCard: DevCard = turn.card[0]
 				val cardView: CardView = devCardMap.forwardOrNull(devCard.id) as CardView
@@ -153,7 +153,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 
 			}
-			if(turn.turnType.equals(TurnType.TAKE_GEMS)){
+			if(turn.turnType == TurnType.TAKE_GEMS){
 				val playerActionService = rootService.playerActionService
 
 				checkNotNull(currentPlayer) { "No player found. "}
@@ -189,10 +189,10 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 			}
 
-			if(turn.turnType.equals(TurnType.RESERVE_CARD)){
+			if(turn.turnType == TurnType.RESERVE_CARD){
 
 			}
-			if(turn.turnType.equals(TurnType.TAKE_GEMS_AND_DISCARD)){
+			if(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD){
 
 			}
 		}
@@ -225,7 +225,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    val playerActionService = rootService.playerActionService
 	    val gameState = rootService.currentGame!!.currentGameState
 	    val turn = rootService.aiService.calculateBestTurn(gameState.currentPlayer,gameState)
-	    var output:String = ""
+	    var output = ""
 	    try {
 		output = playerActionService.showHint(turn)
 	    }
@@ -255,7 +255,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
         visual = imageLoader.saveGameImage()
     ).apply{
 	onMouseClicked = {
-	    val directoryChooser: DirectoryChooser = DirectoryChooser()
+	    val directoryChooser = DirectoryChooser()
 	    val file: File? = directoryChooser.showDialog(null)
 	    if(file!=null) {
 		val ioService = rootService.ioService
@@ -636,9 +636,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 	var temp: List<CardView> = listOf()
 	drawStacks.forEach{
-	    it.forEach{
-		cardView -> temp+=cardView
-	    }
+	    it.forEach{ cardView -> temp = temp + cardView }
 	}
 
 	temp.forEach{ moveCardView(it, stack)}
@@ -671,27 +669,24 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	    gameGemSelection[gem] = 0
 	}
 
-	val levelOneStackSize = Math.min(game.currentGameState.board.levelOneCards.size, 2)
-	val levelTwoStackSize = Math.min(game.currentGameState.board.levelTwoCards.size, 2)
-	val levelThreeStackSize = Math.min(game.currentGameState.board.levelThreeCards.size, 2)
+	val levelOneStackSize = min(game.currentGameState.board.levelOneCards.size, 2)
+	val levelTwoStackSize = min(game.currentGameState.board.levelTwoCards.size, 2)
+	val levelThreeStackSize = min(game.currentGameState.board.levelThreeCards.size, 2)
 
-	for(i in 0..levelOneStackSize-1) {
-	    val cardView: CardView? = devCardMap.forward(200+i)
-	    checkNotNull(cardView)
-	    cardView.isDraggable = true
+	for(i in 0 until levelOneStackSize) {
+	    val cardView: CardView = devCardMap.forward(200+i)
+		cardView.isDraggable = true
 	    moveCardView(cardView, drawStacks[2])
 	}
 
-	for(i in 0..levelTwoStackSize-1) {
-	    val cardView: CardView? = devCardMap.forward(202+i)
-	    checkNotNull(cardView)
+	for(i in 0 until levelTwoStackSize) {
+	    val cardView: CardView = devCardMap.forward(202+i)
 	    cardView.isDraggable = true
 	    moveCardView(cardView, drawStacks[1])
 	}
 
-	for(i in 0..levelThreeStackSize-1) {
-	    val cardView: CardView? = devCardMap.forward(204+i)
-	    checkNotNull(cardView)
+	for(i in 0 until levelThreeStackSize) {
+	    val cardView: CardView = devCardMap.forward(204+i)
 	    cardView.isDraggable = true
 	    moveCardView(cardView, drawStacks[0])
 	}
@@ -945,8 +940,8 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     }
 
     /**[loadAllComponents] : Method to load all view components to GameScene */
-    fun loadAllComponents() {
-	clearComponents()
+	private fun loadAllComponents() {
+		clearComponents()
 
 	for(i in 0..2) {
 	    val drawStack = LabeledStackView(
@@ -1086,11 +1081,11 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	/**
 	 * Checks if current Player is AI(if yes it returns true)
 	 */
-	fun AIcheck(): Boolean{
-		return !rootService.currentGame!!.currentGameState.currentPlayer.playerType.equals(PlayerType.HUMAN)
+	fun aIcheck(): Boolean{
+		return rootService.currentGame!!.currentGameState.currentPlayer.playerType != PlayerType.HUMAN
 	}
 
-	fun AITurn(){
+	fun aITurn(){
 
 	}
 

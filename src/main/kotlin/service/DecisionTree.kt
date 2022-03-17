@@ -41,7 +41,8 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(),
+                    player[playerIndex].clone(), enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -49,7 +50,7 @@ class DecisionTree(var rootService: RootService) {
                 newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
                 newPlayerlist = newPlayerlist.clone().toMutableList()
                 val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
-                println("MAX:" + eval)
+                println("MAX:$eval")
                 if(eval == null)
                     continue
                 if(eval > maxEval) {
@@ -73,7 +74,8 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(),
+                    player[playerIndex].clone(), enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -81,7 +83,7 @@ class DecisionTree(var rootService: RootService) {
                 newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
                 newPlayerlist = newPlayerlist.clone().toMutableList()
                 val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
-                println("MIN:" + eval)
+                println("MIN:$eval")
                 if(eval == null)
                     continue
                 if(eval < minEval) {
@@ -106,14 +108,15 @@ class DecisionTree(var rootService: RootService) {
      */
     fun simulateMoveWithOptionToDiscard(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>):
             Pair<Turn, Pair<Board, Player>>? {
-        val result: Pair<Turn, Pair<Board, Player>>? = simulateMove(turnType, board.cloneForSimulation(), player.clone(), enemyPlayer)
+        val result: Pair<Turn, Pair<Board, Player>>? = simulateMove(turnType, board.cloneForSimulation(),
+            player.clone(), enemyPlayer)
         if(result == null || result.first.turnType != TurnType.TAKE_GEMS)
             return result
-        var gemsOnHandAfterMove: Int = 0
+        var gemsOnHandAfterMove = 0
         result.second.second.gems.forEach {
             gemsOnHandAfterMove += it.value
         }
-        var gemsOnHandToMuch: Int = gemsOnHandAfterMove - 10
+        val gemsOnHandToMuch: Int = gemsOnHandAfterMove - 10
         if(gemsOnHandToMuch <= 0)
             return result
         // Compute which gems to discard
@@ -253,7 +256,8 @@ class DecisionTree(var rootService: RootService) {
         return Pair((gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW)), gemsNeeded)
     }
 
-    private fun subtractGemsFromMapWithSortedIndices(gemsOfPlayer: MutableMap<GemType, Int>, listOfSortedDevCard: List<DevCard>,  pAmount: Int) {
+    private fun subtractGemsFromMapWithSortedIndices(gemsOfPlayer: MutableMap<GemType, Int>,
+                                                     listOfSortedDevCard: List<DevCard>,  pAmount: Int) {
         var amount: Int = pAmount
         for(devCard in listOfSortedDevCard) {
             devCard.price.forEach {

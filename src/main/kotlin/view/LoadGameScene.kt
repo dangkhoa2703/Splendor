@@ -5,11 +5,9 @@ import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
-import javafx.stage.FileChooser
 import java.io.File
 import entity.SplendorImageLoader
 import javafx.stage.DirectoryChooser
-import org.intellij.lang.annotations.JdkConstants.FontStyle
 import java.awt.Color
 
 
@@ -17,7 +15,7 @@ import java.awt.Color
  *  [imageLoader] : Facilitates loading of various images needed for the [LoadGameScene] using SplendorImageLoader
  *   [image] : Facilitates loading of various buttons needed for the [LoadGameScene] using SplendorImageLoader
  *   [backgroundImage] : Facilitates loading of background needed for the [LoadGameScene] using SplendorImageLoader
- *   [headLineLabel] :   Label indicating LoadScene
+ *   [headLine Label] :   Label indicating LoadScene
  *   [fileName] : File names
  */
 

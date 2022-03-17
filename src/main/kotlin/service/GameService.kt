@@ -169,7 +169,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
      * method to save highscores after end game
      * don't use in combination with save game or quit game
      */
-    fun saveHighscoresAfterEndGame(){
+    private fun saveHighscoresAfterEndGame(){
         val game = rootService.currentGame
         checkNotNull(game)
         if(game.validGame){

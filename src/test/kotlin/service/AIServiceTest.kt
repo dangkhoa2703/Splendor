@@ -265,7 +265,8 @@ class AIServiceTest {
         // 9. There are only two gems on the board left
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),true),
             ai.chooseGems(bestDevCards,testPlayer2,exampleBoard9))
-        // 1. Board has only 2 red gems left, so we want to choose two green gems
-        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false), ai.chooseGems(bestDevCards,testPlayer,exampleBoard10))
+        // 10. Board has only 2 red gems left, so we want to choose two green gems
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false), ai.chooseGems(bestDevCards,testPlayer,
+            exampleBoard10))
     }
 }

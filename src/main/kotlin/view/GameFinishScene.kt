@@ -7,8 +7,6 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.components.uicomponents.Button
 import entity.SplendorImageLoader
 import java.awt.Color
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 /** [GameFinishScene] : [MenuScene] that is displayed after the game ends depending on condition
  *  [imageLoader] : Facilitates loading of various images needed for the [GameFinishScene] using SplendorImageLoader

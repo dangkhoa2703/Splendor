@@ -3,7 +3,6 @@ package view
 import tools.aqua.bgw.core.MenuScene
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.util.Font
-import service.RootService
 import entity.SplendorImageLoader
 
 /**
@@ -12,7 +11,7 @@ import entity.SplendorImageLoader
  * existing game or view previous highscores.
  */
 
-class StartScene(private val rootService: RootService): MenuScene(1920, 1080), Refreshable {
+class StartScene: MenuScene(1920, 1080), Refreshable {
 
 	private val imageLoader = SplendorImageLoader()
 	private val image = imageLoader.button()
