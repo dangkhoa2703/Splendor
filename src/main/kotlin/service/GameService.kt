@@ -48,6 +48,13 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
         // create Board
         val board = Board(createNobleTiles(players.size), levelOneStack, levelOneOpen, levelTwoStack, levelTwoOpen,
             levelThreeStack, levelThreeOpen)
+        if (playerList.size < 4) {
+            if (playerList.size == 2) {
+                board.gems = mutableMapOf(GemType.RED to 4, GemType.GREEN to 4, GemType.WHITE to 4, GemType.BLACK to 4,
+                    GemType.BLUE to 4, GemType.YELLOW to 5) }
+            else { board.gems = mutableMapOf(GemType.RED to 5, GemType.GREEN to 5, GemType.WHITE to 5,
+                GemType.BLACK to 5, GemType.BLUE to 5, GemType.YELLOW to 5) }
+        }
         //create GameState
         val gameState = GameState(playerList[0], playerList, board)
         gameState.isInitialState = true
