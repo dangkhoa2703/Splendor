@@ -7,6 +7,7 @@ import entity.*
  */
 class PlayerActionService(private val rootService: RootService): AbstractRefreshingService() {
 
+    /**[showPlayers] :Popup displaying concurring players and items they have in hand.*/
     fun showPlayers(currentPlayer: Player) {
 	    onAllRefreshables{ refreshAfterPopup(currentPlayer) }
     }
