@@ -14,6 +14,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
      */
     fun loadGame(path:String){
         //get information for splendor
+        println("loading game")
         val gameSettingFile = File("$path/gameSetting.txt")
         val gameSettings = gameSettingFile.readLines()
         val totalGameStates = gameSettings[0].trim().toInt()

@@ -1004,11 +1004,38 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	renderPlayerGems()
 
     }
+	/**
+	 * Checks if current Player is AI(if yes it returns true)
+	 */
+	fun AIcheck(): Boolean{
+		return !rootService.currentGame!!.currentGameState.currentPlayer.playerType.equals(PlayerType.HUMAN)
+	}
 
-    init {
+	fun AITurn(){
+		if(AIcheck()){
+			val gamestate= rootService.currentGame!!.currentGameState
+			val turn = rootService.aiService.calculateBestTurn(gamestate.currentPlayer,gamestate)
+			if(turn.turnType.equals(TurnType.BUY_CARD)){
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS)){
+
+			}
+
+			if(turn.turnType.equals(TurnType.RESERVE_CARD)){
+
+			}
+			if(turn.turnType.equals(TurnType.TAKE_GEMS_AND_DISCARD)){
+
+			}
+		}
+	}
+
+
+	init {
 	loadAllComponents()
-	
-	
+
+
 	background = imageLoader.table()
 
 	addComponents(
