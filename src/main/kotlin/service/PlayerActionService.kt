@@ -278,13 +278,15 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun returnGems(gems: List<GemType>, user : Player){
         val game = rootService.currentGame!!
-        if(!game.currentGameState.currentPlayer.hasDoneTurn) {
+        val gemCount = user.gems.values.sum()
+        if(gemCount > 10){
             val board = game.currentGameState.board
             gems.forEach { gemType ->
                 user.gems[gemType] = user.gems.getValue(gemType) - 1
                 board.gems[gemType] = board.gems.getValue(gemType) + 1
             }
             rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
-        } else { throw IllegalArgumentException("Not Ur Turn") }
+        } else { throw IllegalArgumentException("You have less than 10 gems") }
+        onAllRefreshables { refreshAfterEndTurn() }
     }
 }

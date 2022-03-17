@@ -793,7 +793,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	val game = rootService.currentGame
 	checkNotNull(game) { "No game found. "}
 
-	game.turnCount++
+//	game.turnCount++
 
 	currentPlayer = game.currentGameState.currentPlayer
 	currentPlayerIndex = game.currentGameState.playerList.indexOf(currentPlayer)
@@ -927,6 +927,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 
 		for(gem in allGems) {
 			playerGemSelection[gem]=0
+			gameGemSelection[gem] = 0
 		}
 
 		for(gem in gems) {
@@ -934,6 +935,7 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 		}
 
 		renderPlayerGems()
+
 	}
 
     init {
