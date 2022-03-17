@@ -91,9 +91,9 @@ class GameServiceTest {
     /** tests if nextPlayer works correctly */
     @Test
     fun testNextPlayer() {
-        val root = RootService()
         val testRefreshable = TestRefreshable()
         root.addRefreshable(testRefreshable)
+        testRefreshable.reset()
         val playerList2 = listOf(Pair("p1",PlayerType.HUMAN),Pair("p2",PlayerType.HUMAN))
         root.gameService.startNewGame(playerList2,false,1)
         val game = root.currentGame
@@ -120,7 +120,7 @@ class GameServiceTest {
         game.currentGameState.currentPlayer.score = 16
         root.gameService.nextPlayer()
         assertEquals("p1",game.currentGameState.playerList[0].name)
-//        assertTrue(testRefreshable.refreshAfterEndGameCalled)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
         // test if game state are correctly create
         game.currentGameState.consecutiveNoAction = 0
@@ -139,7 +139,7 @@ class GameServiceTest {
         root.currentGame!!.currentGameState.consecutiveNoAction = game.currentGameState.playerList.size
         root.gameService.nextPlayer()
         assertEquals(tempSortedList, game.currentGameState.playerList)
-//        assertTrue(testRefreshable.refreshAfterEndGameCalled)
+        assertTrue(testRefreshable.refreshAfterEndGameCalled)
 
         //players have more than 10 gems
         assertThrows<IllegalArgumentException> {
