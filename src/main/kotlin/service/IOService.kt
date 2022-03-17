@@ -1,6 +1,7 @@
 package service
 
 import entity.*
+import view.GameScene
 import java.io.File
 
 /**
@@ -48,7 +49,7 @@ class IOService(private val rootService: RootService): AbstractRefreshingService
         rootService.currentGame = splendor
 
 //        onAllRefreshables { refreshAfterStartNewGame() }
-        onAllRefreshables { refreshAfterEndTurn() }
+
     }
 
 

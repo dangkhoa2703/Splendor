@@ -51,6 +51,7 @@ class SplendorApplication : BoardGameApplication("Splendor"), Refreshable {
             this@SplendorApplication.hideMenuScene()
             loadGame()
             this@SplendorApplication.showGameScene(gameScene)
+            gameScene.refreshAfterEndTurn()
         }
     }
 
