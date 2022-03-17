@@ -309,6 +309,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             allMissingColours.addAll(sortedListOfMissingGems)
             sortedListOfMissingGems.forEach {
                 var amountOfGemColourOnBoard = (gemsOnBoard[it] ?: 0)
+                val amountOfGemColourOnBoardNotChanged = (gemsOnBoard[it] ?: 0)
                 var amountOfSameGemColour = 0
                 if (amountOfGemColourOnBoard > missingGemsForCurrentDevCard[it]!!) {
                     //while the colour is still available, the player still needs that colour and did not choose
@@ -318,7 +319,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
                         && (amountOfSameGemColour < 2)) {
                         amountOfSameGemColour += 1
                         amountOfGemColourOnBoard -= 1 }
-                    if (gems.isEmpty() && amountOfSameGemColour == 2) {
+                    if (gems.isEmpty() && amountOfSameGemColour == 2 && amountOfGemColourOnBoardNotChanged > 3) {
                         gems[it] = 2
                         return Pair(gems,false) }
                     if (!gems.containsKey(it) && (amountOfGemColourOnBoard > 0)) {

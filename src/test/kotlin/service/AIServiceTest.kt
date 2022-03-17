@@ -215,13 +215,13 @@ class AIServiceTest {
         val bestDevCards = mutableMapOf(devCardOne to 1.0, devCardTwo to 0.5, devCardThree to 0.0)
         val bestDevCardsTwo = mutableMapOf(devCardSix to 1.0, devCardFive to 0.5, devCardFour to 0.0)
         val exampleBoard1 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
-            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 3))
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 4))
         val exampleBoard2 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
-            GemType.GREEN to 3, GemType.BLACK to 3))
+            GemType.GREEN to 4, GemType.BLACK to 3))
         val exampleBoard3 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 0,
-                GemType.GREEN to 3, GemType.BLACK to 3))
+                GemType.GREEN to 4, GemType.BLACK to 3))
         val exampleBoard4 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf())
         val exampleBoard5 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardFour), mutableListOf(),
@@ -238,8 +238,11 @@ class AIServiceTest {
         val exampleBoard9 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
             GemType.BLUE to 1))
+        val exampleBoard10 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
+            mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 2,
+                GemType.GREEN to 4))
 
-        // 1. Board has 3 red gems left, so we want to choose two red gems
+        // 1. Board has 4 red gems left, so we want to choose two red gems
         assertEquals(Pair(mutableMapOf(GemType.RED to 2),false), ai.chooseGems(bestDevCards,testPlayer,exampleBoard1))
         // 2. Board has only 1 red gem left, so we want to choose two green gems
         assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false),ai.chooseGems(bestDevCards,testPlayer,exampleBoard2))
@@ -262,5 +265,7 @@ class AIServiceTest {
         // 9. There are only two gems on the board left
         assertEquals(Pair(mutableMapOf(GemType.RED to 1, GemType.BLUE to 1),true),
             ai.chooseGems(bestDevCards,testPlayer2,exampleBoard9))
+        // 1. Board has only 2 red gems left, so we want to choose two green gems
+        assertEquals(Pair(mutableMapOf(GemType.GREEN to 2),false), ai.chooseGems(bestDevCards,testPlayer,exampleBoard10))
     }
 }
