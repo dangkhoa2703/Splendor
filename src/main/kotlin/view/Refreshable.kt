@@ -5,7 +5,9 @@ import entity.GemType
 import entity.NobleTile
 import entity.Player
 
+/**[Refreshable] : Interface containing various refreshable methods for Splendor. */
 interface Refreshable {
+
     /**[refreshAfterTakeGems] : Refreshable method, refreshes the game / scene after Gems are taken.*/
     fun refreshAfterTakeGems(gems: Map<GemType, Int>){}
 
