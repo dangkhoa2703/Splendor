@@ -154,6 +154,10 @@ class PlayerActionServiceTest {
         root.currentGame!!.currentGameState.board.gems[GemType.YELLOW] = 0
         root.playerActionService.reserveCard(devCard5, player)
         assertEquals(0, player.gems[GemType.YELLOW])
+        root.gameService.startNewGame(playerList, false, 1)
+        assertThrows<NoSuchElementException> { root.playerActionService.buyCard(root.currentGame!!.currentGameState.
+            board.levelOneOpen[0], false, mutableMapOf(), root.currentGame!!.currentGameState.
+            currentPlayer) }
     }
 
     /**
@@ -290,40 +294,70 @@ class PlayerActionServiceTest {
     }
 
     /**
-     * tests if showHint works
+     * tests if showHint works for buyCards and reserveCards
      */
     @Test
-    fun showHintTest(){
+    fun showHintTestCards(){
         root.gameService.startNewGame(playerList, false, 1)
         val board = root.currentGame!!.currentGameState.board
         val player = root.currentGame!!.currentGameState.currentPlayer
-        var turn:Turn
-        val testCard = DevCard(0,mapOf(),1,0,GemType.RED)
+        val testCard1 = DevCard(0,mapOf(),1,0,GemType.RED)
+        val testCard2 = DevCard(0,mapOf(),2,0,GemType.RED)
+        val testCard3 = DevCard(0,mapOf(),3,0,GemType.RED)
 
         //best turn is to reserve a card
-        turn = Turn(mapOf(),listOf(testCard),TurnType.RESERVE_CARD)
+        var turn = Turn(mapOf(),listOf(testCard1),TurnType.RESERVE_CARD)
         board.levelOneOpen.clear()
-        board.levelOneOpen.add(testCard)
+        board.levelOneOpen.add(testCard1)
         var hint = "You should reserve the level-1-card at position 1."
-        assertEquals(hint,root.playerActionService.showHint(turn))
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard2),TurnType.RESERVE_CARD)
+        board.levelTwoOpen.clear()
+        board.levelTwoOpen.add(testCard2)
+        hint = "You should reserve the level-2-card at position 1."
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard3),TurnType.RESERVE_CARD)
+        board.levelThreeOpen.clear()
+        board.levelThreeOpen.add(testCard3)
+        hint = "You should reserve the level-3-card at position 1."
+        assertEquals(hint, root.playerActionService.showHint(turn))
 
         //best turn is to buy a card
-        turn = Turn(mapOf(),listOf(testCard),TurnType.BUY_CARD)
+        turn = Turn(mapOf(),listOf(testCard1),TurnType.BUY_CARD)
         board.levelOneOpen.clear()
-        board.levelOneOpen.add(testCard)
+        board.levelOneOpen.add(testCard1)
         hint = "You should buy the level-1-card at position 1."
         assertEquals(hint,root.playerActionService.showHint(turn))
-        player.reservedCards.add(testCard)
+        player.reservedCards.add(testCard1)
         hint = "You should buy your reserved card at position 1."
         assertEquals(hint,root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard2),TurnType.BUY_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard2)
+        hint = "You should buy the level-2-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+        turn = Turn(mapOf(),listOf(testCard3),TurnType.BUY_CARD)
+        board.levelOneOpen.clear()
+        board.levelOneOpen.add(testCard3)
+        hint = "You should buy the level-3-card at position 1."
+        assertEquals(hint,root.playerActionService.showHint(turn))
+    }
 
+    /**
+     * tests if showHint works for takeGems and returnGems
+     */
+    @Test
+    fun showHintTestGems() {
         //best turn is to take gems
-        turn = Turn(mapOf(Pair(GemType.RED,2)),listOf(),TurnType.TAKE_GEMS)
-        hint = "You should take two RED gems."
-        assertEquals(hint,root.playerActionService.showHint(turn))
-        val gemsMap = mutableMapOf(Pair(GemType.RED,1),Pair(GemType.GREEN,1),Pair(GemType.BLUE,1))
-        turn  =Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
+        root.gameService.startNewGame(playerList, false, 1)
+        var turn = Turn(mapOf(Pair(GemType.RED, 2)), listOf(), TurnType.TAKE_GEMS)
+        var hint = "You should take two RED gems."
+        assertEquals(hint, root.playerActionService.showHint(turn))
+        val gemsMap = mutableMapOf(Pair(GemType.RED, 1), Pair(GemType.GREEN, 1), Pair(GemType.BLUE, 1))
+        turn = Turn(gemsMap, listOf(), TurnType.TAKE_GEMS)
         hint = "You should take three gems of the colours RED, GREEN and BLUE."
-        assertEquals(hint,root.playerActionService.showHint(turn))
+        assertEquals(hint, root.playerActionService.showHint(turn))
+
+        //best turn is to take and to discard gems
     }
 }

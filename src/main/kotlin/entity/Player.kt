@@ -34,10 +34,8 @@ class Player (
     var score : Int = 0,
     var devCards : MutableList<DevCard> = mutableListOf(),
     var id: Int = 0,
-    var hasDoneTurn: Boolean = false,
-    var validForRanking: Boolean = true
-    ) {
-
+    var hasDoneTurn: Boolean = false)
+{
     /** Clones a player */
     fun clone() : Player = Player(name, playerType, gems.toMutableMap(),
         bonus.toMutableMap(), reservedCards.toMutableList(), nobleTiles.toMutableList(),

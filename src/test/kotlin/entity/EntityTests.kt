@@ -1,7 +1,6 @@
 package entity
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import tools.aqua.bgw.visual.ImageVisual
 import kotlin.test.*
 
 /**
@@ -115,6 +114,9 @@ class EntityTests
         assertEquals(3, splendor.simulationSpeed)
         assertEquals(gameStateTwo, splendor.currentGameState)
         assertEquals(false, splendor.validGame)
+
+        splendor = Splendor(simulationSpeed = 2, currentGameState = gameStateOne, validGame = true)
+        assertEquals(mutableListOf(), splendor.highscores)
     }
 
     /** tests if Gem objects can be created correctly */

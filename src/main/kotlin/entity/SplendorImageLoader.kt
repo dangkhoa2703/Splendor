@@ -200,7 +200,7 @@ class SplendorImageLoader {
 		return ImageVisual(image)
 	}
 
-	/**[tokeImage] : Method applied to visualize corresponding tokens aka Gems.*/
+	/**[tokenImage] : Method applied to visualize corresponding tokens aka Gems.*/
     fun tokenImage(type: GemType): ImageVisual {
 	return tokenImages[type.toInt()-1]
     }

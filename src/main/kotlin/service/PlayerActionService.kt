@@ -157,9 +157,6 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                         3 -> {
                             board.levelThreeOpen.remove(card)
                         }
-                        else -> {
-                            throw IllegalArgumentException("illegal card.level " + card.level)
-                        }
                     }
                     rootService.gameService.refill(card.level)
                 } else {
