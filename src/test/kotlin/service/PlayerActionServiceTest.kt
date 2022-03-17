@@ -325,13 +325,5 @@ class PlayerActionServiceTest {
         turn  =Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
         hint = "You should take three gems of the colours RED, GREEN and BLUE."
         assertEquals(hint,root.playerActionService.showHint(turn))
-
-//        //wrong turn
-//        turn = Turn(mapOf(), listOf(),TurnType.EMPTY)
-//        hint = "there is no help for you"
-//        assertEquals(hint,root.playerActionService.showHint(turn))
-//        gemsMap[GemType.BLACK] = 1
-//        turn = Turn(gemsMap, listOf(),TurnType.TAKE_GEMS)
-//        assertThrows<IllegalStateException> { root.playerActionService.showHint(turn) }
     }
 }

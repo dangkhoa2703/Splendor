@@ -9,7 +9,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
 
     /** [showPlayers] :Popup displaying concurring players and items they have in hand.*/
     fun showPlayers(currentPlayer: Player) {
-	    onAllRefreshables{ refreshAfterPopup(currentPlayer) }
+        onAllRefreshables{ refreshAfterPopup(currentPlayer) }
     }
 
     /**
@@ -24,7 +24,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             game.turnCount--
         }
         else throw IllegalStateException("a previous state does not exist")
-	    onAllRefreshables { refreshAfterEndTurn() }
+        onAllRefreshables { refreshAfterEndTurn() }
     }
 
     /**
@@ -39,7 +39,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             game.turnCount++
         }
         else throw IllegalStateException("a following state does not exist")
-	    onAllRefreshables { refreshAfterEndTurn() }
+        onAllRefreshables { refreshAfterEndTurn() }
     }
 
     /**
@@ -47,54 +47,54 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun showHint(turn:Turn): String{
         if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
-        val hint :String
-        val board = rootService.currentGame!!.currentGameState.board
-        val player = rootService.currentGame!!.currentGameState.currentPlayer
-        if(turn.turnType == TurnType.RESERVE_CARD){
-            val card = turn.card[0]
-            val placement = when(card.level){
-                1 -> board.levelOneOpen.indexOf(card)+1
-                2 -> board.levelTwoOpen.indexOf(card)+1
-                3 -> board.levelThreeOpen.indexOf(card)+1
-                else -> {throw IllegalStateException("this should not happen")}
-        }
-        hint = "You should reserve the level-${card.level}-card at position $placement."
-        }
-        else if(turn.turnType == TurnType.BUY_CARD){
-            val card = turn.card[0]
-            val placement :Int
-            if(player.reservedCards.contains(card)){
-                placement = player.reservedCards.indexOf(card)+1
-                hint = "You should buy your reserved card at position $placement."
+            val hint :String
+            val board = rootService.currentGame!!.currentGameState.board
+            val player = rootService.currentGame!!.currentGameState.currentPlayer
+            if(turn.turnType == TurnType.RESERVE_CARD){
+                val card = turn.card[0]
+                val placement = when(card.level){
+                    1 -> board.levelOneOpen.indexOf(card)+1
+                    2 -> board.levelTwoOpen.indexOf(card)+1
+                    3 -> board.levelThreeOpen.indexOf(card)+1
+                    else -> {throw IllegalStateException("this should not happen")}
+                }
+                hint = "You should reserve the level-${card.level}-card at position $placement."
             }
-            else {
-                placement = when (card.level) {
-                    1 -> board.levelOneOpen.indexOf(card) + 1
-                    2 -> board.levelTwoOpen.indexOf(card) + 1
-                    3 -> board.levelThreeOpen.indexOf(card) + 1
+            else if(turn.turnType == TurnType.BUY_CARD){
+                val card = turn.card[0]
+                val placement :Int
+                if(player.reservedCards.contains(card)){
+                    placement = player.reservedCards.indexOf(card)+1
+                    hint = "You should buy your reserved card at position $placement."
+                }
+                else {
+                    placement = when (card.level) {
+                        1 -> board.levelOneOpen.indexOf(card) + 1
+                        2 -> board.levelTwoOpen.indexOf(card) + 1
+                        3 -> board.levelThreeOpen.indexOf(card) + 1
+                        else -> {
+                            throw IllegalStateException("this should not happen")
+                        }
+                    }
+                    hint = "You should buy the level-${card.level}-card at position $placement."
+                }
+            }
+            else if (turn.turnType == TurnType.TAKE_GEMS){
+                val gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
+                hint = when (gemTypes.size) {
+                    1 -> {
+                        "You should take two ${gemTypes[0]} gems."
+                    }
+                    3 -> {
+                        "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
+                    }
                     else -> {
-                        throw IllegalStateException("this should not happen")
+                        throw IllegalStateException("tip is wrong")
                     }
                 }
-                hint = "You should buy the level-${card.level}-card at position $placement."
             }
-        }
-        else if (turn.turnType == TurnType.TAKE_GEMS){
-            val gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
-            hint = when (gemTypes.size) {
-                1 -> {
-                    "You should take two ${gemTypes[0]} gems."
-                }
-                3 -> {
-                    "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
-                }
-                else -> {
-                    throw IllegalStateException("tip is wrong")
-                }
-            }
-        }
-        else{ hint = "there is no help for you" }
-        return hint
+            else{ hint = "there is no help for you" }
+            return hint
         } else { throw IllegalArgumentException ("NOT UR TURN") }
     }
 
@@ -144,37 +144,37 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         if(!game.currentGameState.currentPlayer.hasDoneTurn) {
             val board = game.currentGameState.board
             if(game.currentGameState.isInitialState) { rootService.gameService.createNewGameState(false) }
-                if (rootService.gameService.isCardAcquirable(card, payment)) {
-                    if (boardGameCard) {
-                        //move card from board to player.devCards
-                        when (card.level) {
-                            1 -> {
-                                board.levelOneOpen.remove(card)
-                            }
-                            2 -> {
-                                board.levelTwoOpen.remove(card)
-                            }
-                            3 -> {
-                                board.levelThreeOpen.remove(card)
-                            }
-                            else -> {
-                                throw IllegalArgumentException("illegal card.level " + card.level)
-                            }
+            if (rootService.gameService.isCardAcquirable(card, payment)) {
+                if (boardGameCard) {
+                    //move card from board to player.devCards
+                    when (card.level) {
+                        1 -> {
+                            board.levelOneOpen.remove(card)
                         }
-                        rootService.gameService.refill(card.level)
-                    } else {
-                        //move card from player.reservedCards to player.devCards
-                        user.reservedCards.remove(card)
+                        2 -> {
+                            board.levelTwoOpen.remove(card)
+                        }
+                        3 -> {
+                            board.levelThreeOpen.remove(card)
+                        }
+                        else -> {
+                            throw IllegalArgumentException("illegal card.level " + card.level)
+                        }
                     }
-                    //move the gems in payment from player's hand back to board
-                    payment.forEach { (gemType, value) ->
-                        user.gems[gemType] = user.gems.getValue(gemType) - value
-                        board.gems[gemType] = board.gems.getValue(gemType) + value
-                    }
-                    user.score += card.prestigePoints
-                    user.bonus[card.bonus] = user.bonus.getValue(card.bonus) + 1
-                    user.devCards.add(card)
-                } else throw IllegalArgumentException("card is not acquirable")
+                    rootService.gameService.refill(card.level)
+                } else {
+                    //move card from player.reservedCards to player.devCards
+                    user.reservedCards.remove(card)
+                }
+                //move the gems in payment from player's hand back to board
+                payment.forEach { (gemType, value) ->
+                    user.gems[gemType] = user.gems.getValue(gemType) - value
+                    board.gems[gemType] = board.gems.getValue(gemType) + value
+                }
+                user.score += card.prestigePoints
+                user.bonus[card.bonus] = user.bonus.getValue(card.bonus) + 1
+                user.devCards.add(card)
+            } else throw IllegalArgumentException("card is not acquirable")
             rootService.currentGame!!.currentGameState.consecutiveNoAction = 0
             onAllRefreshables { refreshAfterBuyCard(card) }
             rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn = true
@@ -192,7 +192,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
             if(rootService.currentGame!!.currentGameState.isInitialState){
                 rootService.gameService.createNewGameState(false)
             }
-        val board = rootService.currentGame!!.currentGameState.board
+            val board = rootService.currentGame!!.currentGameState.board
             if(user.reservedCards.size < 3){
                 //move card from board to player.reservedCards
                 val level = card.level
@@ -238,10 +238,10 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val board = game.currentGameState.board
         val availableCards = rootService.gameService.checkNobleTiles()
         if (availableCards.contains(card)) {
-                board.nobleTiles.remove(card)
-                user.nobleTiles.add(card)
-                user.score += card.prestigePoints
-            } else { throw IllegalArgumentException("the chosen card is not available for the current player") }
+            board.nobleTiles.remove(card)
+            user.nobleTiles.add(card)
+            user.score += card.prestigePoints
+        } else { throw IllegalArgumentException("the chosen card is not available for the current player") }
         onAllRefreshables { refreshAfterSelectNobleTile(card) }
     }
 
