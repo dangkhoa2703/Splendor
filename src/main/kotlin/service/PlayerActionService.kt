@@ -47,7 +47,7 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
      */
     fun showHint(turn:Turn): String{
         if(!rootService.currentGame!!.currentGameState.currentPlayer.hasDoneTurn){
-            val hint :String
+            var hint :String
             val board = rootService.currentGame!!.currentGameState.board
             val player = rootService.currentGame!!.currentGameState.currentPlayer
             if(turn.turnType == TurnType.RESERVE_CARD){
@@ -79,17 +79,24 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
                     hint = "You should buy the level-${card.level}-card at position $placement."
                 }
             }
-            else if (turn.turnType == TurnType.TAKE_GEMS){
-                val gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
+            else if ((turn.turnType == TurnType.TAKE_GEMS)||(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD)){
+                var gemTypes = turn.gems.filter { it.value > 0 }.keys.toMutableList()
                 hint = when (gemTypes.size) {
                     1 -> {
-                        "You should take two ${gemTypes[0]} gems."
+                        "You should take two ${gemTypes[0]} gems "
                     }
                     3 -> {
-                        "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]}."
+                        "You should take three gems of the colours ${gemTypes[0]}, ${gemTypes[1]} and ${gemTypes[2]} "
                     }
                     else -> {
                         throw IllegalStateException("tip is wrong")
+                    }
+                }
+                if(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD){
+                    gemTypes = turn.gemsToDiscard.filter { it.value > 0 }.keys.toMutableList()
+                    hint += "and discard gems of the colours "
+                    for (gemType in gemTypes){
+                        hint += "$gemType "
                     }
                 }
             }
