@@ -31,7 +31,7 @@ class AIService(private val rootService: RootService): AbstractRefreshingService
             //if Human or HARD
             else -> 3
         }
-        return decisionTree.computeDecisionTree(aiDifficulty,currentBoard,playerList)
+        return decisionTree.computeDecisionTree(aiDifficulty,currentBoard,playerList)!!
     }
 
     /**

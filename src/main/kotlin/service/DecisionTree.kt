@@ -7,7 +7,7 @@ class DecisionTree(var rootService: RootService) {
     /**
      * Builds the decision Tree with mini-max-algorithm
      */
-    fun computeDecisionTree(turns: Int, board: Board, players: List<Player>) : Turn {
+    fun computeDecisionTree(turns: Int, board: Board, players: List<Player>) : Turn? {
         val root: TreeNode<Turn> = TreeNode.createEmptyTree(turns * players.size, 3)
         miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0,
             board.cloneForSimulation(), players.clone().toMutableList())
@@ -20,10 +20,7 @@ class DecisionTree(var rootService: RootService) {
             else
                 println("\t> root-children score: null")
         }
-
-
-        return root.getChildren().sortedBy { treeNode -> if (treeNode.data == null) -1.0
-            else treeNode.data!!.evaluation }[0].data!!
+        return root.data ?: null
     }
 
     /**
@@ -70,6 +67,8 @@ class DecisionTree(var rootService: RootService) {
                 if(beta <= alpha)
                     break
             }
+            if(maxEval == Double.MIN_VALUE)
+                return null
             maxEvalTurn!!.evaluation = maxEval
             node.data = maxEvalTurn
             return maxEval
@@ -99,6 +98,8 @@ class DecisionTree(var rootService: RootService) {
                 if(beta <= alpha)
                     break
             }
+            if(minEval == Double.MAX_VALUE)
+                return null
             minEvalTurn!!.evaluation = minEval
             node.data = minEvalTurn
             return minEval
@@ -114,8 +115,7 @@ class DecisionTree(var rootService: RootService) {
         val newBoard = board.cloneForSimulation()
         val newPlayer = player.clone()
         // No cards on the board
-        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0
-            || turnType == TurnType.EMPTY)
+        if((newBoard.levelOneOpen.size + newBoard.levelTwoOpen.size + newBoard.levelThreeOpen.size) <= 0)
             return null
         val bestDevCards: Map<DevCard, Double> = rootService.aiService
             .calculateGeneralDevCardScore(newBoard, newPlayer, enemyPlayer)
