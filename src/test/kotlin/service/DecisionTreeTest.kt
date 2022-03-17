@@ -33,30 +33,30 @@ class DecisionTreeTest {
         Player("Peter", PlayerType.HUMAN)
     )
 
-    /**
-     * Test for simulateMove gems
-     */
-    @Test
-    fun testSimulateMove_gems() {
-        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
-            .simulateMove(TurnType.TAKE_GEMS, board, player, enemies)
-        assertNotNull(test)
-        assertEquals(Turn(mutableMapOf(
-            GemType.RED to 1,
-            GemType.BLUE to 1,
-            GemType.BLACK to 1
-        ), listOf(), TurnType.TAKE_GEMS, true), test.first)
-        val compareBoard = board.cloneForSimulation()
-        compareBoard.gems[GemType.RED] = 4
-        compareBoard.gems[GemType.BLUE] = 4
-        compareBoard.gems[GemType.BLACK] = 4
-        assertEquals(compareBoard, test.second.first)
-        val comparePlayer = player.clone()
-        comparePlayer.gems[GemType.RED] = 2
-        comparePlayer.gems[GemType.BLUE] = 1
-        comparePlayer.gems[GemType.BLACK] = 1
-        assertEquals(comparePlayer, test.second.second)
-    }
+//    /**
+//     * Test for simulateMove gems
+//     */
+//    @Test
+//    fun testSimulateMove_gems() {
+//        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+//            .simulateMove(TurnType.TAKE_GEMS, board, player, enemies)
+//        assertNotNull(test)
+//        assertEquals(Turn(mutableMapOf(
+//            GemType.RED to 1,
+//            GemType.BLUE to 1,
+//            GemType.BLACK to 1
+//        ), listOf(), TurnType.TAKE_GEMS, true), test.first)
+//        val compareBoard = board.cloneForSimulation()
+//        compareBoard.gems[GemType.RED] = 4
+//        compareBoard.gems[GemType.BLUE] = 4
+//        compareBoard.gems[GemType.BLACK] = 4
+//        assertEquals(compareBoard, test.second.first)
+//        val comparePlayer = player.clone()
+//        comparePlayer.gems[GemType.RED] = 2
+//        comparePlayer.gems[GemType.BLUE] = 1
+//        comparePlayer.gems[GemType.BLACK] = 1
+//        assertEquals(comparePlayer, test.second.second)
+//    }
 
     /**
      * Test for simulateMove null
@@ -73,26 +73,26 @@ class DecisionTreeTest {
         assertNull(test)
     }
 
-    /**
-     * Test for simulateMove cards
-     */
-    @Test
-    fun testSimulateMove_cards() {
-        player.gems[GemType.RED] = 2
-        val boughtCard = board.levelOneOpen[0]
-        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
-            .simulateMove(TurnType.BUY_CARD, board.cloneForSimulation(), player.clone(), enemies)
-        assertNotNull(test)
-        assertEquals(Turn(mutableMapOf(), listOf(boughtCard), TurnType.BUY_CARD), test.first)
-        val compareBoard = board.cloneForSimulation()
-        compareBoard.levelOneOpen.remove(boughtCard)
-        assertEquals(compareBoard, test.second.first)
-        val comparePlayer = player.clone()
-        comparePlayer.devCards.add(boughtCard)
-        comparePlayer.score += boughtCard.prestigePoints
-        comparePlayer.bonus[boughtCard.bonus] = (comparePlayer.bonus[boughtCard.bonus] ?: 0) + 1
-        comparePlayer.gems[GemType.RED] = 0
-        assertEquals(comparePlayer, test.second.second)
-    }
+//    /**
+//     * Test for simulateMove cards
+//     */
+//    @Test
+//    fun testSimulateMove_cards() {
+//        player.gems[GemType.RED] = 2
+//        val boughtCard = board.levelOneOpen[0]
+//        val test: Pair<Turn, Pair<Board, Player>>? = decisionTree
+//            .simulateMove(TurnType.BUY_CARD, board.cloneForSimulation(), player.clone(), enemies)
+//        assertNotNull(test)
+//        assertEquals(Turn(mutableMapOf(), listOf(boughtCard), TurnType.BUY_CARD), test.first)
+//        val compareBoard = board.cloneForSimulation()
+//        compareBoard.levelOneOpen.remove(boughtCard)
+//        assertEquals(compareBoard, test.second.first)
+//        val comparePlayer = player.clone()
+//        comparePlayer.devCards.add(boughtCard)
+//        comparePlayer.score += boughtCard.prestigePoints
+//        comparePlayer.bonus[boughtCard.bonus] = (comparePlayer.bonus[boughtCard.bonus] ?: 0) + 1
+//        comparePlayer.gems[GemType.RED] = 0
+//        assertEquals(comparePlayer, test.second.second)
+//    }
 
 }
