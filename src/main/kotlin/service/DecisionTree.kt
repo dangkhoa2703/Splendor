@@ -11,15 +11,6 @@ class DecisionTree(var rootService: RootService) {
         val root: TreeNode<Turn> = TreeNode.createEmptyTree(turns * players.size, 3)
         miniMax(root, Double.MIN_VALUE, Double.MAX_VALUE, 0,
             board.cloneForSimulation(), players.clone().toMutableList())
-
-
-        for(i in 0..2) {
-            val childrenData = root.getChildren()[i].data
-            if(childrenData != null)
-                println("\t> root-children score: " + root.getChildren()[i].data!!.evaluation)
-            else
-                println("\t> root-children score: null")
-        }
         return root.data
     }
 
@@ -39,7 +30,7 @@ class DecisionTree(var rootService: RootService) {
             return rootService.aiService.computeTurnEvaluationScore(currentPlayer, enemies)
         }
         // MiniMax
-        var simulation: Pair<Turn, Pair<Board, Player>>? = null
+        var simulation: Pair<Turn, Pair<Board, Player>>?
         val newPlayerIndex: Int = (playerIndex + 1) % player.size
         if(maximizing) {
             var maxEval: Double = Double.MIN_VALUE
@@ -49,7 +40,7 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -57,6 +48,7 @@ class DecisionTree(var rootService: RootService) {
                 newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
                 newPlayerlist = newPlayerlist.clone().toMutableList()
                 val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                println("MAX:" + eval)
                 if(eval == null)
                     continue
                 if(eval > maxEval) {
@@ -80,7 +72,7 @@ class DecisionTree(var rootService: RootService) {
                 val child = node.getChildren()[i]
                 val newTurnType: TurnType = TurnType.values()[TurnType.TAKE_GEMS.ordinal + i]
                 // Simulate new board and player
-                simulation = simulateMove(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
+                simulation = simulateMoveWithOptionToDiscard(newTurnType, board.cloneForSimulation(), player[playerIndex].clone(), enemies.clone())
                 if(simulation == null) // Children not simulatable
                     continue
                 val indexOfCurrentPlayer: Int = player.indexOf(currentPlayer)
@@ -88,6 +80,7 @@ class DecisionTree(var rootService: RootService) {
                 newPlayerlist.add(indexOfCurrentPlayer, simulation.second.second)
                 newPlayerlist = newPlayerlist.clone().toMutableList()
                 val eval = miniMax(child, alpha, beta, newPlayerIndex, simulation.second.first, newPlayerlist)
+                println("MIN:" + eval)
                 if(eval == null)
                     continue
                 if(eval < minEval) {
@@ -104,6 +97,33 @@ class DecisionTree(var rootService: RootService) {
             node.data = minEvalTurn
             return minEval
         }
+    }
+
+    /**
+     * Simulates the given move with option to discard (through [turnType])
+     * @return appropriate [Turn], [Board] and [Player] objects
+     */
+    fun simulateMoveWithOptionToDiscard(turnType: TurnType, board: Board, player: Player, enemyPlayer: List<Player>):
+            Pair<Turn, Pair<Board, Player>>? {
+        val result: Pair<Turn, Pair<Board, Player>>? = simulateMove(turnType, board.cloneForSimulation(), player.clone(), enemyPlayer)
+        if(result == null || result.first.turnType != TurnType.TAKE_GEMS)
+            return result
+        var gemsOnHandAfterMove: Int = 0
+        result.second.second.gems.forEach {
+            gemsOnHandAfterMove += it.value
+        }
+        var gemsOnHandToMuch: Int = gemsOnHandAfterMove - 10
+        if(gemsOnHandToMuch <= 0)
+            return result
+        // Compute which gems to discard
+        val mapWithGemsToDiscard: MutableMap<GemType, Int> = player.gems.toMutableMap()
+        val bestDevCards: Map<DevCard, Double> = rootService.aiService
+            .calculateGeneralDevCardScore(board, player, enemyPlayer)
+        val bestDevCardsSorted = bestDevCards.keys.sortedBy { card -> bestDevCards[card] }
+        subtractGemsFromMapWithSortedIndices(mapWithGemsToDiscard, bestDevCardsSorted, 10)
+        result.first.turnType = TurnType.TAKE_GEMS_AND_DISCARD
+        result.first.gemsToDiscard = mapWithGemsToDiscard
+        return result
     }
 
     /**
@@ -209,5 +229,27 @@ class DecisionTree(var rootService: RootService) {
         return (gemsNeeded == 0) || (gemsNeeded <= payment.getValue(GemType.YELLOW))
     }
 
+    private fun subtractGemsFromMapWithSortedIndices(gemsOfPlayer: MutableMap<GemType, Int>, listOfSortedDevCard: List<DevCard>,  pAmount: Int) {
+        var amount: Int = pAmount
+        for(devCard in listOfSortedDevCard) {
+            devCard.price.forEach {
+                if(it.value > 0) {
+                    while(amount > 0 && (gemsOfPlayer[it.key] ?: 0) > 0) {
+                        gemsOfPlayer[it.key] = (gemsOfPlayer[it.key] ?: 0) - 1
+                        amount--
+                    }
+                }
+                if(amount == 0)
+                    return
+            }
+        }
+        // Subtract randomly the rest
+        gemsOfPlayer.forEach {
+            while(amount > 0 && (gemsOfPlayer[it.key] ?: 0) > 0) {
+                gemsOfPlayer[it.key] = (gemsOfPlayer[it.key] ?: 0) - 1
+                amount--
+            }
+        }
+    }
 
 }
