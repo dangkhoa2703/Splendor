@@ -126,6 +126,7 @@ class IOServiceTest {
         }
     }
 
+    /** tests if createPlayerFromLines works correctly */
     @Test
     fun testCreatePlayerFromLines(){
         val fileLines = listOf(
@@ -137,6 +138,7 @@ class IOServiceTest {
         }
     }
 
+    /** tests if readDevCards works correctly */
     @Test
     fun testReadDevCard(){
         val testDevCardString = "0, 0, 1, 1, 1, 1, 0, 1, diamante"
