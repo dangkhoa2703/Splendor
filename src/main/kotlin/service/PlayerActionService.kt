@@ -228,10 +228,11 @@ class PlayerActionService(private val rootService: RootService): AbstractRefresh
         val game = rootService.currentGame!!
         val board = game.currentGameState.board
         val availableCards = rootService.gameService.checkNobleTiles()
-        if (availableCards.contains(card)) {
+        if (availableCards.contains(card)&&!user.choseNobleTile) {
             board.nobleTiles.remove(card)
             user.nobleTiles.add(card)
             user.score += card.prestigePoints
+            user.choseNobleTile = true
         } else { throw IllegalArgumentException("the chosen card is not available for the current player") }
         onAllRefreshables { refreshAfterSelectNobleTile(card) }
     }
