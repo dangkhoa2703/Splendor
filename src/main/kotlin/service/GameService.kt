@@ -254,7 +254,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     /** creates nobleTiles */
     private fun createNobleTiles(playerCount: Int): MutableList<NobleTile> {
 
-        val nobleTileFile = "src/main/resources/splendor-adligenkarten.csv"
+        val nobleTileFile = GameService::class.java.getResource("/splendor-adligenkarten.csv").getPath()
         val cardProps: MutableList<String> = File(nobleTileFile).readLines().toMutableList()
         cardProps.removeAt(0)
         val nobleCards = mutableListOf<NobleTile>()
@@ -284,7 +284,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     /** creates cardStacks for all devCard levels */
     private fun createCardStack(level: Int): MutableList<DevCard>{
 
-        val cardConfigFile = "src/main/resources/splendor-entwicklungskarten.csv"
+	val cardConfigFile = GameService::class.java.getResource("/splendor-entwicklungskarten.csv").getPath()
         val cardConfigs: MutableList<String> = File(cardConfigFile.trim()).readLines().toMutableList()
         cardConfigs.removeAt(0)
         val cardList = mutableListOf<DevCard>()
