@@ -541,12 +541,33 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
     private fun tryToSave(dragEvent: DragEvent): Boolean {
 	val playerActionService = rootService.playerActionService
 	val cardView: CardView = dragEvent.draggedComponent as CardView
-	val devCard: DevCard = devCardsMap.backwardOrNull(cardView) ?: return false
+	val id: Int = devCardMap.backwardOrNull(cardView) ?: return false
+	val game = rootService.currentGame
 
-	if(saved.contains(devCard)) return false
+	checkNotNull(game) { "No game found. "}
 
 	checkNotNull(currentPlayer) { "No player found."}
 	val player = currentPlayer as Player
+
+	var devCard: DevCard
+	//stack cards
+	if(id>=200) {
+	    //levelOne
+	    if(id<202) {
+		devCard = game.currentGameState.board.levelOneCards[0]
+	    }
+	    else if(id<204) {
+		devCard = game.currentGameState.board.levelTwoCards[0]
+	    }
+	    else {
+		devCard = game.currentGameState.board.levelThreeCards[0]
+	    }
+	}
+	else {
+	    devCard = devCardsMap.backwardOrNull(cardView) ?: return false
+	}
+
+	if(saved.contains(devCard)) return false
 
 	try {
 	    playerActionService.reserveCard(devCard, player)
