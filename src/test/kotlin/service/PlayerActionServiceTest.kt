@@ -34,6 +34,7 @@ class PlayerActionServiceTest {
         return mc
     }
 
+    /** tests if showPlayers works correctly */
     @Test
     fun showPlayerTest(){
         val testRefreshable = TestRefreshable()

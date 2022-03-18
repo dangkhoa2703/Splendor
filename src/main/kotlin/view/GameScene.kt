@@ -150,7 +150,16 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 				val player = currentPlayer as Player
 
 				val isSaved: Boolean = saved.contains(devCard)
-
+				try{
+					playerActionService.buyCard(devCard, !isSaved, turn.gems, player)
+					if(isSaved) saved = saved - devCard
+				}
+				catch(e: Exception) {
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+					println(e)
+				}
 
 			}
 			if(turn.turnType == TurnType.TAKE_GEMS){
@@ -190,11 +199,88 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 			}
 
 			if(turn.turnType == TurnType.RESERVE_CARD){
+				val playerActionService = rootService.playerActionService
+				val game = rootService.currentGame
+
+				checkNotNull(game) { "No game found. "}
+
+				checkNotNull(currentPlayer) { "No player found."}
+				val player = currentPlayer as Player
+
+
+
+				try {
+					playerActionService.reserveCard(turn.card.get(0), player)
+				}
+				catch(e: Exception) {
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+					println(e)
+				}
 
 			}
 			if(turn.turnType == TurnType.TAKE_GEMS_AND_DISCARD){
+				val playerActionService = rootService.playerActionService
 
+				checkNotNull(currentPlayer) { "No player found. "}
+				val player = currentPlayer as Player
+
+				val gemList: MutableList<GemType> = mutableListOf()
+
+				for(gem in turn.gems) {
+					var amount = gem.value
+					while(amount>0) {
+						gemList.add(gem.key)
+						amount--
+					}
+				}
+
+				try {
+					playerActionService.takeGems(gemList, player)
+					for (gem in turn.gems) {
+						gameGemSelection[gem.key] = 0
+					}
+				}
+				catch(e: Exception) {
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+					println(e)
+				}
+
+				for(gem in allGems) {
+					gameGemSelection[gem] = 0
+				}
+				renderGameGems()
+
+
+				val gemList2: MutableList<GemType> = mutableListOf()
+
+				for(gem in turn.gemsToDiscard) {
+					var amount = gem.value
+					while(amount>0) {
+						gemList.add(gem.key)
+						amount--
+					}
+				}
+
+				checkNotNull(currentPlayer) { "No Player found. "}
+				try {
+					playerActionService.returnGems(gemList2, currentPlayer as Player)
+				}
+				catch(e: Exception) {
+					val errText: String? = e.message
+					checkNotNull(errText)
+					errorLabel.text = errText
+					println(e)
+				}
+
+				renderPlayerGems()
 			}
+
+
+
 		}
 		}
 	}
@@ -1105,12 +1191,6 @@ class GameScene(private val rootService: RootService): BoardGameScene(1920,1080)
 	fun aIcheck(): Boolean{
 		return rootService.currentGame!!.currentGameState.currentPlayer.playerType != PlayerType.HUMAN
 	}
-
-	fun aITurn(){
-
-	}
-
-
 	init {
 	loadAllComponents()
 

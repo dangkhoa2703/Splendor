@@ -97,13 +97,13 @@ class AIServiceTest {
         //testPlayerFour needs zero rounds to buy devCardOne, one round to buy devCardThree (with 2 leftovers), one
         //round to buy devCardFive (with 2 leftovers) and two rounds to buy devCardFour (with 2 leftovers)
         val expected4: Map<DevCard, Double> = mutableMapOf(devCardOne to 1.0, devCardThree to 0.5, devCardFive to 0.5,
-        devCardFour to 0.0)
+            devCardFour to 0.0)
         assertEquals(expected4, root.aiService.calculateDevCardPurchasingPowerScores(exampleBoard5, testPlayerFour))
     }
 
     /**
      * Test for calculateDevCardPurchasingPowerScoresForEnemies
-    */
+     */
     @Test
     fun calculateDevCardPurchasingPowerScoresForEnemiesTest() {
         val enemyPlayers: List<Player> = listOf(testPlayer, testPlayerFour)
@@ -114,7 +114,7 @@ class AIServiceTest {
         //So our score for devCardOne need to be the lowest, the score for devCardThree has to be the highest
         val expected1: Map<DevCard, Double> = mutableMapOf(devCardOne to 0.0, devCardTwo to 0.25, devCardThree to 1.0)
         assertEquals(expected1, root.aiService.calculateDevCardPurchasingPowerScoresForEnemies(exampleBoard3,
-        enemyPlayers))
+            enemyPlayers))
     }
 
     /**
@@ -188,13 +188,18 @@ class AIServiceTest {
         //Three gems are missing, two of the same colour and one other
         //Player needs two rounds and has two leftOverGems
         assertEquals(Pair(2,2), root.aiService.calculateAmountOfRoundsNeededToBuy(testPlayer,devCardThree))
+
+        testPlayer.gems[GemType.YELLOW] = 1
+        assertEquals(Pair(1,2),root.aiService.calculateAmountOfRoundsNeededToBuy(testPlayer,devCardTwo))
+
+
     }
 
     /**
      * Test for chooseGems in AIService
      */
     @Test
-    fun chooseGemsTest() {
+    fun chooseGemsTest1() {
         val devCardOne = DevCard(id = 1, price = mutableMapOf(GemType.RED to 3, GemType.BLUE to 1),1,
             bonus = GemType.BLACK, prestigePoints = 0)
         val devCardTwo = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 3, GemType.RED to 1),2,
@@ -218,7 +223,7 @@ class AIServiceTest {
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 4))
         val exampleBoard2 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
-            GemType.GREEN to 4, GemType.BLACK to 3))
+                GemType.GREEN to 4, GemType.BLACK to 3))
         val exampleBoard3 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 0,
                 GemType.GREEN to 4, GemType.BLACK to 3))
@@ -237,7 +242,7 @@ class AIServiceTest {
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1))
         val exampleBoard9 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 1,
-            GemType.BLUE to 1))
+                GemType.BLUE to 1))
         val exampleBoard10 = Board(mutableListOf(), mutableListOf(), mutableListOf(devCardOne), mutableListOf(),
             mutableListOf(devCardTwo), mutableListOf(), mutableListOf(devCardThree), mutableMapOf(GemType.RED to 2,
                 GemType.GREEN to 4))

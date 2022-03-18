@@ -42,6 +42,7 @@ class TestRefreshable: Refreshable {
     var refreshAfterSelectNobleTileCall: Boolean = false
         private set
 
+    /** resets refreshFunctions */
     fun reset(){
         refreshAfterTakeGemsCalled = false
         refreshAfterStarNewGameCalled = false

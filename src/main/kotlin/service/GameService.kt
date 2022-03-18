@@ -133,10 +133,14 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
     fun nextPlayer(){
         var newGameState = rootService.currentGame!!.currentGameState
         val newBoard = newGameState.board
-
+        val newPlayer = newGameState.currentPlayer
         if (checkGems()){
             throw IllegalArgumentException("DISCARD GEMS")
         }
+        if(!newPlayer.choseNobleTile && checkNobleTiles().size>0){
+            throw IllegalStateException("Chose a noble tile")
+        }
+
         // if current player reach 15 or above -> end game
         if(newGameState.currentPlayer.score >= 15){
             newGameState.playerList = newGameState.playerList.sortedByDescending { player -> player.score }
@@ -147,6 +151,7 @@ class GameService(private val rootService: RootService): AbstractRefreshingServi
 
         rootService.currentGame!!.turnCount++
         newGameState = createNewGameState(true)
+        rootService.currentGame!!.currentGameState.currentPlayer.choseNobleTile = false
 
         //check if the next player can make a valid move
         val totalGemsOnBoard = newBoard.gems.values.sum() - newBoard.gems.getValue(GemType.YELLOW)
