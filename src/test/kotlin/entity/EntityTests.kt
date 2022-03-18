@@ -186,6 +186,17 @@ class EntityTests
         assertEquals(mapOf(), turnFour.gems)
         assertEquals(turnCard, turnFour.card)
         assertEquals(TurnType.RESERVE_CARD, turnFour.turnType)
+        assertEquals(null, turnFour.evaluation)
+
+        turnThree.turnType = TurnType.RESERVE_CARD
+        assertEquals(TurnType.RESERVE_CARD, turnThree.turnType)
+
+        turnFour.evaluation = 203.0
+        assertEquals(203.0, turnFour.evaluation)
+
+        assertFalse { turnFour.equals(39) }
+        assertFalse { turnFour.equals(turnTwo) }
+        assertTrue { turnFour.equals(turnFour) }
     }
 
     /**

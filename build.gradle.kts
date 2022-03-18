@@ -35,6 +35,10 @@ dependencies {
 tasks.distZip {
     archiveFileName.set("distribution.zip")
     destinationDirectory.set(layout.projectDirectory.dir("public"))
+    into("distribution/bin"){
+        from("src/main/resources")
+        include("Manual.pdf")
+    }
 }
 
 tasks.test {
