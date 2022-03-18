@@ -188,13 +188,18 @@ class AIServiceTest {
         //Three gems are missing, two of the same colour and one other
         //Player needs two rounds and has two leftOverGems
         assertEquals(Pair(2,2), root.aiService.calculateAmountOfRoundsNeededToBuy(testPlayer,devCardThree))
+
+        testPlayer.gems.put(GemType.YELLOW,1)
+        assertEquals(Pair(1,2),root.aiService.calculateAmountOfRoundsNeededToBuy(testPlayer,devCardTwo))
+
+
     }
 
     /**
      * Test for chooseGems in AIService
      */
     @Test
-    fun chooseGemsTest() {
+    fun chooseGemsTest1() {
         val devCardOne = DevCard(id = 1, price = mutableMapOf(GemType.RED to 3, GemType.BLUE to 1),1,
             bonus = GemType.BLACK, prestigePoints = 0)
         val devCardTwo = DevCard(id = 2, price = mutableMapOf(GemType.GREEN to 3, GemType.RED to 1),2,
